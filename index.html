@@ -1254,6 +1254,392 @@
       color: #FFFFFF;
       border-color: rgba(255, 255, 255, 0.3);
     }
+  
+    /* ==========================================================
+       CSS-CRAFTED DARK MATTE RESTAURANT SERVING TRAY
+       Top-down realistic restaurant tray with raised 3D rim and matte liner
+       ========================================================== */
+    .serving-tray {
+      position: absolute;
+      inset: 8px 10px 40px 10px;
+      border-radius: 24px;
+      background: radial-gradient(ellipse at 50% 45%, #151F33 0%, #0E1626 65%, #0A101C 100%);
+      border: 1.5px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 
+        inset 0 2px 4px rgba(255, 255, 255, 0.1),
+        inset 0 -2px 6px rgba(0, 0, 0, 0.8),
+        0 10px 24px rgba(0, 0, 0, 0.55),
+        0 2px 6px rgba(0, 0, 0, 0.35);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    /* Subtle Matte Liner Inset framing the meal */
+    .tray-liner {
+      position: absolute;
+      inset: 8px 8px;
+      border-radius: 18px;
+      border: 1px dashed rgba(255, 255, 255, 0.05);
+      background: rgba(255, 255, 255, 0.015);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* Grounded Contact Shadow directly underneath wings box */
+    .wings-contact-shadow {
+      position: absolute;
+      width: 175px;
+      height: 22px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 55%, transparent 75%);
+      filter: blur(5px);
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 9;
+      transition: all 0.25s ease;
+    }
+
+    /* Contact shadow for dip cups */
+    .dip-contact-shadow {
+      position: absolute;
+      width: 38px;
+      height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 55%, transparent 75%);
+      filter: blur(2px);
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Contact shadow for side plates (fries, coleslaw) */
+    .side-contact-shadow {
+      position: absolute;
+      width: 62px;
+      height: 13px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.3) 55%, transparent 75%);
+      filter: blur(3px);
+      bottom: -3px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Underlay image for seamless transitions without flash */
+    .underlay-wing-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      pointer-events: none;
+      filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));
+      z-index: 11;
+      display: none;
+    }
+
+    /* Smart Sauce Transitions: Top-Down Sauce Pour / Glaze Wipe */
+    @keyframes saucePourWipe {
+      0% {
+        clip-path: inset(0 0 100% 0);
+        transform: scale(0.96);
+      }
+      60% {
+        clip-path: inset(0 0 10% 0);
+        transform: scale(1.03);
+      }
+      100% {
+        clip-path: inset(0 0 0% 0);
+        transform: scale(1);
+      }
+    }
+    .real-wing-overlay.sauce-pour-wipe {
+      animation: saucePourWipe 0.28s cubic-bezier(0.25, 1, 0.5, 1) forwards !important;
+    }
+
+    /* Smart Sauce Transitions: Fresh Box Swap */
+    @keyframes boxSwapPop {
+      0% {
+        opacity: 0.2;
+        transform: scale(0.94);
+      }
+      65% {
+        opacity: 1;
+        transform: scale(1.02);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+    .real-wing-overlay.box-swap-transition {
+      animation: boxSwapPop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+    }
+
+    /* Tactile Drop & Bounce onto Tray */
+    @keyframes trayDropBounce {
+      0% {
+        transform: translateY(-24px) scale(1.15);
+        opacity: 0;
+      }
+      60% {
+        transform: translateY(3px) scale(0.97);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+    .orbit-ramekin.tray-drop-bounce,
+    .orbit-side-plate.tray-drop-bounce {
+      animation: trayDropBounce 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* Floating Price Feedback Indicator */
+    .floating-price-indicator {
+      position: fixed;
+      z-index: 9999;
+      font-family: var(--font-cairo);
+      font-size: 13px;
+      font-weight: 900;
+      color: #FF8A00;
+      background: rgba(14, 22, 38, 0.95);
+      border: 1px solid rgba(249, 115, 22, 0.45);
+      border-radius: 9999px;
+      padding: 3px 10px;
+      pointer-events: none;
+      box-shadow: 0 4px 14px rgba(249, 115, 22, 0.28);
+      animation: floatPriceUp 0.75s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes floatPriceUp {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 8px) scale(0.85);
+      }
+      25% {
+        opacity: 1;
+        transform: translate(-50%, 0) scale(1.06);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -28px) scale(0.95);
+      }
+    }
+
+    /* Header Cart Badge Bounce Animation */
+    @keyframes badgeBounce {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.45); }
+      65% { transform: scale(0.9); }
+      100% { transform: scale(1); }
+    }
+    .badge-bounce {
+      animation: badgeBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Toast Notification (Glassmorphism Dark) */
+    .cart-toast {
+      position: fixed;
+      bottom: 84px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      opacity: 0;
+      background: rgba(15, 23, 42, 0.94);
+      border: 1px solid rgba(249, 115, 22, 0.4);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      color: #FFFFFF;
+      padding: 10px 16px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 12px;
+      font-weight: 700;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 12px rgba(249, 115, 22, 0.2);
+      z-index: 999;
+      pointer-events: none;
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      white-space: nowrap;
+    }
+    .cart-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .cart-toast-btn {
+      background: var(--brand-orange);
+      color: #FFFFFF;
+      border: none;
+      font-family: var(--font-cairo);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.15s ease;
+    }
+    .cart-toast-btn:active {
+      transform: scale(0.92);
+    }
+
+    /* Cart Empty State */
+    .cart-empty-state {
+      padding: 32px 16px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .empty-icon-circle {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid rgba(249, 115, 22, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .empty-title {
+      font-size: 16px;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+    }
+    .empty-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      max-width: 240px;
+      line-height: 1.5;
+    }
+    .empty-back-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #FFFFFF;
+      font-family: var(--font-cairo);
+      font-size: 13px;
+      font-weight: 800;
+      padding: 9px 22px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .empty-back-btn:active {
+      transform: scale(0.95);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Cart Item Card */
+    .cart-item-card {
+      background: rgba(19, 30, 51, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .cart-item-card:last-child {
+      margin-bottom: 0;
+    }
+    .cart-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .cart-item-title {
+      font-size: 13px;
+      font-weight: 900;
+      color: #FFFFFF;
+    }
+    .cart-item-price {
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--brand-orange);
+      white-space: nowrap;
+    }
+    .cart-item-details {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .cart-item-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 6px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .cart-stepper {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(11, 18, 33, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 9999px;
+      padding: 2px 6px;
+    }
+    .cart-stepper-btn {
+      background: transparent;
+      border: none;
+      color: #FFFFFF;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 900;
+      border-radius: 50%;
+      transition: background 0.15s ease;
+    }
+    .cart-stepper-btn:active {
+      background: rgba(255, 255, 255, 0.15);
+    }
+    .cart-qty-value {
+      font-size: 12px;
+      font-weight: 900;
+      color: #FFFFFF;
+      min-width: 14px;
+      text-align: center;
+    }
+    .cart-item-delete {
+      background: transparent;
+      border: none;
+      color: #EF4444;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.8;
+      transition: opacity 0.2s ease, transform 0.15s ease;
+    }
+    .cart-item-delete:active {
+      transform: scale(0.9);
+      opacity: 1;
+    }
+
   </style>
 </head>
 <body>
@@ -1313,60 +1699,72 @@
          ======================================================== -->
     <div id="buildMealViewWrapper" style="display: flex; flex-direction: column; flex: 1;">
 
-      <!-- 3. TOP-DOWN STAGE (~40%): Zero Overlap & Direct Floating Wings Box (No White Plate) -->
+      <!-- 3. TOP-DOWN STAGE: Sleek CSS Dark Matte Serving Tray -->
       <section class="stage-container" aria-label="لوحة عرض الأجنحة التفاعلية">
-        <!-- Ambient Lighting Glow -->
-        <div class="plate-ambient-glow" id="plateAmbientGlow"></div>
+        <!-- CSS-Crafted Dark Matte Serving Tray -->
+        <div class="serving-tray" id="servingTray">
+          <!-- Subtle Matte Tray Liner with Inset Dashed Border -->
+          <div class="tray-liner"></div>
 
-        <!-- Dedicated Left Dips Zone (Up to 6 slots in compact 2-column cluster) -->
-        <div class="orbit-ramekin dip-slot-0" id="orbitRamekin0"></div>
-        <div class="orbit-ramekin dip-slot-1" id="orbitRamekin1"></div>
-        <div class="orbit-ramekin dip-slot-2" id="orbitRamekin2"></div>
-        <div class="orbit-ramekin dip-slot-3" id="orbitRamekin3"></div>
-        <div class="orbit-ramekin dip-slot-4" id="orbitRamekin4"></div>
-        <div class="orbit-ramekin dip-slot-5" id="orbitRamekin5"></div>
+          <!-- Ambient Lighting Glow Pulsing with Selected Sauce Color -->
+          <div class="plate-ambient-glow" id="plateAmbientGlow"></div>
 
-        <!-- Dedicated Sides Zone: Cleanly tucked below wings box (2 slots) -->
-        <div class="orbit-side-plate side-slot-0" id="orbitSidePlate0"></div>
-        <div class="orbit-side-plate side-slot-1" id="orbitSidePlate1"></div>
+          <!-- Grounded Contact Shadow directly underneath wings box -->
+          <div class="wings-contact-shadow" id="wingsContactShadow"></div>
 
-        <!-- Dedicated Centered Flex Stage for Main Wings (Dead-Center, Zero RTL Shift Bug) -->
-        <div class="wings-center-stage">
-          <div class="main-plate-wrap" id="mainPlateWrap">
-            <!-- Real PNG Image Overlay: Transparent PNG with Soft Realistic Drop Shadow -->
-            <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
-                 onerror="handleWingImgError(this)" 
-                 onload="handleWingImgLoad(this)" />
+          <!-- Dedicated Left Dips Zone (Up to 6 slots in compact 2-column cluster) -->
+          <div class="orbit-ramekin dip-slot-0" id="orbitRamekin0"></div>
+          <div class="orbit-ramekin dip-slot-1" id="orbitRamekin1"></div>
+          <div class="orbit-ramekin dip-slot-2" id="orbitRamekin2"></div>
+          <div class="orbit-ramekin dip-slot-3" id="orbitRamekin3"></div>
+          <div class="orbit-ramekin dip-slot-4" id="orbitRamekin4"></div>
+          <div class="orbit-ramekin dip-slot-5" id="orbitRamekin5"></div>
 
-            <!-- Procedural Vector Fallback (ONLY shown if PNG fails, hidden by default to prevent flashing) -->
-            <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240" style="display: none;">
-            <defs>
-              <!-- Crispy Golden Wing Base Gradient (Fallback) -->
-              <radialGradient id="crispyWingGrad" cx="35%" cy="30%" r="70%">
-                <stop offset="0%" stop-color="#FBBF24"/>
-                <stop offset="40%" stop-color="#D97706"/>
-                <stop offset="80%" stop-color="#B45309"/>
-                <stop offset="100%" stop-color="#78350F"/>
-              </radialGradient>
+          <!-- Dedicated Sides Zone: Right Zone (2 slots) -->
+          <div class="orbit-side-plate side-slot-0" id="orbitSidePlate0"></div>
+          <div class="orbit-side-plate side-slot-1" id="orbitSidePlate1"></div>
 
-              <!-- Dynamic Sauce Glaze Gradient (Fallback) -->
-              <radialGradient id="sauceGlazeGrad" cx="30%" cy="25%" r="75%">
-                <stop id="sauceStop0" offset="0%" stop-color="#F97316"/>
-                <stop id="sauceStop1" offset="50%" stop-color="#EA580C"/>
-                <stop id="sauceStop2" offset="100%" stop-color="#9A3412"/>
-              </radialGradient>
-            </defs>
+          <!-- Dedicated Centered Flex Stage for Main Wings (Dead-Center Symmetrical Stage) -->
+          <div class="wings-center-stage">
+            <div class="main-plate-wrap" id="mainPlateWrap">
+              <!-- Underlay Image to prevent flash when swapping / pouring -->
+              <img id="underlayWingImg" class="underlay-wing-img" src="/images/wings-crispy-6.png" alt="Previous Wings" />
 
-            <!-- Dynamic Procedural Wings Group (SVG Fallback ONLY) -->
-            <g id="wingsGroup" style="display: none; filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));"></g>
+              <!-- Real PNG Image Overlay: Transparent PNG with Soft Realistic Drop Shadow -->
+              <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
+                   onerror="handleWingImgError(this)" 
+                   onload="handleWingImgLoad(this)" />
 
-            <!-- Steam effect when Spicy is active -->
-            <g id="steamGroup" style="display: none;">
-              <path class="steam-line" d="M100 90 Q105 75 98 60 T104 40" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5"/>
-              <path class="steam-line" d="M125 85 Q130 68 122 52 T128 35" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6" style="animation-delay: 0.6s;"/>
-              <path class="steam-line" d="M145 92 Q150 78 143 62 T148 45" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5" style="animation-delay: 1.2s;"/>
-            </g>
-          </svg>
+              <!-- Procedural Vector Fallback (ONLY shown if PNG fails, hidden by default to prevent flashing) -->
+              <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240" style="display: none;">
+              <defs>
+                <!-- Crispy Golden Wing Base Gradient (Fallback) -->
+                <radialGradient id="crispyWingGrad" cx="35%" cy="30%" r="70%">
+                  <stop offset="0%" stop-color="#FBBF24"/>
+                  <stop offset="40%" stop-color="#D97706"/>
+                  <stop offset="80%" stop-color="#B45309"/>
+                  <stop offset="100%" stop-color="#78350F"/>
+                </radialGradient>
+
+                <!-- Dynamic Sauce Glaze Gradient (Fallback) -->
+                <radialGradient id="sauceGlazeGrad" cx="30%" cy="25%" r="75%">
+                  <stop id="sauceStop0" offset="0%" stop-color="#F97316"/>
+                  <stop id="sauceStop1" offset="50%" stop-color="#EA580C"/>
+                  <stop id="sauceStop2" offset="100%" stop-color="#9A3412"/>
+                </radialGradient>
+              </defs>
+
+              <!-- Dynamic Procedural Wings Group (SVG Fallback ONLY) -->
+              <g id="wingsGroup" style="display: none; filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));"></g>
+
+              <!-- Steam effect when Spicy is active -->
+              <g id="steamGroup" style="display: none;">
+                <path class="steam-line" d="M100 90 Q105 75 98 60 T104 40" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+                <path class="steam-line" d="M125 85 Q130 68 122 52 T128 35" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6" style="animation-delay: 0.6s;"/>
+                <path class="steam-line" d="M145 92 Q150 78 143 62 T148 45" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5" style="animation-delay: 1.2s;"/>
+              </g>
+            </svg>
+            </div>
           </div>
         </div>
 
@@ -1453,10 +1851,10 @@
           </div>
         </div>
 
-        <!-- Bottom Full-Width CTA Button -->
+        <!-- Bottom Full-Width CTA Button ("أضف إلى السلة") -->
         <div>
-          <button class="cta-button" onclick="openOrderDrawer()">
-            <span>عرض الطلب والتوصيل</span>
+          <button class="cta-button" id="btnAddToCart" onclick="handleAddToCart(event)">
+            <span>أضف إلى السلة</span>
             <span id="ctaPriceText">850 دج</span>
           </button>
         </div>
@@ -1471,6 +1869,18 @@
       <!-- Populated dynamically by renderReadyBoxes() -->
     </div>
 
+  
+  <!-- Toast Notification -->
+  <div class="cart-toast" id="cartToast">
+    <span id="cartToastMsg">تمت الإضافة إلى السلة</span>
+    <button class="cart-toast-btn" onclick="openOrderDrawer()">
+      <span>عرض السلة</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
+  </div>
   </main>
 
   <!-- ==========================================================
@@ -1803,11 +2213,12 @@
       viewMode: "build", // "build" | "ready_boxes"
       wingsCount: 6,
       selectedSauceId: "crispy", // default to crispy
+      previousSauceId: "crispy",
       spiceLevel: 1, // 0: mild, 1: medium, 2: extra_hot
       selectedDips: {}, // { [dipId]: quantity }
       selectedSides: {}, // { [sideId]: quantity }
       activeTab: "sauce", // "sauce" | "dips" | "sides"
-      cartReadyBoxes: [],
+      cartItems: [], // Multi-Item Shopping Cart
       activeModalBox: null,
       modalSelectedSauceId: "crispy",
       modalSelectedSpiceLevel: 1,
@@ -1816,12 +2227,92 @@
     let currentWingImgLoadedSrc = "";
 
     /**
-     * INITIALIZATION & COMPLETE PNG ASSET PRELOADING (ZERO LOADING FLASH)
+     * INITIALIZATION, CART RESTORATION & COMPLETE PNG ASSET PRELOADING
      */
     window.addEventListener("DOMContentLoaded", () => {
+      loadCartFromStorage();
       preloadAllAssets();
       renderAll();
+      updateCartBadge();
     });
+
+    function loadCartFromStorage() {
+      try {
+        const saved = localStorage.getItem("mewio_wings_cart_v1");
+        if (saved) {
+          state.cartItems = JSON.parse(saved);
+        }
+      } catch (e) {
+        console.warn("Could not load cart from storage", e);
+      }
+    }
+
+    function saveCartToStorage() {
+      try {
+        localStorage.setItem("mewio_wings_cart_v1", JSON.stringify(state.cartItems));
+      } catch (e) {
+        console.warn("Could not save cart to storage", e);
+      }
+    }
+
+    function getCartCount() {
+      return state.cartItems.reduce((acc, it) => acc + (it.qty || 1), 0);
+    }
+
+    function updateCartBadge() {
+      const count = getCartCount();
+      const badge = document.getElementById("cartBadgeCount");
+      if (badge) {
+        badge.innerText = count;
+        badge.style.display = count > 0 ? "flex" : "none";
+      }
+    }
+
+    function triggerCartBounce() {
+      const badge = document.getElementById("cartBadgeCount");
+      const cartBtn = document.querySelector(".header .icon-btn");
+      if (badge) {
+        badge.classList.remove("badge-bounce");
+        badge.offsetHeight; // trigger reflow
+        badge.classList.add("badge-bounce");
+      }
+      if (cartBtn) {
+        cartBtn.classList.remove("badge-bounce");
+        cartBtn.offsetHeight;
+        cartBtn.classList.add("badge-bounce");
+      }
+    }
+
+    let toastTimer = null;
+    function showToast(message, actionLabel, actionCallback) {
+      const toast = document.getElementById("cartToast");
+      if (!toast) return;
+      const msgEl = document.getElementById("cartToastMsg");
+      if (msgEl) msgEl.innerText = message;
+
+      toast.classList.add("show");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove("show");
+      }, 3500);
+    }
+
+    function showFloatingPriceFeedback(text, evt) {
+      const span = document.createElement("span");
+      span.className = "floating-price-indicator";
+      span.innerText = text;
+
+      let x = window.innerWidth / 2;
+      let y = window.innerHeight - 90;
+      if (evt && evt.clientX && evt.clientY) {
+        x = evt.clientX;
+        y = evt.clientY - 22;
+      }
+      span.style.left = `${x}px`;
+      span.style.top = `${y}px`;
+      document.body.appendChild(span);
+      setTimeout(() => span.remove(), 800);
+    }
 
     /**
      * PRELOAD ALL PNG ASSETS ON APP MOUNT
@@ -1952,18 +2443,54 @@
      */
     function renderWingsImage() {
       const img = document.getElementById("realWingImg");
+      const underlay = document.getElementById("underlayWingImg");
       if (!img) return;
 
       const targetSrc = getWingImagePath(state.selectedSauceId, state.wingsCount);
+      const prevSauce = state.previousSauceId || "crispy";
+      const newSauce = state.selectedSauceId;
 
       if (currentWingImgLoadedSrc !== targetSrc) {
-        img.classList.add("switching");
+        // Keep previous image on underlay to prevent any flash during animation
+        if (underlay && currentWingImgLoadedSrc) {
+          underlay.src = currentWingImgLoadedSrc;
+          underlay.style.display = "block";
+        }
+
+        // Clean previous animation classes
+        img.classList.remove("sauce-pour-wipe", "box-swap-transition", "switching");
+
+        // Set new image
         currentWingImgLoadedSrc = targetSrc;
         img.src = targetSrc;
-        // Trigger subtle transition removal
+
+        // Smart Context-Aware Animation:
+        // Case A: Switching FROM crispy TO any sauce -> Top-Down Sauce Pour / Glaze Wipe
+        // Case B: Switching between two sauces or back to crispy -> Fresh Box Swap
+        img.offsetHeight; // force reflow
+        if (prevSauce === "crispy" && newSauce !== "crispy") {
+          img.classList.add("sauce-pour-wipe");
+        } else {
+          img.classList.add("box-swap-transition");
+        }
+
+        // Sauce Color Ambient Glow pulse on the tray
+        const glowColors = {
+          crispy: "rgba(245, 158, 11, 0.22)",
+          algeria: "rgba(234, 88, 12, 0.38)",
+          bbq: "rgba(180, 83, 9, 0.38)",
+          buffalo: "rgba(239, 68, 68, 0.44)"
+        };
+        const glow = document.getElementById("plateAmbientGlow");
+        if (glow) {
+          glow.style.background = `radial-gradient(circle, ${glowColors[newSauce] || glowColors.crispy} 0%, transparent 70%)`;
+        }
+
+        state.previousSauceId = newSauce;
+
         setTimeout(() => {
-          img.classList.remove("switching");
-        }, 50);
+          if (underlay) underlay.style.display = "none";
+        }, 320);
       }
     }
 
@@ -2080,19 +2607,26 @@
           const dipObj = MENU_CONFIG.dips.find(d => d.id === dipId) || MENU_CONFIG.dips[0];
           const imgPath = resolveImagePath(dipObj.image || `/images/dip-${dipObj.id}.png`);
 
+          const wasHidden = !el.classList.contains("visible");
+
           // Key Check: if slot already displays this exact item.id, ONLY update badge text without re-mounting <img>
           if (el.dataset.itemId === dipId) {
             updateOrCreateBadge(el, qty, "dip-qty-badge");
           } else {
             el.dataset.itemId = dipId;
             el.innerHTML = `
-              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55));" />
+              <div class="dip-contact-shadow"></div>
+              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : ""}
             `;
           }
           el.classList.add("visible");
+          if (wasHidden) {
+            el.classList.add("tray-drop-bounce");
+            setTimeout(() => el.classList.remove("tray-drop-bounce"), 350);
+          }
         } else {
-          el.classList.remove("visible");
+          el.classList.remove("visible", "tray-drop-bounce");
           el.dataset.itemId = "";
           el.innerHTML = "";
         }
@@ -2118,19 +2652,26 @@
           const sideObj = MENU_CONFIG.sides.find(s => s.id === sideId) || MENU_CONFIG.sides[0];
           const imgPath = resolveImagePath(sideObj.image || `/images/side-${sideObj.id}.png`);
 
+          const wasHidden = !el.classList.contains("visible");
+
           // Key Check: if slot already displays this exact item.id, ONLY update badge text without re-mounting <img>
           if (el.dataset.itemId === sideId) {
             updateOrCreateBadge(el, qty, "side-qty-badge");
           } else {
             el.dataset.itemId = sideId;
             el.innerHTML = `
-              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6));" />
+              <div class="side-contact-shadow"></div>
+              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : ""}
             `;
           }
           el.classList.add("visible");
+          if (wasHidden) {
+            el.classList.add("tray-drop-bounce");
+            setTimeout(() => el.classList.remove("tray-drop-bounce"), 350);
+          }
         } else {
-          el.classList.remove("visible");
+          el.classList.remove("visible", "tray-drop-bounce");
           el.dataset.itemId = "";
           el.innerHTML = "";
         }
@@ -2199,11 +2740,7 @@
       }
     }
 
-    function updateCartBadge() {
-      const buildCount = 1;
-      const readyBoxesCount = state.cartReadyBoxes.reduce((a, b) => a + (b.quantity || 1), 0);
-      document.getElementById("cartBadgeCount").innerText = buildCount + readyBoxesCount;
-    }
+    // Centralized updateCartBadge() is active
 
     function renderCarousel() {
       const track = document.getElementById("carouselTrack");
@@ -2284,7 +2821,12 @@
         `;
 
         card.onclick = (e) => {
-          if (e.target.classList.contains("item-btn-minus")) return;
+          if (e.target.classList.contains("item-btn-minus") || e.target.closest(".item-btn-minus")) return;
+          const currentTotalDips = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
+          const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
+          if (currentTotalDips >= wingsObj.freeDips) {
+            showFloatingPriceFeedback(`+${MENU_CONFIG.rules.extraDipPrice} دج`, e);
+          }
           state.selectedDips[dip.id] = (state.selectedDips[dip.id] || 0) + 1;
           renderAll();
         };
@@ -2330,7 +2872,8 @@
         `;
 
         card.onclick = (e) => {
-          if (e.target.classList.contains("item-btn-minus")) return;
+          if (e.target.classList.contains("item-btn-minus") || e.target.closest(".item-btn-minus")) return;
+          showFloatingPriceFeedback(`+${side.price} دج`, e);
           state.selectedSides[side.id] = (state.selectedSides[side.id] || 0) + 1;
           renderAll();
         };
@@ -2473,23 +3016,77 @@
     function handleAddReadyBoxToCart() {
       if (!state.activeModalBox) return;
 
-      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.modalSelectedSauceId);
-      const spiceObj = MENU_CONFIG.spiceLevels[state.modalSelectedSpiceLevel];
+      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.modalSelectedSauceId) || MENU_CONFIG.coatingSauces[0];
+      const spiceObj = MENU_CONFIG.spiceLevels[state.modalSelectedSpiceLevel] || MENU_CONFIG.spiceLevels[1];
+      const boxObj = state.activeModalBox;
 
-      state.cartReadyBoxes.push({
-        boxId: state.activeModalBox.id,
-        code: state.activeModalBox.code,
-        nameAr: state.activeModalBox.nameAr,
-        price: state.activeModalBox.price,
+      const cartItem = {
+        cartItemId: "ready_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+        type: "ready-box",
+        title: boxObj.nameAr,
+        boxCode: boxObj.code,
+        boxId: boxObj.id,
+        sauceId: sauceObj.id,
         sauceName: sauceObj ? sauceObj.name : "مقرمش بدون صوص",
+        spiceLevel: state.modalSelectedSpiceLevel,
         spiceTitle: spiceObj ? spiceObj.title : "حار",
-        quantity: 1,
-      });
+        spiceColor: spiceObj ? spiceObj.color : "#F97316",
+        includesSummary: (boxObj.itemsSummary || []).join(" + "),
+        qty: 1,
+        unitPrice: boxObj.price,
+      };
 
+      state.cartItems.push(cartItem);
+      saveCartToStorage();
       closeReadyBoxModal();
       updateCartBadge();
+      triggerCartBounce();
+      showToast(`تمت إضافة ${boxObj.nameAr} إلى السلة`, "عرض السلة", () => openOrderDrawer());
+    }
+
+    /**
+     * ADD CURRENT CUSTOM CONFIGURED MEAL TO CART
+     */
+    function handleAddToCart(event) {
+      const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
+      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) || MENU_CONFIG.coatingSauces[0];
+      const spiceObj = MENU_CONFIG.spiceLevels[state.spiceLevel];
+      const mealUnitPrice = calculateBuildMealTotal();
+
+      const itemDips = { ...state.selectedDips };
+      const itemSides = { ...state.selectedSides };
+
+      const cartItem = {
+        cartItemId: "custom_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
+        type: "custom",
+        title: `وجبة ${wingsObj.label} (${sauceObj.name})`,
+        wingsCount: state.wingsCount,
+        wingsLabel: wingsObj.label,
+        sauceId: sauceObj.id,
+        sauceName: sauceObj.name,
+        spiceLevel: state.spiceLevel,
+        spiceTitle: spiceObj.title,
+        spiceColor: spiceObj.color,
+        selectedDips: itemDips,
+        selectedSides: itemSides,
+        qty: 1,
+        unitPrice: mealUnitPrice,
+      };
+
+      state.cartItems.push(cartItem);
+      saveCartToStorage();
+      updateCartBadge();
+      triggerCartBounce();
+      showToast("تمت إضافة الوجبة إلى السلة بنجاح", "عرض السلة", () => openOrderDrawer());
+
+      // Reset optional dips and sides for next build
+      state.selectedDips = {};
+      state.selectedSides = {};
+      renderOrbitingDips();
+      renderOrbitingSides();
+      renderTabs();
+      renderCarousel();
       updateLivePrice();
-      alert(`تمت إضافة ${state.activeModalBox.nameAr} إلى طلبك بنجاح`);
     }
 
     /**
@@ -2512,16 +3109,20 @@
       return total;
     }
 
+    function calculateCartSubtotal() {
+      return state.cartItems.reduce((acc, item) => acc + (item.unitPrice * (item.qty || 1)), 0);
+    }
+
     function calculateGrandTotal() {
-      const buildTotal = calculateBuildMealTotal();
-      const readyTotal = state.cartReadyBoxes.reduce((acc, box) => acc + (box.price * (box.quantity || 1)), 0);
-      const deliveryFee = MENU_CONFIG.rules.deliveryFee;
-      return buildTotal + readyTotal + deliveryFee;
+      const subtotal = calculateCartSubtotal();
+      return subtotal > 0 ? (subtotal + MENU_CONFIG.rules.deliveryFee) : 0;
     }
 
     function updateLivePrice() {
-      const total = calculateGrandTotal();
-      document.getElementById("ctaPriceText").innerText = `${total.toLocaleString("fr-DZ")} دج`;
+      const currentMealPrice = calculateBuildMealTotal();
+      const ctaPriceEl = document.getElementById("ctaPriceText");
+      if (ctaPriceEl) ctaPriceEl.innerText = `${currentMealPrice.toLocaleString("fr-DZ")} دج`;
+
       const drawerFee = document.getElementById("drawerDeliveryFeeText");
       if (drawerFee) drawerFee.innerText = `${MENU_CONFIG.rules.deliveryFee} دج`;
     }
@@ -2537,96 +3138,168 @@
       overlay.classList.add("open");
 
       const content = document.getElementById("drawerSummaryContent");
-      const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount);
-      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
-      const spiceObj = MENU_CONFIG.spiceLevels[state.spiceLevel];
+      const customerSection = document.querySelector(".customer-form-section");
+      const deliveryBanner = document.querySelector(".delivery-banner");
+      const submitBtn = document.getElementById("btnSubmitOrder");
 
-      // Dips itemized text
-      let dipsListHtml = '<span class="drawer-item-value" style="color: var(--text-muted);">بدون صوصات</span>';
-      const distinctDipIds = Object.keys(state.selectedDips).filter(id => state.selectedDips[id] > 0);
-      const totalDipsCount = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
-      const extraDipsCount = Math.max(0, totalDipsCount - wingsObj.freeDips);
-
-      if (distinctDipIds.length > 0) {
-        const dipNames = distinctDipIds.map(id => {
-          const d = MENU_CONFIG.dips.find(x => x.id === id);
-          const q = state.selectedDips[id];
-          return `${d ? d.name : id} ${q > 1 ? `(×${q})` : ''}`;
-        }).join(" + ");
-
-        const extraNote = extraDipsCount > 0 ? ` <span style="color: var(--brand-orange); font-size: 11px;">(${extraDipsCount} إضافي: +${extraDipsCount * MENU_CONFIG.rules.extraDipPrice} دج)</span>` : ` <span style="color: #10B981; font-size: 11px;">(${wingsObj.freeDips} مشمول)</span>`;
-        dipsListHtml = `<span class="drawer-item-value">${dipNames}${extraNote}</span>`;
-      }
-
-      // Sides itemized text
-      let sidesListHtml = '<span class="drawer-item-value" style="color: var(--text-muted);">بدون إضافات</span>';
-      const distinctSideIds = Object.keys(state.selectedSides).filter(id => state.selectedSides[id] > 0);
-      if (distinctSideIds.length > 0) {
-        const sideItems = distinctSideIds.map(id => {
-          const s = MENU_CONFIG.sides.find(x => x.id === id);
-          const q = state.selectedSides[id];
-          const cost = s ? s.price * q : 0;
-          return `${s ? s.name : id} ${q > 1 ? `(×${q})` : ''} <span style="color: var(--brand-orange); font-size: 11px;">(+${cost} دج)</span>`;
-        }).join("<br/>");
-        sidesListHtml = `<span class="drawer-item-value" style="line-height: 1.4;">${sideItems}</span>`;
-      }
-
-      const buildTotal = calculateBuildMealTotal();
-      const deliveryFee = MENU_CONFIG.rules.deliveryFee;
-      const grandTotal = calculateGrandTotal();
-
-      let html = `
-        <div style="font-size: 13px; font-weight: 800; color: var(--brand-orange); margin-bottom: 8px;">
-          وجبتك المخصصة (${wingsObj.label}) — ${buildTotal.toLocaleString("fr-DZ")} دج
-        </div>
-        <div class="drawer-item-row">
-          <span class="drawer-item-label">صوص الأجنحة:</span>
-          <span class="drawer-item-value">${sauceObj ? sauceObj.name : "مقرمش بدون صوص"}</span>
-        </div>
-        <div class="drawer-item-row">
-          <span class="drawer-item-label">درجة الحرارة (Spice Level):</span>
-          <span class="drawer-item-value" style="color: ${spiceObj.color};">${spiceObj.title}</span>
-        </div>
-        <div class="drawer-item-row">
-          <span class="drawer-item-label">الصوصات الجانبية:</span>
-          ${dipsListHtml}
-        </div>
-        <div class="drawer-item-row" style="align-items: flex-start;">
-          <span class="drawer-item-label" style="padding-top: 2px;">الإضافات:</span>
-          ${sidesListHtml}
-        </div>
-      `;
-
-      if (state.cartReadyBoxes.length > 0) {
-        html += `
-          <div style="font-size: 13px; font-weight: 800; color: var(--brand-gold); margin-top: 12px; margin-bottom: 6px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
-            البوكسات الجاهزة المضافة:
+      if (state.cartItems.length === 0) {
+        // Empty Cart State
+        content.innerHTML = `
+          <div class="cart-empty-state">
+            <div class="empty-icon-circle">
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+            </div>
+            <div class="empty-title">سلة طلباتك فارغة</div>
+            <div class="empty-subtitle">اختر وجبتك المفضلة وخصصها، ثم أضفها إلى السلة لبدء الطلب</div>
+            <button type="button" class="empty-back-btn" onclick="closeOrderDrawer()">تصفح القائمة</button>
           </div>
         `;
-        state.cartReadyBoxes.forEach((b) => {
-          html += `
-            <div class="drawer-item-row">
-              <span class="drawer-item-label">${b.code} (${b.sauceName} • ${b.spiceTitle}):</span>
-              <span class="drawer-item-value">${b.price.toLocaleString("fr-DZ")} دج</span>
-            </div>
-          `;
-        });
+        if (customerSection) customerSection.style.display = "none";
+        if (deliveryBanner) deliveryBanner.style.display = "none";
+        if (submitBtn) submitBtn.style.display = "none";
+        return;
       }
 
-      html += `
-        <div class="drawer-item-row" style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px;">
-          <span class="drawer-item-label">رسوم التوصيل (المدية):</span>
-          <span class="drawer-item-value" style="color: var(--brand-orange);">${deliveryFee} دج</span>
-        </div>
-        <div class="drawer-item-row" style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px;">
-          <span class="drawer-item-label" style="font-weight: 900; color: white;">المجموع الإجمالي للدفع:</span>
-          <span class="drawer-item-value" style="color: var(--brand-orange); font-size: 17px; font-weight: 900;">
-            ${grandTotal.toLocaleString("fr-DZ")} دج
-          </span>
+      if (customerSection) customerSection.style.display = "block";
+      if (deliveryBanner) deliveryBanner.style.display = "flex";
+      if (submitBtn) submitBtn.style.display = "flex";
+
+      let itemsHtml = `
+        <div style="font-size: 13px; font-weight: 800; color: #FFFFFF; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+          <span>وجبات الطلب (${getCartCount()}):</span>
         </div>
       `;
 
-      content.innerHTML = html;
+      let subtotal = 0;
+
+      state.cartItems.forEach(item => {
+        const lineTotal = item.unitPrice * (item.qty || 1);
+        subtotal += lineTotal;
+
+        let detailsHtml = "";
+        if (item.type === "custom") {
+          const dipsArr = [];
+          if (item.selectedDips) {
+            Object.keys(item.selectedDips).forEach(dId => {
+              const q = item.selectedDips[dId];
+              if (q > 0) {
+                const dObj = MENU_CONFIG.dips.find(x => x.id === dId);
+                dipsArr.push(`${dObj ? dObj.name : dId} ${q > 1 ? `(×${q})` : ''}`);
+              }
+            });
+          }
+
+          const sidesArr = [];
+          if (item.selectedSides) {
+            Object.keys(item.selectedSides).forEach(sId => {
+              const q = item.selectedSides[sId];
+              if (q > 0) {
+                const sObj = MENU_CONFIG.sides.find(x => x.id === sId);
+                sidesArr.push(`${sObj ? sObj.name : sId} ${q > 1 ? `(×${q})` : ''}`);
+              }
+            });
+          }
+
+          detailsHtml = `
+            <div class="cart-item-details">
+              <div>صوص الأجنحة: <strong>${item.sauceName}</strong> • <span style="color:${item.spiceColor};">${item.spiceTitle}</span></div>
+              ${dipsArr.length > 0 ? `<div>الصوصات: ${dipsArr.join(" + ")}</div>` : ''}
+              ${sidesArr.length > 0 ? `<div>الإضافات: ${sidesArr.join(" + ")}</div>` : ''}
+            </div>
+          `;
+        } else {
+          detailsHtml = `
+            <div class="cart-item-details">
+              <div>${item.boxCode} • صوص <strong>${item.sauceName}</strong> • <span style="color:${item.spiceColor};">${item.spiceTitle}</span></div>
+              <div>يتضمن: ${item.includesSummary}</div>
+            </div>
+          `;
+        }
+
+        itemsHtml += `
+          <div class="cart-item-card">
+            <div class="cart-item-top">
+              <div class="cart-item-title">${item.title}</div>
+              <div class="cart-item-price">${lineTotal.toLocaleString("fr-DZ")} دج</div>
+            </div>
+            ${detailsHtml}
+            <div class="cart-item-controls">
+              <div class="cart-stepper">
+                <button type="button" class="cart-stepper-btn" onclick="handleUpdateCartItemQty('${item.cartItemId}', -1)">−</button>
+                <span class="cart-qty-value">${item.qty || 1}</span>
+                <button type="button" class="cart-stepper-btn" onclick="handleUpdateCartItemQty('${item.cartItemId}', 1)">+</button>
+              </div>
+              <button type="button" class="cart-item-delete" onclick="handleRemoveCartItem('${item.cartItemId}')" title="حذف الوجبة">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        `;
+      });
+
+      const deliveryFee = MENU_CONFIG.rules.deliveryFee;
+      const grandTotal = subtotal + deliveryFee;
+
+      itemsHtml += `
+        <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
+          <div class="drawer-item-row">
+            <span class="drawer-item-label">المجموع الفرعي:</span>
+            <span class="drawer-item-value">${subtotal.toLocaleString("fr-DZ")} دج</span>
+          </div>
+          <div class="drawer-item-row" style="margin-top: 4px;">
+            <span class="drawer-item-label">التوصيل (المدية):</span>
+            <span class="drawer-item-value" style="color: var(--brand-orange);">${deliveryFee} دج</span>
+          </div>
+          <div class="drawer-item-row" style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px;">
+            <span class="drawer-item-label" style="font-weight: 900; color: white;">المجموع الكلي للدفع:</span>
+            <span class="drawer-item-value" style="color: var(--brand-orange); font-size: 17px; font-weight: 900;">
+              ${grandTotal.toLocaleString("fr-DZ")} دج
+            </span>
+          </div>
+        </div>
+      `;
+
+      content.innerHTML = itemsHtml;
+      if (submitBtn) {
+        submitBtn.innerHTML = `
+          <span>تأكيد الطلب الآن</span>
+          <span>(${grandTotal.toLocaleString("fr-DZ")} دج)</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        `;
+      }
+    }
+
+    function handleUpdateCartItemQty(cartItemId, delta) {
+      const item = state.cartItems.find(it => it.cartItemId === cartItemId);
+      if (!item) return;
+
+      if ((item.qty || 1) + delta <= 0) {
+        handleRemoveCartItem(cartItemId);
+        return;
+      }
+
+      item.qty = (item.qty || 1) + delta;
+      saveCartToStorage();
+      updateCartBadge();
+      openOrderDrawer();
+    }
+
+    function handleRemoveCartItem(cartItemId) {
+      state.cartItems = state.cartItems.filter(it => it.cartItemId !== cartItemId);
+      saveCartToStorage();
+      updateCartBadge();
+      openOrderDrawer();
     }
 
     function closeOrderDrawer() {
@@ -2710,11 +3383,14 @@
         return;
       }
 
+      if (state.cartItems.length === 0) {
+        alert("سلة طلباتك فارغة! أضف وجبة أولاً.");
+        return;
+      }
+
       const orderId = Math.floor(100000 + Math.random() * 900000);
-      const grandTotal = calculateGrandTotal();
-      const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
-      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
-      const spiceObj = MENU_CONFIG.spiceLevels[state.spiceLevel];
+      const subtotal = calculateCartSubtotal();
+      const grandTotal = subtotal + MENU_CONFIG.rules.deliveryFee;
 
       // Build WhatsApp Message (Clean, professional, zero emojis)
       let msg = `*طلب جديد من مطعم WINGS (المدية)*\n`;
@@ -2725,65 +3401,88 @@
       msg += `• عنوان التوصيل: ${rawAddress}\n`;
       if (notes) msg += `• ملاحظات: ${notes}\n`;
       msg += `------------------------------------\n`;
-      msg += `• الوجبة المخصصة: ${wingsObj.label} (${wingsObj.price} دج)\n`;
-      msg += `  - صوص الأجنحة: ${sauceObj ? sauceObj.name : "مقرمش بدون صوص"}\n`;
-      msg += `  - درجة الحرارة: ${spiceObj.title}\n`;
+      msg += `• وجبات الطلب (${getCartCount()}):\n`;
 
-      const distinctDips = Object.keys(state.selectedDips).filter(id => state.selectedDips[id] > 0);
-      if (distinctDips.length > 0) {
-        msg += `• الصوصات الجانبية:\n`;
-        distinctDips.forEach(id => {
-          const d = MENU_CONFIG.dips.find(x => x.id === id);
-          const qty = state.selectedDips[id];
-          msg += `  - ${d ? d.name : id} ×${qty}\n`;
-        });
-      }
+      state.cartItems.forEach((item, index) => {
+        const lineTotal = item.unitPrice * (item.qty || 1);
+        if (item.type === "custom") {
+          msg += `[${index + 1}] ${item.title} (×${item.qty || 1}) — ${lineTotal} دج\n`;
+          msg += `    - درجة الحرارة: ${item.spiceTitle}\n`;
 
-      const distinctSides = Object.keys(state.selectedSides).filter(id => state.selectedSides[id] > 0);
-      if (distinctSides.length > 0) {
-        msg += `• الإضافات:\n`;
-        distinctSides.forEach(id => {
-          const s = MENU_CONFIG.sides.find(x => x.id === id);
-          const qty = state.selectedSides[id];
-          msg += `  - ${s ? s.name : id} ×${qty} (${(s ? s.price * qty : 0)} دج)\n`;
-        });
-      }
+          const distinctDips = item.selectedDips ? Object.keys(item.selectedDips).filter(id => item.selectedDips[id] > 0) : [];
+          if (distinctDips.length > 0) {
+            const dipsStr = distinctDips.map(id => {
+              const d = MENU_CONFIG.dips.find(x => x.id === id);
+              return `${d ? d.name : id} ×${item.selectedDips[id]}`;
+            }).join(", ");
+            msg += `    - الصوصات: ${dipsStr}\n`;
+          }
 
-      if (state.cartReadyBoxes.length > 0) {
-        msg += `------------------------------------\n`;
-        msg += `• البوكسات الجاهزة:\n`;
-        state.cartReadyBoxes.forEach(b => {
-          msg += `  - ${b.code} (${b.sauceName} | ${b.spiceTitle}) - ${b.price} دج\n`;
-        });
-      }
+          const distinctSides = item.selectedSides ? Object.keys(item.selectedSides).filter(id => item.selectedSides[id] > 0) : [];
+          if (distinctSides.length > 0) {
+            const sidesStr = distinctSides.map(id => {
+              const s = MENU_CONFIG.sides.find(x => x.id === id);
+              return `${s ? s.name : id} ×${item.selectedSides[id]}`;
+            }).join(", ");
+            msg += `    - الإضافات: ${sidesStr}\n`;
+          }
+        } else {
+          msg += `[${index + 1}] ${item.title} (${item.boxCode}) (×${item.qty || 1}) — ${lineTotal} دج\n`;
+          msg += `    - صوص: ${item.sauceName} • درجة الحرارة: ${item.spiceTitle}\n`;
+        }
+      });
 
       msg += `------------------------------------\n`;
-      msg += `تكلفة الوجبات: ${(grandTotal - MENU_CONFIG.rules.deliveryFee).toLocaleString('fr-DZ')} دج\n`;
-      msg += `رسوم التوصيل: ${MENU_CONFIG.rules.deliveryFee} دج\n`;
-      msg += `*المجموع النهائي للدفع: ${grandTotal.toLocaleString('fr-DZ')} دج*\n`;
-      msg += `مطعم WINGS — المدية، الجزائر`;
+      msg += `• المجموع الفرعي: ${subtotal.toLocaleString("fr-DZ")} دج\n`;
+      msg += `• رسوم التوصيل (المدية): ${MENU_CONFIG.rules.deliveryFee} دج\n`;
+      msg += `• المجموع النهائي للدفع: *${grandTotal.toLocaleString("fr-DZ")} دج*\n`;
+      msg += `------------------------------------\n`;
+      msg += `شكراً لاختياركم مطعم WINGS!`;
 
-      const whatsappUrl = `https://wa.me/${MENU_CONFIG.restaurant.whatsapp}?text=${encodeURIComponent(msg)}`;
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${MENU_CONFIG.restaurant.whatsapp}&text=${encodeURIComponent(msg)}`;
 
-      renderOrderSuccessScreen(orderId, cleanPhone, rawAddress, notes, grandTotal, whatsappUrl);
+      // Clear Cart Upon Successful Order
+      const orderedItems = [...state.cartItems];
+      state.cartItems = [];
+      saveCartToStorage();
+      updateCartBadge();
+
+      renderOrderSuccessScreen(orderId, cleanPhone, rawAddress, notes, grandTotal, whatsappUrl, orderedItems);
     }
 
-    function renderOrderSuccessScreen(orderId, phone, address, notes, total, whatsappUrl) {
+    function renderOrderSuccessScreen(orderId, phone, address, notes, total, whatsappUrl, orderedItems) {
       document.getElementById("drawerCheckoutState").style.display = "none";
-      const successContainer = document.getElementById("drawerSuccessState");
-      successContainer.style.display = "block";
+      const successEl = document.getElementById("drawerSuccessState");
+      successEl.style.display = "block";
 
-      successContainer.innerHTML = `
+      let itemsRecapHtml = "";
+      if (orderedItems && orderedItems.length > 0) {
+        itemsRecapHtml = `
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 6px; font-weight: 800;">الوجبات المطلوبة:</div>
+        `;
+        orderedItems.forEach(it => {
+          itemsRecapHtml += `
+            <div class="drawer-item-row" style="font-size: 12px;">
+              <span class="drawer-item-label">${it.title} (×${it.qty || 1}):</span>
+              <span class="drawer-item-value">${(it.unitPrice * (it.qty || 1)).toLocaleString("fr-DZ")} دج</span>
+            </div>
+          `;
+        });
+      }
+
+      successEl.innerHTML = `
         <div class="success-screen">
           <div class="success-icon-wrap">
-            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 6 9 17 4 12"></polyline>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
             </svg>
           </div>
-          
+
           <h2 class="success-title">تم تسجيل طلبك بنجاح!</h2>
-          <div class="order-id-pill">رقم الطلب: #${orderId}</div>
-          <p class="eta-text">
+          <div class="success-order-num">رقم الطلب: #${orderId}</div>
+
+          <p class="success-delivery-pill">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-left:4px;">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
@@ -2793,9 +3492,10 @@
 
           <div class="success-recap-card">
             <div style="font-size: 13px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">
-              بيانات التوصيل المسجلة:
+              بيانات التوصيل والطلب:
             </div>
-            <div class="drawer-item-row">
+            ${itemsRecapHtml}
+            <div class="drawer-item-row" style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 6px;">
               <span class="drawer-item-label">الهاتف:</span>
               <span class="drawer-item-value" dir="ltr">${phone}</span>
             </div>
@@ -2837,22 +3537,26 @@
 
     function handleNewOrder() {
       handleResetMenu();
-      document.getElementById("customerPhoneInput").value = "";
-      document.getElementById("customerAddressInput").value = "";
-      if (document.getElementById("customerNotesInput")) {
-        document.getElementById("customerNotesInput").value = "";
-      }
+      state.cartItems = [];
+      saveCartToStorage();
+      updateCartBadge();
+      const phoneInput = document.getElementById("customerPhoneInput");
+      const addressInput = document.getElementById("customerAddressInput");
+      const notesInput = document.getElementById("customerNotesInput");
+      if (phoneInput) phoneInput.value = "";
+      if (addressInput) addressInput.value = "";
+      if (notesInput) notesInput.value = "";
       closeOrderDrawer();
     }
 
     function handleResetMenu() {
       state.wingsCount = 6;
       state.selectedSauceId = "crispy";
+      state.previousSauceId = "crispy";
       state.spiceLevel = 1;
       state.selectedDips = {};
       state.selectedSides = {};
       state.activeTab = "sauce";
-      state.cartReadyBoxes = [];
       currentWingImgLoadedSrc = "";
       renderAll();
     }
