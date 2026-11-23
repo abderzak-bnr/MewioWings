@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import {
   ShoppingBag,
@@ -24,7 +24,8 @@ import {
   Eye,
   EyeOff,
   Pencil,
-  X
+  X,
+  Upload
 } from 'lucide-react';
 
 // Play crisp audio chime when new order arrives
@@ -76,6 +77,58 @@ const CATEGORY_LABELS: Record<string, string> = {
   ready_boxes: 'الوجبات الجاهزة',
 };
 
+// Compress & resize image in browser via HTML5 Canvas (max 800px, WebP @ 0.8 quality)
+function compressImageToWebP(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('تعذر تحميل الصورة للمعالجة'));
+    };
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      let width = img.naturalWidth || img.width;
+      let height = img.naturalHeight || img.height;
+      const maxDim = 800;
+
+      if (width > maxDim || height > maxDim) {
+        if (width > height) {
+          height = Math.round((height * maxDim) / width);
+          width = maxDim;
+        } else {
+          width = Math.round((width * maxDim) / height);
+          height = maxDim;
+        }
+      }
+
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Canvas context not available'));
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error('فشل ضغط الصورة إلى WebP'));
+          }
+        },
+        'image/webp',
+        0.8
+      );
+    };
+    img.src = objectUrl;
+  });
+}
+
 export default function AdminDashboard() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -103,6 +156,8 @@ export default function AdminDashboard() {
   const [itemFormCategory, setItemFormCategory] = useState('wing_size');
   const [itemFormPrice, setItemFormPrice] = useState(0);
   const [itemFormImage, setItemFormImage] = useState('');
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   // Settings State
   const [settings, setSettings] = useState<any>({
@@ -360,6 +415,52 @@ export default function AdminDashboard() {
     setItemFormPrice(item.price || 0);
     setItemFormImage(item.image_url || '');
     setIsItemModalOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset file input value so selecting the same file again triggers onChange
+    e.target.value = '';
+
+    if (!file.type.startsWith('image/')) {
+      alert('يرجى اختيار ملف صورة صالح (PNG, JPG, WebP)');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      // 1. Compress & resize via Canvas (max 800px, WebP @ 0.8 quality)
+      const webpBlob = await compressImageToWebP(file);
+
+      // 2. Upload to Supabase Storage bucket 'menu-images' with unique filename
+      const fileName = `${Date.now()}.webp`;
+      const { data, error } = await supabase.storage
+        .from('menu-images')
+        .upload(fileName, webpBlob, {
+          contentType: 'image/webp',
+          upsert: true,
+        });
+
+      if (error) {
+        throw error;
+      }
+
+      // 3. Retrieve public URL
+      const { data: urlData } = supabase.storage
+        .from('menu-images')
+        .getPublicUrl(fileName);
+
+      if (urlData?.publicUrl) {
+        setItemFormImage(urlData.publicUrl);
+      }
+    } catch (err: any) {
+      console.error('Image upload error:', err);
+      alert('فشل رفع الصورة إلى Supabase: ' + (err.message || 'خطأ غير معروف') + '\nتأكد من إنشاء Storage Bucket باسم menu-images بصلاحية Public، أو يمكنك إدخال مسار الصورة يدوياً.');
+    } finally {
+      setUploadingImage(false);
+    }
   };
 
   const handleSaveItem = async (e: React.FormEvent) => {
@@ -1289,14 +1390,133 @@ export default function AdminDashboard() {
                     </div>
 
                     <div>
-                      <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px' }}>مسار / رابط الصورة</label>
-                      <input
-                        type="text"
-                        value={itemFormImage}
-                        onChange={(e) => setItemFormImage(e.target.value)}
-                        placeholder="/images/dip-buffalo.png"
-                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
-                      />
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px' }}>
+                        <label style={{ fontSize: '12px', fontWeight: 700, color: '#FFFFFF' }}>مسار / رابط الصورة</label>
+                        <span style={{ fontSize: '11px', color: '#8E9BAE' }}>WebP مضغوطة تلقائياً</span>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <input
+                          type="text"
+                          value={itemFormImage}
+                          onChange={(e) => setItemFormImage(e.target.value)}
+                          placeholder="/images/dip-buffalo.png أو رابط صورة"
+                          style={{
+                            flex: 1,
+                            minWidth: 0,
+                            height: '42px',
+                            padding: '0 12px',
+                            backgroundColor: '#0B1221',
+                            border: '1px solid rgba(255,255,255,0.12)',
+                            borderRadius: '10px',
+                            color: '#FFFFFF',
+                            fontSize: '13px',
+                            fontFamily: "'Cairo', sans-serif"
+                          }}
+                        />
+
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          style={{ display: 'none' }}
+                        />
+
+                        <button
+                          type="button"
+                          disabled={uploadingImage}
+                          onClick={() => fileInputRef.current?.click()}
+                          style={{
+                            height: '42px',
+                            padding: '0 12px',
+                            backgroundColor: uploadingImage ? 'rgba(255,255,255,0.06)' : 'rgba(249,78,30,0.15)',
+                            border: '1px solid rgba(249,78,30,0.4)',
+                            borderRadius: '10px',
+                            color: uploadingImage ? '#8E9BAE' : '#FF6436',
+                            fontSize: '12px',
+                            fontWeight: 800,
+                            cursor: uploadingImage ? 'not-allowed' : 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            whiteSpace: 'nowrap',
+                            fontFamily: "'Cairo', sans-serif",
+                            transition: 'all 0.2s',
+                            flexShrink: 0
+                          }}
+                        >
+                          {uploadingImage ? (
+                            <>
+                              <RefreshCw className="animate-spin" size={14} />
+                              <span>جاري الرفع...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Upload size={14} />
+                              <span>رفع صورة من الجهاز</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Live Thumbnail Preview */}
+                      {itemFormImage && (
+                        <div style={{
+                          marginTop: '8px',
+                          padding: '8px 12px',
+                          backgroundColor: '#0B1221',
+                          border: '1px solid rgba(255,255,255,0.08)',
+                          borderRadius: '10px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          gap: '12px'
+                        }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
+                            <img
+                              src={itemFormImage}
+                              alt="معاينة"
+                              onError={(e) => {
+                                (e.target as HTMLElement).style.display = 'none';
+                              }}
+                              style={{
+                                width: '38px',
+                                height: '38px',
+                                borderRadius: '8px',
+                                objectFit: 'contain',
+                                backgroundColor: 'rgba(255,255,255,0.04)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                flexShrink: 0
+                              }}
+                            />
+                            <div style={{ overflow: 'hidden' }}>
+                              <div style={{ fontSize: '11px', color: '#86EFAC', fontWeight: 700 }}>معاينة الصورة:</div>
+                              <div style={{ fontSize: '11px', color: '#8E9BAE', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', direction: 'ltr', maxWidth: '180px' }}>
+                                {itemFormImage}
+                              </div>
+                            </div>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setItemFormImage('')}
+                            style={{
+                              padding: '4px 8px',
+                              backgroundColor: 'rgba(239,68,68,0.15)',
+                              border: '1px solid rgba(239,68,68,0.3)',
+                              borderRadius: '6px',
+                              color: '#FCA5A5',
+                              fontSize: '11px',
+                              fontWeight: 700,
+                              cursor: 'pointer',
+                              whiteSpace: 'nowrap',
+                              fontFamily: "'Cairo', sans-serif"
+                            }}
+                          >
+                            إزالة
+                          </button>
+                        </div>
+                      )}
                     </div>
 
                     <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
