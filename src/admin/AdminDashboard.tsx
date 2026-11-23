@@ -22,7 +22,9 @@ import {
   MessageCircle,
   Check,
   Eye,
-  EyeOff
+  EyeOff,
+  Pencil,
+  X
 } from 'lucide-react';
 
 // Play crisp audio chime when new order arrives
@@ -47,13 +49,31 @@ function playOrderChime() {
   }
 }
 
-// Categories mapping
+// Categories mapping and configuration
+interface MenuCategory {
+  key: string;
+  label: string;
+  legacyKeys?: string[];
+}
+
+const MENU_CATEGORIES: MenuCategory[] = [
+  { key: 'wing_size', label: 'أحجام الأجنحة', legacyKeys: ['wings_count'] },
+  { key: 'coating_sauce', label: 'صوصات الأجنحة' },
+  { key: 'dip', label: 'الصوصات الجانبية', legacyKeys: ['dips'] },
+  { key: 'side', label: 'الإضافات', legacyKeys: ['sides'] },
+  { key: 'ready_box', label: 'الوجبات الجاهزة', legacyKeys: ['ready_boxes'] },
+];
+
 const CATEGORY_LABELS: Record<string, string> = {
-  wings_count: 'الأحجام',
-  coating_sauce: 'صوص الأجنحة',
+  wing_size: 'أحجام الأجنحة',
+  wings_count: 'أحجام الأجنحة',
+  coating_sauce: 'صوصات الأجنحة',
+  dip: 'الصوصات الجانبية',
   dips: 'الصوصات الجانبية',
+  side: 'الإضافات',
   sides: 'الإضافات',
-  ready_boxes: 'وجبات جاهزة',
+  ready_box: 'الوجبات الجاهزة',
+  ready_boxes: 'الوجبات الجاهزة',
 };
 
 export default function AdminDashboard() {
@@ -77,13 +97,12 @@ export default function AdminDashboard() {
   // Menu State
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [menuLoading, setMenuLoading] = useState(false);
-  const [editingPriceId, setEditingPriceId] = useState<number | null>(null);
-  const [editPriceVal, setEditPriceVal] = useState<number>(0);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [newItemName, setNewItemName] = useState('');
-  const [newItemCategory, setNewItemCategory] = useState('coating_sauce');
-  const [newItemPrice, setNewItemPrice] = useState(0);
-  const [newItemImage, setNewItemImage] = useState('');
+  const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+  const [editingItem, setEditingItem] = useState<any | null>(null);
+  const [itemFormName, setItemFormName] = useState('');
+  const [itemFormCategory, setItemFormCategory] = useState('wing_size');
+  const [itemFormPrice, setItemFormPrice] = useState(0);
+  const [itemFormImage, setItemFormImage] = useState('');
 
   // Settings State
   const [settings, setSettings] = useState<any>({
@@ -237,126 +256,172 @@ export default function AdminDashboard() {
     }
   };
 
-  // Seed Menu Items from standard defaults
+  // Seed / Sync Menu Items from standard defaults using .upsert(rows, { onConflict: 'id' })
   const handleSeedMenu = async () => {
     setMenuLoading(true);
     try {
       const defaultItems = [
-        // Wing counts
-        { name_ar: '3 قطع أجنحة', category: 'wings_count', price: 350, is_available: true, image_url: '/images/wings-crispy-3.png', sort_order: 1 },
-        { name_ar: '6 قطع أجنحة', category: 'wings_count', price: 650, is_available: true, image_url: '/images/wings-crispy-6.png', sort_order: 2 },
-        { name_ar: '9 قطع أجنحة', category: 'wings_count', price: 950, is_available: true, image_url: '/images/wings-crispy-9.png', sort_order: 3 },
-        { name_ar: '12 قطعة أجنحة', category: 'wings_count', price: 1250, is_available: true, image_url: '/images/wings-crispy-12.png', sort_order: 4 },
-        { name_ar: '20 قطعة أجنحة (دلو عائلي)', category: 'wings_count', price: 1950, is_available: true, image_url: '/images/wings-crispy-20.png', sort_order: 5 },
+        // أحجام الأجنحة (wing_size)
+        { id: 'wing_3', category: 'wing_size', name_ar: '3 قطع أجنحة', price: 350, image_url: '/images/wings-crispy-3.png', is_available: true, sort_order: 1 },
+        { id: 'wing_6', category: 'wing_size', name_ar: '6 قطع أجنحة', price: 650, image_url: '/images/wings-crispy-6.png', is_available: true, sort_order: 2 },
+        { id: 'wing_9', category: 'wing_size', name_ar: '9 قطع أجنحة', price: 950, image_url: '/images/wings-crispy-9.png', is_available: true, sort_order: 3 },
+        { id: 'wing_12', category: 'wing_size', name_ar: '12 قطعة أجنحة', price: 1250, image_url: '/images/wings-crispy-12.png', is_available: true, sort_order: 4 },
+        { id: 'wing_20', category: 'wing_size', name_ar: '20 قطعة أجنحة (دلو عائلي)', price: 1950, image_url: '/images/wings-crispy-20.png', is_available: true, sort_order: 5 },
 
-        // Coating sauces
-        { name_ar: 'كريسبي (بدون صوص)', category: 'coating_sauce', price: 0, is_available: true, image_url: '/images/wings-crispy-6.png', sort_order: 10 },
-        { name_ar: 'الصوص الجزائرية', category: 'coating_sauce', price: 0, is_available: true, image_url: '/images/wings-algeria-6.png', sort_order: 11 },
-        { name_ar: 'باربكيو', category: 'coating_sauce', price: 0, is_available: true, image_url: '/images/wings-bbq-6.png', sort_order: 12 },
-        { name_ar: 'بافالو', category: 'coating_sauce', price: 0, is_available: true, image_url: '/images/wings-buffalo-6.png', sort_order: 13 },
+        // صوصات الأجنحة (coating_sauce)
+        { id: 'sauce_crispy', category: 'coating_sauce', name_ar: 'كريسبي (بدون صوص)', price: 0, image_url: '/images/wings-crispy-6.png', is_available: true, sort_order: 10 },
+        { id: 'sauce_algeria', category: 'coating_sauce', name_ar: 'الصوص الجزائرية', price: 0, image_url: '/images/wings-algeria-6.png', is_available: true, sort_order: 11 },
+        { id: 'sauce_bbq', category: 'coating_sauce', name_ar: 'باربكيو', price: 0, image_url: '/images/wings-bbq-6.png', sort_order: 12 },
+        { id: 'sauce_buffalo', category: 'coating_sauce', name_ar: 'بافالو', price: 0, image_url: '/images/wings-buffalo-6.png', sort_order: 13 },
 
-        // Dips
-        { name_ar: 'بافالو', category: 'dips', price: 30, is_available: true, image_url: '/images/dip-buffalo.png', sort_order: 20 },
-        { name_ar: 'هوني ماسترد', category: 'dips', price: 30, is_available: true, image_url: '/images/dip-honey-mustard.png', sort_order: 21 },
-        { name_ar: 'رانش', category: 'dips', price: 30, is_available: true, image_url: '/images/dip-ranch.png', sort_order: 22 },
-        { name_ar: 'صوص الجبن', category: 'dips', price: 30, is_available: true, image_url: '/images/dip-cheese.png', sort_order: 23 },
-        { name_ar: 'باربكيو', category: 'dips', price: 30, is_available: true, image_url: '/images/dip-bbq.png', sort_order: 24 },
-        { name_ar: 'كاتشب', category: 'dips', price: 30, is_available: true, image_url: '/images/dip-ketchup.png', sort_order: 25 },
+        // الصوصات الجانبية (dip)
+        { id: 'dip_buffalo', category: 'dip', name_ar: 'بافالو', price: 30, image_url: '/images/dip-buffalo.png', is_available: true, sort_order: 20 },
+        { id: 'dip_honey_mustard', category: 'dip', name_ar: 'هوني ماسترد', price: 30, image_url: '/images/dip-honey-mustard.png', is_available: true, sort_order: 21 },
+        { id: 'dip_ranch', category: 'dip', name_ar: 'رانش', price: 30, image_url: '/images/dip-ranch.png', is_available: true, sort_order: 22 },
+        { id: 'dip_cheese', category: 'dip', name_ar: 'صوص الجبن', price: 30, image_url: '/images/dip-cheese.png', is_available: true, sort_order: 23 },
+        { id: 'dip_bbq', category: 'dip', name_ar: 'باربكيو', price: 30, image_url: '/images/dip-bbq.png', is_available: true, sort_order: 24 },
+        { id: 'dip_ketchup', category: 'dip', name_ar: 'كاتشب', price: 30, image_url: '/images/dip-ketchup.png', is_available: true, sort_order: 25 },
 
-        // Sides
-        { name_ar: 'بطاطا مقلية', category: 'sides', price: 200, is_available: true, image_url: '/images/side-fries.png?v=2', sort_order: 30 },
-        { name_ar: 'سلطة الكرنب', category: 'sides', price: 220, is_available: true, image_url: '/images/side-coleslaw.png', sort_order: 31 },
+        // الإضافات (side)
+        { id: 'side_fries', category: 'side', name_ar: 'بطاطا مقلية', price: 200, image_url: '/images/side-fries.png?v=2', is_available: true, sort_order: 30 },
+        { id: 'side_coleslaw', category: 'side', name_ar: 'سلطة الكرنب', price: 220, image_url: '/images/side-coleslaw.png', is_available: true, sort_order: 31 },
 
-        // Ready Boxes
-        { name_ar: 'سولو بوكس (SOLO BOX)', category: 'ready_boxes', price: 850, is_available: true, image_url: '/images/wings-crispy-6.png', sort_order: 40 },
-        { name_ar: 'دابل بوكس (DOUBLE BOX)', category: 'ready_boxes', price: 1450, is_available: true, image_url: '/images/wings-bbq-12.png', sort_order: 41 },
-        { name_ar: 'ميغا بوكس (MEGA BOX)', category: 'ready_boxes', price: 2450, is_available: true, image_url: '/images/wings-algeria-20.png', sort_order: 42 },
+        // الوجبات الجاهزة (ready_box)
+        { id: 'box_solo', category: 'ready_box', name_ar: 'سولو بوكس (SOLO BOX)', price: 850, image_url: '/images/wings-crispy-6.png', is_available: true, sort_order: 40 },
+        { id: 'box_double', category: 'ready_box', name_ar: 'دابل بوكس (DOUBLE BOX)', price: 1450, image_url: '/images/wings-bbq-12.png', is_available: true, sort_order: 41 },
+        { id: 'box_friends', category: 'ready_box', name_ar: 'فريندز بوكس (FRIENDS BOX)', price: 2150, image_url: '/images/wings-buffalo-12.png', is_available: true, sort_order: 42 },
+        { id: 'box_party', category: 'ready_box', name_ar: 'بارتي بوكس (PARTY BOX)', price: 2750, image_url: '/images/wings-algeria-20.png', sort_order: 43 },
       ];
 
-      const { error } = await supabase.from('menu_items').insert(defaultItems);
-      if (!error) {
-        await fetchMenuItems();
+      const { error } = await supabase.from('menu_items').upsert(defaultItems, { onConflict: 'id' });
+      if (error) {
+        console.error('Menu bulk upsert error:', error);
+        alert('تعذر استيراد المنيو: ' + (error.message || JSON.stringify(error)));
       } else {
-        alert('تعذر استيراد المنيو: ' + error.message);
+        await fetchMenuItems();
       }
     } catch (err: any) {
-      alert('خطأ: ' + err.message);
+      console.error('Menu sync exception:', err);
+      alert('خطأ أثناء المزامنة: ' + (err.message || String(err)));
     } finally {
       setMenuLoading(false);
     }
   };
 
   const handleToggleItemAvailability = async (item: any) => {
+    const updatedVal = !item.is_available;
     try {
-      const updatedVal = !item.is_available;
       const { error } = await supabase
         .from('menu_items')
         .update({ is_available: updatedVal })
         .eq('id', item.id);
-      if (!error) {
+      if (error) {
+        console.error('Toggle availability error:', error);
+        alert('تعذر تعديل التوفر: ' + error.message);
+      } else {
         setMenuItems((prev) =>
           prev.map((i) => (i.id === item.id ? { ...i, is_available: updatedVal } : i))
         );
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error toggling availability:', err);
     }
   };
 
-  const handleSavePrice = async (itemId: number) => {
+  const handleDeleteMenuItem = async (item: any) => {
+    if (!confirm(`هل أنت متأكد من حذف الصنف "${item.name_ar}" من المنيو؟`)) return;
     try {
-      const { error } = await supabase
-        .from('menu_items')
-        .update({ price: editPriceVal })
-        .eq('id', itemId);
-      if (!error) {
-        setMenuItems((prev) =>
-          prev.map((i) => (i.id === itemId ? { ...i, price: editPriceVal } : i))
-        );
-        setEditingPriceId(null);
-      }
-    } catch (err) {
-      console.error('Error saving price:', err);
-    }
-  };
-
-  const handleDeleteMenuItem = async (itemId: number) => {
-    if (!confirm('هل أنت متأكد من حذف هذا الصنف من المنيو؟')) return;
-    try {
-      const { error } = await supabase.from('menu_items').delete().eq('id', itemId);
-      if (!error) {
-        setMenuItems((prev) => prev.filter((i) => i.id !== itemId));
-      }
-    } catch (err) {
-      console.error('Error deleting menu item:', err);
-    }
-  };
-
-  const handleAddNewItem = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newItemName) return;
-
-    try {
-      const payload = {
-        name_ar: newItemName,
-        category: newItemCategory,
-        price: Number(newItemPrice) || 0,
-        image_url: newItemImage || '/images/wings-crispy-6.png',
-        is_available: true,
-        sort_order: menuItems.length + 1,
-      };
-
-      const { error } = await supabase.from('menu_items').insert([payload]);
-      if (!error) {
-        setIsAddModalOpen(false);
-        setNewItemName('');
-        setNewItemPrice(0);
-        setNewItemImage('');
-        await fetchMenuItems();
+      const { error } = await supabase.from('menu_items').delete().eq('id', item.id);
+      if (error) {
+        console.error('Delete item error:', error);
+        alert('تعذر حذف الصنف: ' + error.message);
       } else {
-        alert('تعذر إضافة الصنف: ' + error.message);
+        setMenuItems((prev) => prev.filter((i) => i.id !== item.id));
       }
     } catch (err: any) {
+      console.error('Error deleting menu item:', err);
+      alert('خطأ: ' + err.message);
+    }
+  };
+
+  const handleOpenAddModal = (catKey: string = 'wing_size') => {
+    setEditingItem(null);
+    setItemFormName('');
+    setItemFormCategory(catKey);
+    setItemFormPrice(0);
+    setItemFormImage('');
+    setIsItemModalOpen(true);
+  };
+
+  const handleOpenEditModal = (item: any) => {
+    setEditingItem(item);
+    setItemFormName(item.name_ar || '');
+    setItemFormCategory(item.category || 'wing_size');
+    setItemFormPrice(item.price || 0);
+    setItemFormImage(item.image_url || '');
+    setIsItemModalOpen(true);
+  };
+
+  const handleSaveItem = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!itemFormName.trim()) return;
+
+    try {
+      if (editingItem) {
+        // Update existing item
+        const { error } = await supabase
+          .from('menu_items')
+          .update({
+            name_ar: itemFormName.trim(),
+            category: itemFormCategory,
+            price: Number(itemFormPrice) || 0,
+            image_url: itemFormImage.trim() || null,
+          })
+          .eq('id', editingItem.id);
+
+        if (error) {
+          console.error('Update item error:', error);
+          alert('تعذر تحديث الصنف: ' + error.message);
+        } else {
+          setMenuItems((prev) =>
+            prev.map((i) =>
+              i.id === editingItem.id
+                ? {
+                    ...i,
+                    name_ar: itemFormName.trim(),
+                    category: itemFormCategory,
+                    price: Number(itemFormPrice) || 0,
+                    image_url: itemFormImage.trim() || null,
+                  }
+                : i
+            )
+          );
+          setIsItemModalOpen(false);
+        }
+      } else {
+        // Insert new item with clean string ID
+        const newId = `${itemFormCategory}_${Date.now()}`;
+        const payload = {
+          id: newId,
+          name_ar: itemFormName.trim(),
+          category: itemFormCategory,
+          price: Number(itemFormPrice) || 0,
+          image_url: itemFormImage.trim() || null,
+          is_available: true,
+          sort_order: menuItems.length + 1,
+        };
+
+        const { error } = await supabase.from('menu_items').insert([payload]);
+        if (error) {
+          console.error('Add item error:', error);
+          alert('تعذر إضافة الصنف: ' + error.message);
+        } else {
+          await fetchMenuItems();
+          setIsItemModalOpen(false);
+        }
+      }
+    } catch (err: any) {
+      console.error('Save item error:', err);
       alert('خطأ: ' + err.message);
     }
   };
@@ -929,16 +994,27 @@ export default function AdminDashboard() {
             ============================================================== */}
         {activeTab === 'menu' && (
           <div>
-            {/* Header with Add Button and Seed Option */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '18px' }}>
+            {/* Header with Add Button and Seed/Sync Option */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px', marginBottom: '18px', flexWrap: 'wrap' }}>
               <div>
-                <h2 style={{ fontSize: '18px', fontWeight: 900, color: '#FFFFFF' }}>قائمة أصناف المنيو</h2>
-                <div style={{ fontSize: '12px', color: '#8E9BAE' }}>تحكم بالأسعار وتوفر الأصناف مباشرة</div>
+                <h2 style={{ fontSize: '18px', fontWeight: 900, color: '#FFFFFF' }}>إدارة المنيو والأصناف</h2>
+                <div style={{ fontSize: '12px', color: '#8E9BAE' }}>تحكم بالأسعار، توفر الأصناف، وتعديل القائمة لحظياً</div>
               </div>
 
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button
-                  onClick={() => setIsAddModalOpen(true)}
+                  type="button"
+                  onClick={handleSeedMenu}
+                  disabled={menuLoading}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', backgroundColor: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '12px', color: '#F59E0B', fontSize: '12px', fontWeight: 800, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
+                >
+                  <RefreshCw size={14} className={menuLoading ? 'animate-spin' : ''} />
+                  <span>مزامنة واستيراد المنيو</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleOpenAddModal('wing_size')}
                   style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', backgroundColor: '#F94E1E', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
                 >
                   <Plus size={16} />
@@ -956,6 +1032,7 @@ export default function AdminDashboard() {
                   يمكنك استيراد جميع أصناف المنيو الحالية (الأحجام، الصوصات، الإضافات، والبوكسات الجاهزة) بضغطة زر واحدة!
                 </p>
                 <button
+                  type="button"
                   onClick={handleSeedMenu}
                   style={{ padding: '10px 20px', backgroundColor: '#F59E0B', border: 'none', borderRadius: '12px', color: '#000000', fontSize: '13px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif", display: 'inline-flex', alignItems: 'center', gap: '6px' }}
                 >
@@ -972,141 +1049,213 @@ export default function AdminDashboard() {
                 <div>جارٍ تحميل المنيو...</div>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '22px' }}>
-                {['wings_count', 'coating_sauce', 'dips', 'sides', 'ready_boxes'].map((catKey) => {
-                  const itemsInCat = menuItems.filter((it) => it.category === catKey);
-                  if (itemsInCat.length === 0) return null;
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {MENU_CATEGORIES.map((cat) => {
+                  const itemsInCat = menuItems.filter(
+                    (it) => it.category === cat.key || (cat.legacyKeys && cat.legacyKeys.includes(it.category))
+                  );
 
                   return (
-                    <div key={catKey}>
-                      <div style={{ fontSize: '14px', fontWeight: 900, color: '#F94E1E', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span>{CATEGORY_LABELS[catKey] || catKey}</span>
-                        <span style={{ fontSize: '11px', color: '#8E9BAE', fontWeight: 700 }}>({itemsInCat.length})</span>
+                    <div
+                      key={cat.key}
+                      style={{
+                        backgroundColor: '#131E33',
+                        border: '1px solid rgba(255,255,255,0.06)',
+                        borderRadius: '20px',
+                        padding: '18px 20px',
+                      }}
+                    >
+                      {/* Category Header */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span style={{ fontSize: '15px', fontWeight: 900, color: '#FFFFFF' }}>{cat.label}</span>
+                          <span style={{ fontSize: '11px', fontWeight: 800, backgroundColor: 'rgba(249,78,30,0.18)', color: '#F94E1E', padding: '2px 8px', borderRadius: '9999px', border: '1px solid rgba(249,78,30,0.3)' }}>
+                            {itemsInCat.length}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={() => handleOpenAddModal(cat.key)}
+                          style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            padding: '6px 12px',
+                            backgroundColor: 'rgba(255,255,255,0.06)',
+                            border: '1px solid rgba(255,255,255,0.12)',
+                            borderRadius: '10px',
+                            color: '#FFFFFF',
+                            fontSize: '12px',
+                            fontWeight: 800,
+                            cursor: 'pointer',
+                            fontFamily: "'Cairo', sans-serif",
+                            transition: 'all 0.2s ease',
+                          }}
+                        >
+                          <Plus size={14} style={{ color: '#F94E1E' }} />
+                          <span>إضافة</span>
+                        </button>
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '10px' }}>
-                        {itemsInCat.map((item) => (
-                          <div
-                            key={item.id}
-                            style={{
-                              backgroundColor: '#131E33',
-                              border: '1px solid rgba(255,255,255,0.06)',
-                              borderRadius: '16px',
-                              padding: '12px 14px',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              gap: '12px',
-                              opacity: item.is_available ? 1 : 0.6,
-                            }}
-                          >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0 }}>
-                              <img
-                                src={item.image_url || '/images/wings-crispy-6.png'}
-                                alt={item.name_ar}
-                                style={{ width: '42px', height: '42px', objectFit: 'contain', borderRadius: '8px', backgroundColor: '#0B1221', padding: '3px' }}
-                                onError={(e: any) => { e.target.src = '/images/wings-crispy-6.png'; }}
-                              />
-                              <div style={{ minWidth: 0 }}>
-                                <div style={{ fontSize: '13px', fontWeight: 800, color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                  {item.name_ar}
-                                </div>
-                                
-                                {/* Inline Price Editing */}
-                                {editingPriceId === item.id ? (
-                                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '4px' }}>
-                                    <input
-                                      type="number"
-                                      value={editPriceVal}
-                                      onChange={(e) => setEditPriceVal(Number(e.target.value))}
-                                      style={{ width: '70px', height: '26px', backgroundColor: '#0B1221', border: '1px solid #F94E1E', borderRadius: '6px', color: '#FFFFFF', fontSize: '12px', padding: '0 6px', fontFamily: "'Cairo', sans-serif" }}
-                                    />
-                                    <button
-                                      onClick={() => handleSavePrice(item.id)}
-                                      style={{ backgroundColor: '#F94E1E', border: 'none', borderRadius: '6px', width: '26px', height: '26px', color: '#FFFFFF', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
-                                    >
-                                      <Check size={14} />
-                                    </button>
-                                  </div>
+                      {/* Items List */}
+                      {itemsInCat.length === 0 ? (
+                        <div style={{ textAlign: 'center', padding: '16px', color: '#8E9BAE', fontSize: '12px', backgroundColor: '#0B1221', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.08)' }}>
+                          لا توجد أصناف في هذا القسم حالياً
+                        </div>
+                      ) : (
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(290px, 1fr))', gap: '10px' }}>
+                          {itemsInCat.map((item) => (
+                            <div
+                              key={item.id}
+                              style={{
+                                backgroundColor: '#0B1221',
+                                border: '1px solid rgba(255,255,255,0.08)',
+                                borderRadius: '14px',
+                                padding: '12px 14px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: '12px',
+                                opacity: item.is_available ? 1 : 0.65,
+                                transition: 'all 0.2s ease',
+                              }}
+                            >
+                              {/* Item Info & Image */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                                {item.image_url ? (
+                                  <img
+                                    src={item.image_url}
+                                    alt={item.name_ar}
+                                    style={{ width: '42px', height: '42px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#131E33', padding: '3px', flexShrink: 0 }}
+                                    onError={(e: any) => { e.target.style.display = 'none'; }}
+                                  />
                                 ) : (
-                                  <div
-                                    onClick={() => {
-                                      setEditingPriceId(item.id);
-                                      setEditPriceVal(item.price || 0);
-                                    }}
-                                    title="انقر لتعديل السعر"
-                                    style={{ fontSize: '12px', fontWeight: 900, color: '#F94E1E', cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
-                                  >
-                                    <span>{(item.price || 0).toLocaleString('fr-DZ')} دج</span>
-                                    <span style={{ fontSize: '10px', color: '#8E9BAE' }}>(تعديل)</span>
+                                  <div style={{ width: '42px', height: '42px', borderRadius: '10px', backgroundColor: '#131E33', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F94E1E', flexShrink: 0 }}>
+                                    <Package size={18} />
                                   </div>
                                 )}
+
+                                <div style={{ minWidth: 0 }}>
+                                  <div style={{ fontSize: '13px', fontWeight: 800, color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {item.name_ar}
+                                  </div>
+                                  <div style={{ fontSize: '12px', fontWeight: 900, color: '#F94E1E', marginTop: '2px' }}>
+                                    {(item.price || 0).toLocaleString('fr-DZ')} دج
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Controls: Availability Toggle, Edit, Delete */}
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                                {/* Instant Availability Toggle Switch */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleItemAvailability(item)}
+                                  title={item.is_available ? 'تعطيل التوفر' : 'تفعيل التوفر'}
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    padding: '5px 10px',
+                                    borderRadius: '20px',
+                                    border: item.is_available ? '1px solid rgba(16,185,129,0.4)' : '1px solid rgba(239,68,68,0.4)',
+                                    backgroundColor: item.is_available ? 'rgba(16,185,129,0.16)' : 'rgba(239,68,68,0.16)',
+                                    color: item.is_available ? '#10B981' : '#EF4444',
+                                    fontSize: '11px',
+                                    fontWeight: 800,
+                                    cursor: 'pointer',
+                                    fontFamily: "'Cairo', sans-serif",
+                                    transition: 'all 0.15s ease',
+                                  }}
+                                >
+                                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: item.is_available ? '#10B981' : '#EF4444' }}></span>
+                                  <span>{item.is_available ? 'متوفر' : 'غير متوفر'}</span>
+                                </button>
+
+                                {/* Edit Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleOpenEditModal(item)}
+                                  title="تعديل الصنف"
+                                  style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    borderRadius: '8px',
+                                    border: '1px solid rgba(255,255,255,0.08)',
+                                    backgroundColor: 'rgba(255,255,255,0.04)',
+                                    color: '#8E9BAE',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                  }}
+                                  onMouseEnter={(e: any) => { e.currentTarget.style.color = '#FFFFFF'; e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.1)'; }}
+                                  onMouseLeave={(e: any) => { e.currentTarget.style.color = '#8E9BAE'; e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.04)'; }}
+                                >
+                                  <Pencil size={14} />
+                                </button>
+
+                                {/* Delete Button */}
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteMenuItem(item)}
+                                  title="حذف الصنف"
+                                  style={{
+                                    width: '32px',
+                                    height: '32px',
+                                    borderRadius: '8px',
+                                    border: '1px solid rgba(239,68,68,0.2)',
+                                    backgroundColor: 'rgba(239,68,68,0.08)',
+                                    color: '#EF4444',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                  }}
+                                  onMouseEnter={(e: any) => { e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.2)'; }}
+                                  onMouseLeave={(e: any) => { e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.08)'; }}
+                                >
+                                  <Trash2 size={14} />
+                                </button>
                               </div>
                             </div>
-
-                            {/* Actions */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                              <button
-                                onClick={() => handleToggleItemAvailability(item)}
-                                title={item.is_available ? 'إلغاء التوفر' : 'جعله متوفراً'}
-                                style={{
-                                  padding: '5px 10px',
-                                  borderRadius: '9999px',
-                                  border: 'none',
-                                  backgroundColor: item.is_available ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)',
-                                  color: item.is_available ? '#10B981' : '#EF4444',
-                                  fontSize: '11px',
-                                  fontWeight: 800,
-                                  cursor: 'pointer',
-                                  fontFamily: "'Cairo', sans-serif",
-                                  display: 'inline-flex',
-                                  alignItems: 'center',
-                                  gap: '4px',
-                                }}
-                              >
-                                {item.is_available ? <Eye size={12} /> : <EyeOff size={12} />}
-                                <span>{item.is_available ? 'متوفر' : 'غير متوفر'}</span>
-                              </button>
-
-                              <button
-                                onClick={() => handleDeleteMenuItem(item.id)}
-                                title="حذف"
-                                style={{ width: '30px', height: '30px', borderRadius: '50%', border: 'none', backgroundColor: 'transparent', color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: 0.7 }}
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
               </div>
             )}
 
-            {/* Modal: Add New Menu Item */}
-            {isAddModalOpen && (
+            {/* Modal: Add or Edit Menu Item */}
+            {isItemModalOpen && (
               <div style={{ position: 'fixed', inset: 0, zIndex: 100, backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
                 <div style={{ width: '100%', maxWidth: '440px', backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '20px', padding: '24px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                    <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#FFFFFF' }}>إضافة صنف جديد إلى المنيو</h3>
+                    <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#FFFFFF' }}>
+                      {editingItem ? 'تعديل الصنف' : 'إضافة صنف جديد إلى المنيو'}
+                    </h3>
                     <button
-                      onClick={() => setIsAddModalOpen(false)}
+                      type="button"
+                      onClick={() => setIsItemModalOpen(false)}
                       style={{ background: 'transparent', border: 'none', color: '#8E9BAE', cursor: 'pointer' }}
                     >
-                      <XCircle size={20} />
+                      <X size={20} />
                     </button>
                   </div>
 
-                  <form onSubmit={handleAddNewItem} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                  <form onSubmit={handleSaveItem} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     <div>
                       <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px' }}>اسم الصنف بالعربية</label>
                       <input
                         type="text"
                         required
-                        value={newItemName}
-                        onChange={(e) => setNewItemName(e.target.value)}
+                        value={itemFormName}
+                        onChange={(e) => setItemFormName(e.target.value)}
                         placeholder="مثال: صوص رانش حار"
                         style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
                       />
@@ -1115,15 +1264,15 @@ export default function AdminDashboard() {
                     <div>
                       <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px' }}>القسم</label>
                       <select
-                        value={newItemCategory}
-                        onChange={(e) => setNewItemCategory(e.target.value)}
+                        value={itemFormCategory}
+                        onChange={(e) => setItemFormCategory(e.target.value)}
                         style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
                       >
-                        <option value="wings_count">الأحجام (Wings Count)</option>
-                        <option value="coating_sauce">صوص الأجنحة (Coating Sauce)</option>
-                        <option value="dips">الصوصات الجانبية (Dips)</option>
-                        <option value="sides">الإضافات (Sides)</option>
-                        <option value="ready_boxes">وجبات جاهزة (Ready Boxes)</option>
+                        <option value="wing_size">أحجام الأجنحة (wing_size)</option>
+                        <option value="coating_sauce">صوصات الأجنحة (coating_sauce)</option>
+                        <option value="dip">الصوصات الجانبية (dip)</option>
+                        <option value="side">الإضافات (side)</option>
+                        <option value="ready_box">الوجبات الجاهزة (ready_box)</option>
                       </select>
                     </div>
 
@@ -1132,8 +1281,8 @@ export default function AdminDashboard() {
                       <input
                         type="number"
                         required
-                        value={newItemPrice}
-                        onChange={(e) => setNewItemPrice(Number(e.target.value))}
+                        value={itemFormPrice}
+                        onChange={(e) => setItemFormPrice(Number(e.target.value))}
                         placeholder="250"
                         style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
                       />
@@ -1143,19 +1292,28 @@ export default function AdminDashboard() {
                       <label style={{ display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '6px' }}>مسار / رابط الصورة</label>
                       <input
                         type="text"
-                        value={newItemImage}
-                        onChange={(e) => setNewItemImage(e.target.value)}
+                        value={itemFormImage}
+                        onChange={(e) => setItemFormImage(e.target.value)}
                         placeholder="/images/dip-buffalo.png"
                         style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
                       />
                     </div>
 
-                    <button
-                      type="submit"
-                      style={{ width: '100%', height: '46px', backgroundColor: '#F94E1E', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif", marginTop: '8px' }}
-                    >
-                      إضافة الصنف للمنيو
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
+                      <button
+                        type="submit"
+                        style={{ flex: 1, height: '46px', backgroundColor: '#F94E1E', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
+                      >
+                        {editingItem ? 'حفظ التعديلات' : 'إضافة الصنف للمنيو'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setIsItemModalOpen(false)}
+                        style={{ padding: '0 18px', height: '46px', backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#8E9BAE', fontSize: '13px', fontWeight: 800, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
+                      >
+                        إلغاء
+                      </button>
+                    </div>
                   </form>
                 </div>
               </div>
