@@ -31,9 +31,25 @@
       --brand-gold: #F59E0B;
       --brand-green: #10B981;
       --text-white: #FFFFFF;
-      --text-muted: #8E9BAE;
+      --text-muted: #94A3B8;
+      --text-secondary: #CBD5E1;
       --border-subtle: rgba(255, 255, 255, 0.08);
       --font-cairo: 'Cairo', system-ui, -apple-system, sans-serif;
+    }
+
+    .tabular-nums,
+    .box-price,
+    .item-price,
+    .badge-price,
+    .cart-item-price,
+    #ctaPriceText,
+    .cart-qty-value,
+    .side-qty-badge,
+    .dip-qty-badge,
+    .cart-badge,
+    .order-id-pill {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
     }
 
     body {
@@ -281,7 +297,7 @@
       pointer-events: none;
     }
 
-    /* Transparent PNG Wings Box: Strict Bounding Box (Snappy 150ms Scale, Zero Lag) */
+    /* Transparent PNG Wings Box: Strict Bounding Box (Silky Smooth Scale & Glide Transition) */
     .real-wing-overlay {
       width: 100%;
       height: 100%;
@@ -291,13 +307,41 @@
       z-index: 12;
       pointer-events: none;
       filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.6));
-      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
       opacity: 1;
       transform-origin: center center;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
     }
     .real-wing-overlay.switching {
       opacity: 0.12;
       transform: scale(0.96);
+    }
+
+    @keyframes productTrayEnter {
+      0% {
+        opacity: 0.2;
+        transform: translateY(6px) scale(0.94);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .product-tray-enter {
+      animation: productTrayEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+    }
+
+    @keyframes titleGlazeEnter {
+      0% {
+        opacity: 0.3;
+        transform: translateY(-4px) scale(0.95);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .title-glaze-enter {
+      animation: titleGlazeEnter 0.24s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
     }
 
     /* ==========================================================
@@ -554,9 +598,27 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
-      padding-bottom: 2px;
+      gap: 4px;
+      padding: 4px;
       width: 100%;
+      position: relative;
+      background: rgba(19, 30, 51, 0.85);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+
+    .tabs-sliding-indicator {
+      position: absolute;
+      top: 4px;
+      bottom: 4px;
+      background: #FFFFFF;
+      border-radius: 9999px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      z-index: 1;
+      pointer-events: none;
     }
 
     .tab-pill {
@@ -564,24 +626,33 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 6px;
       padding: 7px 8px;
       border-radius: 9999px;
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
+      background: transparent;
+      border: none;
       color: var(--text-muted);
       font-size: 11px;
-      font-weight: 800;
+      font-weight: 700;
       font-family: var(--font-cairo);
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s ease;
+      transition: color 0.22s ease, transform 0.12s ease;
+      position: relative;
+      z-index: 2;
+    }
+    .tab-pill:active {
+      transform: scale(0.95);
     }
     .tab-pill.active {
-      background: #FFFFFF;
       color: #0B1221;
-      border-color: #FFFFFF;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+      font-weight: 900;
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+    }
+    .tab-pill.active svg {
+      stroke: #0B1221;
     }
 
     .tab-counter {
@@ -705,6 +776,10 @@
       width: 82px;
       text-align: center;
       scroll-snap-align: start;
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .item-card:active {
+      transform: scale(0.95);
     }
 
     .item-circle {
@@ -718,7 +793,7 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
-      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
       overflow: visible;
     }
     .item-card:active .item-circle {
@@ -726,7 +801,8 @@
     }
     .item-card.selected .item-circle {
       border-color: var(--brand-orange);
-      box-shadow: 0 0 16px rgba(249, 78, 30, 0.45);
+      box-shadow: 0 0 0 2px rgba(249, 78, 30, 0.75), 0 8px 22px rgba(249, 78, 30, 0.3);
+      transform: scale(1.02);
     }
 
     .item-badge-check {
@@ -791,7 +867,7 @@
 
     .item-price {
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--brand-orange);
       margin-top: 2px;
     }
@@ -822,8 +898,11 @@
       padding: 6px 0;
       border-radius: 9999px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       text-align: center;
+    }
+    .qty-btn:active {
+      transform: scale(0.95);
     }
     .qty-btn.active {
       background: #FFFFFF;
@@ -832,14 +911,14 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
 
-    /* Bottom CTA Button with Mobile Safe-Area Margin */
+    /* Bottom CTA Button with Mobile Safe-Area Margin & Rich Gradient */
     .cta-button {
       width: 100%;
-      background: var(--brand-orange);
+      background: linear-gradient(135deg, #F94E1E 0%, #EA3C08 100%);
       color: #FFFFFF;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 9999px;
-      padding: 14px 20px;
+      padding: 15px 22px;
       font-size: 15px;
       font-weight: 900;
       font-family: var(--font-cairo);
@@ -847,13 +926,13 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 8px 20px rgba(249, 78, 30, 0.45);
-      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 8px 24px rgba(249, 78, 30, 0.42), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       margin-bottom: max(4px, env(safe-area-inset-bottom, 0px));
     }
     .cta-button:active {
-      transform: scale(0.98);
-      box-shadow: 0 4px 12px rgba(249, 78, 30, 0.3);
+      transform: scale(0.97);
+      box-shadow: 0 4px 14px rgba(249, 78, 30, 0.3);
     }
 
     /* ==========================================================
@@ -989,86 +1068,76 @@
       background: var(--brand-orange-hover);
     }
 
-    /* Ready Box Customizer Modal */
-    .ready-modal-overlay {
+    /* Ready Box Customizer Modal & Order Drawer */
+    .ready-modal-overlay, .drawer-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.8);
-      backdrop-filter: blur(8px);
-      z-index: 110;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-    .ready-modal-overlay.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
-    .ready-modal-panel {
-      width: 100%;
-      max-width: 430px;
-      background: #101726;
-      border-top-left-radius: 28px;
-      border-top-right-radius: 28px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 16px 20px 24px;
-      max-height: 85vh;
-      overflow-y: auto;
-      transform: translateY(100%);
-      transition: transform 0.32s cubic-bezier(0.32, 1, 0.23, 1);
-    }
-    .ready-modal-overlay.open .ready-modal-panel {
-      transform: translateY(0);
-    }
-
-    /* ==========================================================
-       ORDER SUMMARY & CHECKOUT BOTTOM SHEET DRAWER
-       ========================================================== */
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.78);
-      backdrop-filter: blur(8px);
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       z-index: 100;
       display: flex;
       justify-content: center;
       align-items: flex-end;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .drawer-overlay.open {
+    .ready-modal-overlay.open, .drawer-overlay.open {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .drawer-panel {
+    .ready-modal-panel, .drawer-panel {
       width: 100%;
-      max-width: 430px;
-      background: #101726;
+      max-width: 480px;
+      background: #111928;
       border-top-left-radius: 28px;
       border-top-right-radius: 28px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      padding: 16px 20px 26px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-bottom: none;
+      padding: 16px 20px calc(24px + env(safe-area-inset-bottom, 0px));
       max-height: 90vh;
       overflow-y: auto;
       transform: translateY(100%);
-      transition: transform 0.32s cubic-bezier(0.32, 1, 0.23, 1);
-      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.85);
     }
+    .ready-modal-overlay.open .ready-modal-panel,
     .drawer-overlay.open .drawer-panel {
       transform: translateY(0);
     }
 
     .drawer-handle {
-      width: 36px;
-      height: 4px;
-      border-radius: 2px;
-      background: rgba(255, 255, 255, 0.2);
+      width: 40px;
+      height: 4.5px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.25);
       margin: 0 auto 14px;
+      cursor: grab;
+    }
+
+    /* Desktop View (>= 768px): Fade & Scale Centered Dialog */
+    @media (min-width: 768px) {
+      .ready-modal-overlay, .drawer-overlay {
+        align-items: center;
+        background: rgba(0, 0, 0, 0.65);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+      }
+      .ready-modal-panel, .drawer-panel {
+        border-radius: 24px;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        max-width: 460px;
+        max-height: 85vh;
+        transform: scale(0.95) translateY(12px);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+        padding: 24px;
+      }
+      .ready-modal-overlay.open .ready-modal-panel,
+      .drawer-overlay.open .drawer-panel {
+        transform: scale(1) translateY(0);
+      }
     }
 
     .drawer-header {
@@ -1224,11 +1293,11 @@
 
     .confirm-btn {
       width: 100%;
-      background: var(--brand-orange);
+      background: linear-gradient(135deg, #F94E1E 0%, #EA3C08 100%);
       color: #FFFFFF;
-      border: none;
+      border: 1px solid rgba(255, 255, 255, 0.16);
       border-radius: 9999px;
-      padding: 14px 20px;
+      padding: 15px 22px;
       font-size: 15px;
       font-weight: 800;
       font-family: var(--font-cairo);
@@ -1236,13 +1305,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      box-shadow: 0 6px 16px rgba(249, 78, 30, 0.4);
-      transition: all 0.2s ease;
+      gap: 10px;
+      box-shadow: 0 8px 24px rgba(249, 78, 30, 0.42), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .confirm-btn:active {
-      transform: scale(0.98);
-      background: var(--brand-orange-hover);
+      transform: scale(0.97);
+    }
+    .confirm-btn:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      box-shadow: none;
     }
 
     .restaurant-footer-note {
@@ -1603,45 +1676,65 @@
     }
 
     /* Header Cart Badge Bounce Animation */
-    @keyframes badgeBounce {
+    @keyframes badgeSpringBounce {
       0% { transform: scale(1); }
-      35% { transform: scale(1.45); }
-      65% { transform: scale(0.9); }
+      30% { transform: scale(1.45) rotate(6deg); }
+      60% { transform: scale(0.9) rotate(-3deg); }
+      85% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
     .badge-bounce {
-      animation: badgeBounce 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      animation: badgeSpringBounce 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
     }
 
-    /* Toast Notification (Glassmorphism Dark) */
+    /* Toast Notification (Sleek Glassmorphic Floating Top Toast) */
     .cart-toast {
       position: fixed;
-      bottom: 84px;
+      top: 18px;
       left: 50%;
-      transform: translateX(-50%) translateY(20px);
+      transform: translateX(-50%) translateY(-65px);
       opacity: 0;
       background: rgba(15, 23, 42, 0.94);
-      border: 1px solid rgba(249, 115, 22, 0.4);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       color: #FFFFFF;
-      padding: 10px 16px;
+      padding: 10px 18px;
       border-radius: 9999px;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 12px;
-      font-size: 12px;
+      gap: 10px;
+      font-size: 13px;
       font-weight: 700;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.6), 0 0 12px rgba(249, 115, 22, 0.2);
-      z-index: 999;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(249, 78, 30, 0.18);
+      z-index: 99999;
       pointer-events: none;
-      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.24s ease;
       white-space: nowrap;
+      max-width: 90vw;
     }
     .cart-toast.show {
       transform: translateX(-50%) translateY(0);
       opacity: 1;
       pointer-events: auto;
+    }
+    .cart-toast.toast-error {
+      border-color: rgba(239, 68, 68, 0.45);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(239, 68, 68, 0.25);
+    }
+    .cart-toast.toast-warning {
+      border-color: rgba(245, 158, 11, 0.45);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(245, 158, 11, 0.25);
+    }
+    .cart-toast.toast-success {
+      border-color: rgba(16, 185, 129, 0.45);
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.65), 0 0 20px rgba(16, 185, 129, 0.25);
+    }
+    .cart-toast-icon-wrap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
     .cart-toast-btn {
       background: var(--brand-orange);
@@ -2007,6 +2100,7 @@
         <!-- Category Pill Tabs -->
         <div>
           <div class="category-tabs-row" role="tablist">
+            <div class="tabs-sliding-indicator" id="tabsSlidingIndicator"></div>
             <button class="tab-pill active" id="tabSauce" onclick="setActiveTab('sauce')">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M18 2v6a3 3 0 0 1-3 3 3 3 0 0 1-3-3V2"/>
@@ -2075,10 +2169,15 @@
     </div>
 
   
-  <!-- Toast Notification -->
-  <div class="cart-toast" id="cartToast">
+  <!-- Toast Notification (Floating Top) -->
+  <div class="cart-toast" id="cartToast" role="alert" aria-live="assertive">
+    <div class="cart-toast-icon-wrap" id="cartToastIcon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
     <span id="cartToastMsg">تمت الإضافة إلى السلة</span>
-    <button class="cart-toast-btn" onclick="openOrderDrawer()">
+    <button class="cart-toast-btn" id="cartToastBtn" onclick="openOrderDrawer()">
       <span>عرض السلة</span>
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <line x1="19" y1="12" x2="5" y2="12"></line>
@@ -2519,6 +2618,8 @@
       preloadAllAssets();
       renderAll();
       updateCartBadge();
+      setTimeout(updateTabsSlidingIndicator, 50);
+      window.addEventListener("resize", updateTabsSlidingIndicator);
       if (window.supabase) {
         initSupabaseStorefront();
       }
@@ -2926,17 +3027,92 @@
     }
 
     let toastTimer = null;
-    function showToast(message, actionLabel, actionCallback) {
+    function showToast(message, typeOrActionLabel = "success", actionCallback = null) {
       const toast = document.getElementById("cartToast");
       if (!toast) return;
       const msgEl = document.getElementById("cartToastMsg");
+      const iconEl = document.getElementById("cartToastIcon");
+      const btnEl = document.getElementById("cartToastBtn");
+
       if (msgEl) msgEl.innerText = message;
+
+      let type = "success";
+      let actionLabel = null;
+      let callback = null;
+
+      if (typeOrActionLabel === "error" || typeOrActionLabel === "warning" || typeOrActionLabel === "success") {
+        type = typeOrActionLabel;
+        if (typeof actionCallback === "function") {
+          callback = actionCallback;
+        }
+      } else if (typeof typeOrActionLabel === "string") {
+        // Support legacy call: showToast("msg", "عرض السلة", () => openOrderDrawer())
+        actionLabel = typeOrActionLabel;
+        callback = actionCallback;
+        type = "success";
+      }
+
+      toast.classList.remove("toast-error", "toast-warning", "toast-success");
+      if (type === "error") {
+        toast.classList.add("toast-error");
+        if (iconEl) {
+          iconEl.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          `;
+        }
+      } else if (type === "warning") {
+        toast.classList.add("toast-warning");
+        if (iconEl) {
+          iconEl.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          `;
+        }
+      } else {
+        toast.classList.add("toast-success");
+        if (iconEl) {
+          iconEl.innerHTML = `
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          `;
+        }
+      }
+
+      if (btnEl) {
+        if (actionLabel && callback) {
+          btnEl.style.display = "inline-flex";
+          const textSpan = btnEl.querySelector("span");
+          if (textSpan) textSpan.innerText = actionLabel;
+          btnEl.onclick = () => {
+            callback();
+            toast.classList.remove("show");
+          };
+        } else if (type === "success" && state.cartItems && state.cartItems.length > 0) {
+          btnEl.style.display = "inline-flex";
+          const textSpan = btnEl.querySelector("span");
+          if (textSpan) textSpan.innerText = "عرض السلة";
+          btnEl.onclick = () => {
+            openOrderDrawer();
+            toast.classList.remove("show");
+          };
+        } else {
+          btnEl.style.display = "none";
+        }
+      }
 
       toast.classList.add("show");
       if (toastTimer) clearTimeout(toastTimer);
       toastTimer = setTimeout(() => {
         toast.classList.remove("show");
-      }, 3500);
+      }, 4000);
     }
 
     function showFloatingPriceFeedback(text, evt) {
@@ -3138,10 +3314,11 @@
         currentWingImgLoadedSrc = targetSrc;
         img.src = targetSrc;
 
-        // Instant snappy switching with lightweight, fast 150ms subtle scale transition
-        img.style.transform = `scale(${currentScale * 0.96})`;
-        img.offsetHeight; // force reflow
+        // Silky smooth transition (subtle scale 0.94 -> 1, slight y glide, and opacity fade over 0.25s)
         img.style.transform = `scale(${currentScale})`;
+        img.classList.remove("product-tray-enter");
+        void img.offsetWidth; // force reflow
+        img.classList.add("product-tray-enter");
       } else {
         img.style.transform = `scale(${currentScale})`;
       }
@@ -3256,6 +3433,7 @@
     }
 
     function updateStageSauceBadge() {
+      const badgeWrap = document.getElementById("stageSauceBadge");
       const badgeText = document.getElementById("stageSauceBadgeText");
       const badgeDot = document.getElementById("stageSauceBadgeDot");
       if (!badgeText || !badgeDot) return;
@@ -3268,6 +3446,12 @@
       } else {
         badgeText.innerText = "يرجى اختيار صوص";
         badgeDot.style.display = "none";
+      }
+
+      if (badgeWrap) {
+        badgeWrap.classList.remove("title-glaze-enter");
+        void badgeWrap.offsetWidth;
+        badgeWrap.classList.add("title-glaze-enter");
       }
     }
 
@@ -3385,8 +3569,23 @@
     }
 
     /**
-     * TABS & CAROUSEL RENDERING
+     * TABS & CAROUSEL RENDERING WITH SPRING-ANIMATED SLIDING PILL INDICATOR
      */
+    function updateTabsSlidingIndicator() {
+      const container = document.querySelector('.category-tabs-row');
+      const indicator = document.getElementById('tabsSlidingIndicator');
+      if (!container || !indicator) return;
+      const activeBtn = container.querySelector('.tab-pill.active');
+      if (!activeBtn) return;
+
+      const containerRect = container.getBoundingClientRect();
+      const btnRect = activeBtn.getBoundingClientRect();
+
+      const leftPos = btnRect.left - containerRect.left;
+      indicator.style.left = `${leftPos}px`;
+      indicator.style.width = `${btnRect.width}px`;
+    }
+
     function setActiveTab(tab) {
       state.activeTab = tab;
       renderTabs();
@@ -3398,6 +3597,9 @@
         const el = document.getElementById("tab" + capitalize(t));
         if (el) el.classList.toggle("active", state.activeTab === t);
       });
+
+      // Update sliding pill indicator position
+      requestAnimationFrame(updateTabsSlidingIndicator);
 
       const badgeSauce = document.getElementById("badgeSauceCount");
       const badgeDips = document.getElementById("badgeDipsCount");
@@ -4232,7 +4434,7 @@
      */
     async function handleConfirmOrder() {
       if (state.isStoreOpen === false) {
-        alert("المطعم مغلق حالياً — سنعاود استقبال الطلبات قريباً");
+        showToast("المطعم مغلق حالياً — سنعاود استقبال الطلبات قريباً", "error");
         return;
       }
 
@@ -4243,7 +4445,7 @@
         const elapsed = Math.floor((Date.now() - parseInt(lastOrderTs, 10)) / 1000);
         if (elapsed < ORDER_COOLDOWN_SEC) {
           const remaining = ORDER_COOLDOWN_SEC - elapsed;
-          alert(`تم تسجيل طلبك السابق بنجاح! حرصاً على عدم تكرار الطلبات بالخطأ، يرجى الانتظار ${remaining} ثانية قبل إرسال طلب جديد.`);
+          showToast(`يرجى الانتظار ${remaining} ثانية قبل إرسال طلب جديد`, "warning");
           return;
         }
       }
@@ -4294,7 +4496,7 @@
       }
 
       if (state.cartItems.length === 0) {
-        alert("سلة طلباتك فارغة! أضف وجبة أولاً.");
+        showToast("سلة طلباتك فارغة! أضف وجبة أولاً.", "warning");
         return;
       }
 
@@ -4347,7 +4549,7 @@
 
       if (!window.supabase) {
         console.error("Supabase client is not initialized");
-        alert("تعذر الاتصال بالخادم لتسجيل الطلب. يرجى إعادة المحاولة.");
+        showToast("تعذر الاتصال بالخادم لتسجيل الطلب. يرجى إعادة المحاولة.", "error");
         restoreSubmitBtn();
         return;
       }
@@ -4357,7 +4559,7 @@
 
       if (insertErr) {
         console.error("Supabase order insert error:", insertErr);
-        alert(`حدث خطأ أثناء تسجيل طلبك: ${insertErr.message || "يرجى المحاولة مجدداً"}`);
+        showToast(`حدث خطأ أثناء تسجيل طلبك: ${insertErr.message || "يرجى المحاولة مجدداً"}`, "error");
         restoreSubmitBtn();
         return;
       }

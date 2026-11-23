@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
 import {
   ShoppingBag,
@@ -765,7 +766,8 @@ export default function AdminDashboard() {
 
         {/* Tab Switcher */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', backgroundColor: '#131E33', padding: '5px', borderRadius: '16px', marginBottom: '20px', border: '1px solid rgba(255,255,255,0.06)' }}>
-          <button
+          <motion.button
+            whileTap={{ scale: 0.96 }}
             onClick={() => setActiveTab('orders')}
             style={{
               padding: '10px 8px',
@@ -791,9 +793,10 @@ export default function AdminDashboard() {
                 {pendingCount}
               </span>
             )}
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileTap={{ scale: 0.96 }}
             onClick={() => setActiveTab('menu')}
             style={{
               padding: '10px 8px',
@@ -814,9 +817,10 @@ export default function AdminDashboard() {
           >
             <Layers size={16} />
             <span>إدارة المنيو</span>
-          </button>
+          </motion.button>
 
-          <button
+          <motion.button
+            whileTap={{ scale: 0.96 }}
             onClick={() => setActiveTab('settings')}
             style={{
               padding: '10px 8px',
@@ -837,7 +841,7 @@ export default function AdminDashboard() {
           >
             <Settings size={16} />
             <span>الإعدادات</span>
-          </button>
+          </motion.button>
         </div>
 
         {/* ==============================================================
@@ -1104,25 +1108,27 @@ export default function AdminDashboard() {
 
               <div style={{ display: 'flex', gap: '8px' }}>
                 {menuItems.length === 0 && (
-                  <button
+                  <motion.button
                     type="button"
+                    whileTap={{ scale: 0.96 }}
                     onClick={handleSeedMenu}
                     disabled={menuLoading}
                     style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', backgroundColor: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '12px', color: '#F59E0B', fontSize: '12px', fontWeight: 800, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
                   >
                     <RefreshCw size={14} className={menuLoading ? 'animate-spin' : ''} />
                     <span>مزامنة واستيراد المنيو</span>
-                  </button>
+                  </motion.button>
                 )}
 
-                <button
+                <motion.button
                   type="button"
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => handleOpenAddModal('wing_size')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', backgroundColor: '#F94E1E', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', background: 'linear-gradient(135deg, #F94E1E 0%, #EA3C08 100%)', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif", boxShadow: '0 4px 14px rgba(249,78,30,0.35)' }}
                 >
                   <Plus size={16} />
                   <span>صنف جديد</span>
-                </button>
+                </motion.button>
               </div>
             </div>
 
@@ -1334,22 +1340,38 @@ export default function AdminDashboard() {
               </div>
             )}
 
-            {/* Modal: Add or Edit Menu Item */}
-            {isItemModalOpen && (
-              <div style={{ position: 'fixed', inset: 0, zIndex: 100, backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(6px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}>
-                <div style={{ width: '100%', maxWidth: '440px', backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '20px', padding: '24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                    <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#FFFFFF' }}>
-                      {editingItem ? 'تعديل الصنف' : 'إضافة صنف جديد إلى المنيو'}
-                    </h3>
-                    <button
-                      type="button"
-                      onClick={() => setIsItemModalOpen(false)}
-                      style={{ background: 'transparent', border: 'none', color: '#8E9BAE', cursor: 'pointer' }}
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
+            {/* Modal: Add or Edit Menu Item with Framer Motion & Responsive Bottom Sheet / Dialog */}
+            <AnimatePresence>
+              {isItemModalOpen && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  onClick={() => setIsItemModalOpen(false)}
+                  style={{ position: 'fixed', inset: 0, zIndex: 100, backgroundColor: 'rgba(0,0,0,0.72)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px' }}
+                >
+                  <motion.div
+                    initial={{ y: 24, scale: 0.95, opacity: 0 }}
+                    animate={{ y: 0, scale: 1, opacity: 1 }}
+                    exit={{ y: 24, scale: 0.95, opacity: 0 }}
+                    transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+                    onClick={(e) => e.stopPropagation()}
+                    style={{ width: '100%', maxWidth: '460px', backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '24px', padding: '24px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,0.75)' }}
+                  >
+                    <div style={{ width: '38px', height: '4px', borderRadius: '9999px', backgroundColor: 'rgba(255,255,255,0.2)', margin: '0 auto 16px' }} />
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+                      <h3 style={{ fontSize: '16px', fontWeight: 900, color: '#FFFFFF' }}>
+                        {editingItem ? 'تعديل الصنف' : 'إضافة صنف جديد إلى المنيو'}
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => setIsItemModalOpen(false)}
+                        style={{ background: 'transparent', border: 'none', color: '#8E9BAE', cursor: 'pointer' }}
+                      >
+                        <X size={20} />
+                      </button>
+                    </div>
 
                   <form onSubmit={handleSaveItem} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     <div>
@@ -1522,24 +1544,27 @@ export default function AdminDashboard() {
                     </div>
 
                     <div style={{ display: 'flex', gap: '10px', marginTop: '8px' }}>
-                      <button
+                      <motion.button
                         type="submit"
-                        style={{ flex: 1, height: '46px', backgroundColor: '#F94E1E', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
+                        whileTap={{ scale: 0.96 }}
+                        style={{ flex: 1, height: '46px', background: 'linear-gradient(135deg, #F94E1E 0%, #EA3C08 100%)', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif", boxShadow: '0 4px 14px rgba(249,78,30,0.35)' }}
                       >
                         {editingItem ? 'حفظ التعديلات' : 'إضافة الصنف للمنيو'}
-                      </button>
-                      <button
+                      </motion.button>
+                      <motion.button
                         type="button"
+                        whileTap={{ scale: 0.96 }}
                         onClick={() => setIsItemModalOpen(false)}
                         style={{ padding: '0 18px', height: '46px', backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#8E9BAE', fontSize: '13px', fontWeight: 800, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
                       >
                         إلغاء
-                      </button>
+                      </motion.button>
                     </div>
                   </form>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
             )}
+          </AnimatePresence>
           </div>
         )}
 
