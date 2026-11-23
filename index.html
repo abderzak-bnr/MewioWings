@@ -2464,87 +2464,247 @@
     }
 
     function applyMenuItemsToConfig(items) {
+      if (!Array.isArray(items) || items.length === 0) return;
       state.dbMenuItems = items;
 
-      items.forEach(dbItem => {
-        const isAvail = dbItem.is_available !== false;
-        const priceNum = typeof dbItem.price === "number" ? dbItem.price : null;
+      const sorted = [...items].sort((a, b) => (Number(a.sort_order) || 0) - (Number(b.sort_order) || 0));
 
-        if (dbItem.category === "wing_size" || dbItem.category === "wings_count") {
-          const match = MENU_CONFIG.wingCounts.find(w => {
-            if (dbItem.id && dbItem.id === `wing_${w.count}`) return true;
-            const numMatch = dbItem.name_ar.match(/\d+/);
-            return numMatch ? w.count === parseInt(numMatch[0]) : false;
-          });
-          if (match) {
-            if (priceNum !== null) match.price = priceNum;
-            match.is_available = isAvail;
-          }
-        } else if (dbItem.category === "coating_sauce") {
-          const name = dbItem.name_ar;
-          let sId = null;
-          if (dbItem.id && dbItem.id.startsWith("sauce_")) {
-            sId = dbItem.id.replace("sauce_", "");
-          } else if (name.includes("كريسبي")) sId = "crispy";
-          else if (name.includes("جزائرية")) sId = "algeria";
-          else if (name.includes("باربكيو")) sId = "bbq";
-          else if (name.includes("بافالو")) sId = "buffalo";
+      const wingSizes = sorted.filter(i => i.category === 'wing_size' || i.category === 'wings_count');
+      const coatingSauces = sorted.filter(i => i.category === 'coating_sauce');
+      const dips = sorted.filter(i => i.category === 'dip' || i.category === 'dips');
+      const sides = sorted.filter(i => i.category === 'side' || i.category === 'sides');
+      const readyBoxes = sorted.filter(i => i.category === 'ready_box' || i.category === 'ready_boxes');
 
-          if (sId) {
-            const match = MENU_CONFIG.coatingSauces.find(s => s.id === sId);
-            if (match) match.is_available = isAvail;
-          }
-        } else if (dbItem.category === "dip" || dbItem.category === "dips") {
-          const name = dbItem.name_ar;
-          let dId = null;
-          if (dbItem.id && dbItem.id.startsWith("dip_")) {
-            dId = dbItem.id.replace("dip_", "").replace("_", "-");
-          } else if (name.includes("بافالو")) dId = "buffalo";
-          else if (name.includes("هوني") || name.includes("ماسترد")) dId = "honey-mustard";
-          else if (name.includes("رانش")) dId = "ranch";
-          else if (name.includes("جبن")) dId = "cheese";
-          else if (name.includes("باربكيو")) dId = "bbq";
-          else if (name.includes("كاتشب")) dId = "ketchup";
+      // 1. Rebuild Wing Counts (Strictly from Supabase)
+      if (wingSizes.length > 0) {
+        MENU_CONFIG.wingCounts = wingSizes.map(dbItem => {
+          const countMatch = (dbItem.id && dbItem.id.match(/\d+/)) || dbItem.name_ar.match(/\d+/);
+          const count = countMatch ? parseInt(countMatch[0], 10) : 6;
+          const freeDips = count <= 3 ? 1 : (count <= 6 ? 1 : (count <= 9 ? 2 : (count <= 12 ? 2 : 3)));
+          return {
+            id: dbItem.id,
+            count: count,
+            label: dbItem.name_ar,
+            price: typeof dbItem.price === "number" ? dbItem.price : 650,
+            freeDips: freeDips,
+            image: dbItem.image_url || `/images/wings-crispy-${count}.png`,
+            is_available: dbItem.is_available !== false,
+            sort_order: Number(dbItem.sort_order) || 0
+          };
+        });
+      }
 
-          if (dId) {
-            const match = MENU_CONFIG.dips.find(d => d.id === dId);
-            if (match) {
-              if (priceNum !== null) match.price = priceNum;
-              match.is_available = isAvail;
-            }
-          }
-        } else if (dbItem.category === "side" || dbItem.category === "sides") {
-          const name = dbItem.name_ar;
-          let sId = null;
-          if (dbItem.id && dbItem.id.startsWith("side_")) {
-            sId = dbItem.id.replace("side_", "");
-          } else if (name.includes("بطاطا")) sId = "fries";
-          else if (name.includes("كرنب") || name.includes("كولسلو")) sId = "coleslaw";
+      // 2. Rebuild Coating Sauces (Strictly from Supabase)
+      if (coatingSauces.length > 0) {
+        const KNOWN_SAUCE_META = {
+          crispy: {
+            nameEn: "Crispy",
+            color: "#D97706",
+            stops: ["#FBBF24", "#D97706", "#78350F"],
+            description: "أجنحة ذهبية مقلية مقرمشة بدون أي صوص للحفاظ على القرمشة القصوى",
+          },
+          algeria: {
+            nameEn: "Algerian Sauce",
+            color: "#EA580C",
+            stops: ["#FB923C", "#EA580C", "#9A3412"],
+            isSignature: true,
+            badge: "SIGNATURE",
+            description: "صوص مميز بالعلامة، متوازن ومتبل بالبصل والبهارات الجزائرية",
+          },
+          bbq: {
+            nameEn: "Smokey BBQ",
+            color: "#451A03",
+            stops: ["#78350F", "#451A03", "#1C0A02"],
+            description: "صوص باربكيو مدخن غني بالكراميل ولمحة حلاوة خفيفة",
+          },
+          buffalo: {
+            nameEn: "Classic Buffalo",
+            color: "#DC2626",
+            stops: ["#EF4444", "#B91C1C", "#7F1D1D"],
+            hasHeatGlow: true,
+            description: "الصوص الأمريكي الكلاسيكي الأصلي بلون أحمر ناري ولذعة لاذعة",
+          },
+        };
 
-          if (sId) {
-            const match = MENU_CONFIG.sides.find(s => s.id === sId);
-            if (match) {
-              if (priceNum !== null) match.price = priceNum;
-              match.is_available = isAvail;
-            }
-          }
-        } else if (dbItem.category === "ready_box" || dbItem.category === "ready_boxes") {
-          const name = dbItem.name_ar;
-          let bId = null;
-          if (dbItem.id && dbItem.id.startsWith("box_")) {
-            bId = "ready_" + dbItem.id.replace("box_", "");
-          } else if (name.includes("سولو") || name.includes("SOLO")) bId = "ready_solo";
-          else if (name.includes("دابل") || name.includes("DOUBLE")) bId = "ready_double";
-          else if (name.includes("فريندز") || name.includes("FRIENDS")) bId = "ready_friends";
-          else if (name.includes("ميغا") || name.includes("MEGA") || name.includes("بارتي") || name.includes("PARTY")) bId = "ready_party";
+        MENU_CONFIG.coatingSauces = coatingSauces.map(dbItem => {
+          let sId = dbItem.id;
+          if (sId.startsWith("sauce_")) sId = sId.replace("sauce_", "");
+          else if (sId.startsWith("coating_sauce_")) sId = sId.replace("coating_sauce_", "");
 
-          if (bId) {
-            const match = MENU_CONFIG.readyBoxes.find(b => b.id === bId);
-            if (match) {
-              if (priceNum !== null) match.price = priceNum;
-              match.is_available = isAvail;
-            }
+          const meta = KNOWN_SAUCE_META[sId] || {
+            nameEn: dbItem.name_ar,
+            color: "#EA580C",
+            stops: ["#FB923C", "#EA580C", "#9A3412"],
+            description: "صوص مميز تم إعداده خصيصاً لوجبات أجنحة WINGS",
+          };
+
+          return {
+            id: sId,
+            dbId: dbItem.id,
+            name: dbItem.name_ar,
+            subtitle: sId === "crispy" ? "بدون صوص" : "",
+            nameEn: meta.nameEn || dbItem.name_ar,
+            color: meta.color || "#EA580C",
+            stops: meta.stops || ["#FB923C", "#EA580C", "#9A3412"],
+            description: meta.description || "",
+            isSignature: meta.isSignature || false,
+            badge: meta.badge || "",
+            isPlain: sId === "crispy",
+            image_url: dbItem.image_url || null,
+            is_available: dbItem.is_available !== false,
+            sort_order: Number(dbItem.sort_order) || 0
+          };
+        });
+      }
+
+      // 3. Rebuild Side Dips (Strictly from Supabase)
+      if (dips.length > 0) {
+        MENU_CONFIG.dips = dips.map(dbItem => {
+          let dId = dbItem.id;
+          if (dId.startsWith("dip_")) dId = dId.replace("dip_", "");
+          let imgPath = dbItem.image_url;
+          if (!imgPath) {
+            imgPath = `/images/dip-${dId}.png`;
           }
+
+          return {
+            id: dId,
+            dbId: dbItem.id,
+            name: dbItem.name_ar,
+            nameEn: dbItem.name_ar,
+            price: typeof dbItem.price === "number" ? dbItem.price : MENU_CONFIG.rules.extraDipPrice,
+            image: imgPath,
+            is_available: dbItem.is_available !== false,
+            sort_order: Number(dbItem.sort_order) || 0
+          };
+        });
+      }
+
+      // 4. Rebuild Sides (Strictly from Supabase)
+      if (sides.length > 0) {
+        MENU_CONFIG.sides = sides.map(dbItem => {
+          let sId = dbItem.id;
+          if (sId.startsWith("side_")) sId = sId.replace("side_", "");
+          let imgPath = dbItem.image_url;
+          if (!imgPath) {
+            imgPath = sId === "fries" ? "/images/side-fries.png?v=2" : `/images/side-${sId}.png`;
+          }
+
+          return {
+            id: sId,
+            dbId: dbItem.id,
+            name: dbItem.name_ar,
+            nameEn: dbItem.name_ar,
+            price: typeof dbItem.price === "number" ? dbItem.price : 200,
+            type: sId,
+            image: imgPath,
+            is_available: dbItem.is_available !== false,
+            sort_order: Number(dbItem.sort_order) || 0
+          };
+        });
+      }
+
+      // 5. Rebuild Ready Boxes (Strictly from Supabase)
+      if (readyBoxes.length > 0) {
+        const KNOWN_BOX_TEMPLATES = {
+          ready_solo: {
+            code: "SOLO BOX",
+            wingsCount: 6,
+            freeDips: 1,
+            description: "6 أجنحة دجاج مقرمشة + بطاطا مقلية + 1 صوص جانبي",
+            serves: "وجبة فردية",
+            badge: "الأكثر طلباً",
+            itemsSummary: ["6 أجنحة", "بطاطا مقلية", "1 صوص"],
+          },
+          ready_double: {
+            code: "DOUBLE BOX",
+            wingsCount: 10,
+            freeDips: 2,
+            description: "10 أجنحة دجاج + بطاطا مقلية عائلية + 2 صوص جانبي",
+            serves: "يكفي شخصين",
+            badge: "توفير عائلي",
+            itemsSummary: ["10 أجنحة", "بطاطا عائلية", "2 صوص"],
+          },
+          ready_friends: {
+            code: "FRIENDS BOX",
+            wingsCount: 15,
+            freeDips: 3,
+            description: "15 جناح دجاج + بطاطا كبيرة + 3 صوصات جانبية",
+            serves: "3 إلى 4 أشخاص",
+            badge: "لمة الأصحاب",
+            itemsSummary: ["15 جناح", "بطاطا كبيرة", "3 صوصات"],
+          },
+          ready_party: {
+            code: "PARTY BOX",
+            wingsCount: 20,
+            freeDips: 4,
+            description: "20 جناح دجاج + حصتين بطاطا كبيرة + 4 صوصات جانبية",
+            serves: "4 إلى 6 أشخاص",
+            badge: "الأفضل قيمة",
+            itemsSummary: ["20 جناح", "حصتين بطاطا", "4 صوصات"],
+          },
+        };
+
+        MENU_CONFIG.readyBoxes = readyBoxes.map(dbItem => {
+          let bId = dbItem.id;
+          if (bId.startsWith("box_")) bId = "ready_" + bId.replace("box_", "");
+          const tmpl = KNOWN_BOX_TEMPLATES[bId] || {
+            code: dbItem.id.toUpperCase().replace("READY_", "").replace("BOX_", ""),
+            wingsCount: 6,
+            freeDips: 1,
+            description: dbItem.name_ar,
+            serves: "وجبة خاصة",
+            badge: "بوكس مميز",
+            itemsSummary: ["وجبة كاملة", "أجنحة دجاج", "صوص ولواحق"],
+          };
+
+          return {
+            id: bId,
+            dbId: dbItem.id,
+            code: tmpl.code,
+            nameAr: dbItem.name_ar,
+            price: typeof dbItem.price === "number" ? dbItem.price : 900,
+            wingsCount: tmpl.wingsCount,
+            freeDips: tmpl.freeDips,
+            description: tmpl.description,
+            serves: tmpl.serves,
+            badge: tmpl.badge,
+            itemsSummary: tmpl.itemsSummary,
+            image: dbItem.image_url || "/images/wings-crispy-6.png",
+            is_available: dbItem.is_available !== false,
+            sort_order: Number(dbItem.sort_order) || 0
+          };
+        });
+      }
+
+      // Synchronize currently active selections if any item became unavailable
+      if (MENU_CONFIG.wingCounts.length > 0) {
+        const currentCountObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount);
+        if (!currentCountObj || currentCountObj.is_available === false) {
+          const firstAvail = MENU_CONFIG.wingCounts.find(w => w.is_available !== false);
+          if (firstAvail) state.wingsCount = firstAvail.count;
+        }
+      }
+
+      if (MENU_CONFIG.coatingSauces.length > 0) {
+        const currentSauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
+        if (!currentSauceObj || currentSauceObj.is_available === false) {
+          const firstAvail = MENU_CONFIG.coatingSauces.find(s => s.is_available !== false);
+          if (firstAvail) state.selectedSauceId = firstAvail.id;
+        }
+      }
+
+      Object.keys(state.selectedDips).forEach(dipId => {
+        const dip = MENU_CONFIG.dips.find(d => d.id === dipId);
+        if (!dip || dip.is_available === false) {
+          delete state.selectedDips[dipId];
+        }
+      });
+
+      Object.keys(state.selectedSides).forEach(sideId => {
+        const side = MENU_CONFIG.sides.find(s => s.id === sideId);
+        if (!side || side.is_available === false) {
+          delete state.selectedSides[sideId];
         }
       });
     }
@@ -2750,22 +2910,26 @@
     }
 
     function updateQuantityPillBar() {
-      [3, 6, 9, 12, 20].forEach(count => {
-        const btn = document.getElementById("qty" + count);
-        if (btn) {
-          const wObj = MENU_CONFIG.wingCounts.find(w => w.count === count);
-          const isAvail = !wObj || wObj.is_available !== false;
-          btn.classList.toggle("active", state.wingsCount === count);
-          if (!isAvail) {
-            btn.style.opacity = "0.35";
-            btn.style.pointerEvents = "none";
-            btn.title = "غير متوفر";
-          } else {
-            btn.style.opacity = "1";
-            btn.style.pointerEvents = "auto";
-            btn.title = "";
-          }
+      const container = document.querySelector(".quantity-pill-bar");
+      if (!container) return;
+
+      container.innerHTML = "";
+      MENU_CONFIG.wingCounts.forEach(w => {
+        const isAvail = w.is_available !== false;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "qty-btn" + (state.wingsCount === w.count ? " active" : "");
+        btn.id = "qty" + w.count;
+        btn.innerText = w.label || `${w.count} قطع`;
+
+        if (!isAvail) {
+          btn.style.opacity = "0.35";
+          btn.style.pointerEvents = "none";
+          btn.title = "غير متوفر";
+        } else {
+          btn.onclick = () => setWingsCount(w.count);
         }
+        container.appendChild(btn);
       });
     }
 
@@ -2776,10 +2940,21 @@
       const img = document.getElementById("realWingImg");
       if (!img) return;
 
-      const targetSrc = getWingImagePath(state.selectedSauceId, state.wingsCount);
-      // Subtle proportional scaling between 3 and 20 pieces strictly within the bounding box (82% to 100%)
       const wingScales = { 3: 0.82, 6: 0.88, 9: 0.92, 12: 0.96, 20: 1.0 };
       const currentScale = wingScales[state.wingsCount] || 0.88;
+      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
+
+      // Known sauces with custom box PNGs in codebase
+      const knownTraySauces = ["crispy", "algeria", "bbq", "buffalo"];
+      let targetSrc = "";
+
+      if (knownTraySauces.includes(state.selectedSauceId)) {
+        targetSrc = getWingImagePath(state.selectedSauceId, state.wingsCount);
+      } else if (sauceObj && sauceObj.image_url) {
+        targetSrc = resolveImagePath(sauceObj.image_url);
+      } else {
+        targetSrc = getWingImagePath("crispy", state.wingsCount);
+      }
 
       if (currentWingImgLoadedSrc !== targetSrc) {
         currentWingImgLoadedSrc = targetSrc;
@@ -2808,7 +2983,8 @@
       };
       const glow = document.getElementById("plateAmbientGlow");
       if (glow) {
-        glow.style.background = `radial-gradient(circle, ${glowColors[state.selectedSauceId] || glowColors.crispy} 0%, transparent 70%)`;
+        const glowColor = (sauceObj && sauceObj.color) ? `${sauceObj.color}35` : (glowColors[state.selectedSauceId] || glowColors.crispy);
+        glow.style.background = `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`;
       }
     }
 
@@ -3094,7 +3270,14 @@
           card.style.cursor = "not-allowed";
         }
 
-        const previewImgSrc = getWingImagePath(sauce.id, 6);
+        let previewImgSrc = "";
+        if (sauce.image_url) {
+          previewImgSrc = resolveImagePath(sauce.image_url);
+        } else if (['crispy', 'algeria', 'bbq', 'buffalo'].includes(sauce.id)) {
+          previewImgSrc = getWingImagePath(sauce.id, 6);
+        } else {
+          previewImgSrc = getWingImagePath("crispy", 6);
+        }
 
         card.innerHTML = `
           <div class="item-circle">

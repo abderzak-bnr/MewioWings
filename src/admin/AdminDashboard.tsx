@@ -1103,15 +1103,17 @@ export default function AdminDashboard() {
               </div>
 
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button
-                  type="button"
-                  onClick={handleSeedMenu}
-                  disabled={menuLoading}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', backgroundColor: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '12px', color: '#F59E0B', fontSize: '12px', fontWeight: 800, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
-                >
-                  <RefreshCw size={14} className={menuLoading ? 'animate-spin' : ''} />
-                  <span>مزامنة واستيراد المنيو</span>
-                </button>
+                {menuItems.length === 0 && (
+                  <button
+                    type="button"
+                    onClick={handleSeedMenu}
+                    disabled={menuLoading}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', backgroundColor: 'rgba(245,158,11,0.15)', border: '1px solid rgba(245,158,11,0.35)', borderRadius: '12px', color: '#F59E0B', fontSize: '12px', fontWeight: 800, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
+                  >
+                    <RefreshCw size={14} className={menuLoading ? 'animate-spin' : ''} />
+                    <span>مزامنة واستيراد المنيو</span>
+                  </button>
+                )}
 
                 <button
                   type="button"
