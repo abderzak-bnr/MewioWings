@@ -1,0 +1,82 @@
+import React from 'react';
+import { Check, Plus, Layers } from 'lucide-react';
+import { TOPPINGS, formatDZD } from '../../data/wingsConfig';
+
+export const ToppingsSelector = ({ selectedToppings, onToggleTopping }) => {
+  return (
+    <section className="space-y-3" aria-labelledby="section-toppings">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-600 text-white text-xs font-black">
+            3
+          </span>
+          <h3 id="section-toppings" className="text-base sm:text-lg font-black text-white font-tajawal">
+            إضافات التوبينغ (Toppings) — اختيار متعدد
+          </h3>
+        </div>
+        <span className="text-[11px] font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-800/60">
+          تتراكم فوق بعضها 🥞
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+        {TOPPINGS.map((topping) => {
+          const isSelected = selectedToppings.includes(topping.id);
+
+          return (
+            <button
+              key={topping.id}
+              type="button"
+              onClick={() => onToggleTopping(topping.id)}
+              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 ${
+                isSelected
+                  ? 'border-emerald-500 bg-emerald-950/30 shadow-sm ring-1 ring-emerald-500/50 scale-[1.01]'
+                  : 'border-zinc-800 bg-zinc-900/90 hover:border-zinc-700 hover:bg-zinc-800/70'
+              }`}
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <span className="text-2xl shrink-0 p-2 rounded-xl bg-zinc-800 border border-zinc-700">
+                  {topping.icon}
+                </span>
+
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <h4 className="text-sm font-black text-white font-tajawal truncate">
+                      {topping.name}
+                    </h4>
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300">
+                      {topping.badge}
+                    </span>
+                  </div>
+
+                  <div className="text-[11px] text-zinc-400 font-medium">
+                    {topping.nameEn}
+                  </div>
+
+                  <div className="text-xs font-black text-brand-400 mt-1">
+                    +{formatDZD(topping.price)}
+                  </div>
+                </div>
+              </div>
+
+              {/* Toggle Indicator */}
+              <div
+                className={`w-6 h-6 rounded-xl flex items-center justify-center shrink-0 transition-all ${
+                  isSelected
+                    ? 'bg-emerald-500 text-zinc-950 shadow-sm'
+                    : 'border border-zinc-700 text-zinc-600 bg-zinc-800'
+                }`}
+              >
+                {isSelected ? (
+                  <Check className="w-4 h-4 stroke-[3]" />
+                ) : (
+                  <Plus className="w-3.5 h-3.5" />
+                )}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </section>
+  );
+};

@@ -1,0 +1,2954 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#0B1221">
+  <title>WINGS — Build Your Wings | صمّم وجبتك (المدية)</title>
+  
+  <!-- Google Font: Cairo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================
+       RESET & BASE THEME VARIABLES
+       ========================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg-midnight: #0B1221;
+      --bg-surface: #131E33;
+      --bg-surface-elevated: #1B2945;
+      --brand-orange: #F94E1E;
+      --brand-orange-hover: #E03E10;
+      --brand-gold: #F59E0B;
+      --brand-green: #10B981;
+      --text-white: #FFFFFF;
+      --text-muted: #8E9BAE;
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --font-cairo: 'Cairo', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: #050810;
+      color: var(--text-white);
+      font-family: var(--font-cairo);
+      direction: rtl;
+      text-align: right;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      overflow-x: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Sleek Mobile Viewport Container */
+    .app-viewport {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      background-color: var(--bg-midnight);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
+      overflow-x: hidden;
+    }
+
+    /* Hide scrollbars */
+    ::-webkit-scrollbar { display: none; }
+    * { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* ==========================================================
+       TOP NAVIGATION BAR
+       ========================================================== */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px 8px;
+      z-index: 30;
+      position: relative;
+    }
+
+    .icon-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+    .icon-btn:active {
+      transform: scale(0.92);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .brand-title-wrap {
+      text-align: center;
+    }
+    .brand-title {
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: var(--text-white);
+      line-height: 1.1;
+    }
+    .brand-subtitle {
+      font-size: 10px;
+      color: var(--brand-orange);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .cart-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--brand-orange);
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(249, 78, 30, 0.5);
+    }
+
+    /* ==========================================================
+       HEADER ROW & MODE SWITCHER (صمّم وجبتك | وجبات جاهزة)
+       ========================================================== */
+    .header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 18px 10px;
+      z-index: 25;
+      gap: 12px;
+    }
+
+    .header-headline {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text-white);
+      line-height: 1.2;
+    }
+    .header-tagline {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .mode-toggle-container {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 3px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .mode-toggle-btn {
+      position: relative;
+      z-index: 2;
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 9999px;
+      transition: color 0.25s ease;
+      font-family: var(--font-cairo);
+      white-space: nowrap;
+    }
+    .mode-toggle-btn.active {
+      color: #0B1221;
+    }
+
+    .mode-slider {
+      position: absolute;
+      top: 3px;
+      bottom: 3px;
+      width: 50%;
+      background: #FFFFFF;
+      border-radius: 9999px;
+      z-index: 1;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+    }
+    .mode-slider.ready-pos {
+      transform: translateX(-100%);
+    }
+
+    /* ==========================================================
+       TOP-DOWN ORBITING STAGE (~40% height)
+       ========================================================== */
+    .stage-container {
+      height: 38vh;
+      min-height: 275px;
+      max-height: 345px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      margin: 0 12px;
+      border-radius: 28px;
+      background: radial-gradient(circle at center, #15223A 0%, #0B1221 72%);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s ease;
+    }
+
+    /* Ambient Glow Behind Plate */
+    .plate-ambient-glow {
+      position: absolute;
+      width: 240px;
+      height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(249, 78, 30, 0.15) 0%, transparent 70%);
+      transition: all 0.4s ease;
+      pointer-events: none;
+      z-index: 1;
+    }
+    .plate-ambient-glow.glow-medium {
+      background: radial-gradient(circle, rgba(249, 115, 22, 0.32) 0%, transparent 70%);
+      transform: scale(1.18);
+    }
+    .plate-ambient-glow.glow-extra-hot {
+      background: radial-gradient(circle, rgba(239, 68, 68, 0.5) 0%, transparent 70%);
+      transform: scale(1.32);
+      animation: pulseFieryGlow 1.8s ease-in-out infinite;
+    }
+    @keyframes pulseFieryGlow {
+      0%, 100% { opacity: 0.85; transform: scale(1.3); }
+      50% { opacity: 1; transform: scale(1.38); }
+    }
+
+    /* Main Wings Box Wrapper: Centered slightly toward top-middle (Zero Overlap) */
+    .main-plate-wrap {
+      position: absolute;
+      left: 54%;
+      top: 44%;
+      transform: translate(-50%, -50%);
+      width: 215px;
+      height: 215px;
+      z-index: 10;
+      transition: transform 0.22s ease-out;
+    }
+
+    .plate-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    /* Transparent PNG Wings Box: Direct on dark stage (#0B1221) with soft realistic drop shadow */
+    .real-wing-overlay {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      z-index: 12;
+      pointer-events: none;
+      filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));
+      transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      opacity: 1;
+      transform: scale(1);
+    }
+    .real-wing-overlay.switching {
+      opacity: 0.12;
+      transform: scale(0.96);
+    }
+
+    /* ==========================================================
+       INTERACTIVE VERTICAL SPICE THERMOMETER (Right Side)
+       ========================================================== */
+    .spice-thermometer-wrap {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 25;
+      cursor: pointer;
+      background: rgba(19, 30, 51, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 8px 6px 6px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      transition: all 0.25s ease;
+    }
+    .spice-thermometer-wrap:hover {
+      background: rgba(19, 30, 51, 0.95);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .spice-thermometer-wrap:active {
+      transform: translateY(-50%) scale(0.96);
+    }
+
+    .thermo-header-icon {
+      font-size: 13px;
+      margin-bottom: 4px;
+      line-height: 1;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+    }
+
+    .thermometer-glass {
+      width: 12px;
+      height: 84px;
+      background: rgba(0, 0, 0, 0.5);
+      border-radius: 6px 6px 0 0;
+      border: 1.5px solid rgba(255, 255, 255, 0.3);
+      border-bottom: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .thermo-ticks-guide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px 1px;
+      pointer-events: none;
+      z-index: 3;
+    }
+    .thermo-tick-line {
+      width: 5px;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .thermo-mercury {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.3s ease;
+      z-index: 2;
+    }
+
+    .thermo-bulb {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.35);
+      margin-top: -3px;
+      position: relative;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .thermo-bulb-inner {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+
+    .thermo-label {
+      font-size: 10px;
+      font-weight: 800;
+      margin-top: 5px;
+      white-space: nowrap;
+      font-family: var(--font-cairo);
+      text-align: center;
+      line-height: 1.1;
+      transition: color 0.25s ease;
+    }
+
+    @keyframes steamDrift {
+      0% { transform: translateY(0) scale(0.8); opacity: 0; }
+      40% { opacity: 0.6; }
+      100% { transform: translateY(-30px) scale(1.3); opacity: 0; }
+    }
+    .steam-line {
+      animation: steamDrift 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    }
+
+    /* ==========================================================
+       DIPS ZONE: DEDICATED 2-COLUMN COMPACT MINI-CLUSTER (LEFT SIDE)
+       Smooth < 250ms spring scale/fade animations, zero overlap
+       ========================================================== */
+    .orbit-ramekin {
+      position: absolute;
+      width: 42px;
+      height: 42px;
+      z-index: 18;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+      transform: scale(0);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .orbit-ramekin.visible {
+      transform: scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* 6 Dip slots cleanly arranged in 2 columns on the left */
+    .dip-slot-0 { left: 12px; top: 20px; }
+    .dip-slot-1 { left: 54px; top: 48px; }
+    .dip-slot-2 { left: 10px; top: 80px; }
+    .dip-slot-3 { left: 52px; top: 110px; }
+    .dip-slot-4 { left: 10px; top: 142px; }
+    .dip-slot-5 { left: 50px; top: 174px; }
+
+    /* Dip quantity badge on single bowl */
+    .dip-qty-badge {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--brand-orange);
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 900;
+      border-radius: 9999px;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--bg-midnight);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      z-index: 22;
+      animation: popInBadge 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Overflow pill if > 5 distinct dips */
+    .dip-overflow-pill {
+      position: absolute;
+      inset: 0;
+      background: rgba(11, 18, 33, 0.94);
+      border: 1.5px solid var(--brand-orange);
+      border-radius: 50%;
+      color: var(--brand-orange);
+      font-size: 11px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      z-index: 23;
+    }
+
+    /* ==========================================================
+       SIDES ZONE: DEDICATED BOTTOM-LEFT / BELOW WINGS (2 SLOTS)
+       Smooth < 250ms spring scale/fade animations, zero collision
+       ========================================================== */
+    .orbit-side-plate {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      z-index: 16;
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+      transform: scale(0) rotate(-6deg);
+      opacity: 0;
+      pointer-events: none;
+    }
+    .orbit-side-plate.visible {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Cleanly tucked below the wings box and clear of dips and thermometer */
+    .side-slot-0 { bottom: 12px; left: 78px; }
+    .side-slot-1 { bottom: 12px; left: 154px; }
+
+    .side-qty-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      background: var(--brand-orange);
+      color: #FFFFFF;
+      font-size: 11px;
+      font-weight: 900;
+      border-radius: 9999px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--bg-midnight);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      z-index: 22;
+      animation: popInBadge 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .side-overflow-pill {
+      position: absolute;
+      inset: 0;
+      background: rgba(11, 18, 33, 0.94);
+      border: 1.5px solid var(--brand-orange);
+      border-radius: 50%;
+      color: var(--brand-orange);
+      font-size: 12px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+      z-index: 23;
+    }
+
+    @keyframes popInBadge {
+      0% { transform: scale(0); }
+      100% { transform: scale(1); }
+    }
+
+    /* Active Sauce Name Badge on Stage (Top Center above Wings) */
+    .stage-sauce-badge {
+      position: absolute;
+      top: 10px;
+      left: 54%;
+      transform: translateX(-50%);
+      background: rgba(11, 18, 33, 0.88);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(8px);
+      padding: 3px 12px;
+      border-radius: 9999px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 20;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+    .sauce-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    /* ==========================================================
+       LOWER INTERACTIVE CONTROLS (~48% height)
+       ========================================================== */
+    .controls-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 10px 16px 14px;
+      gap: 10px;
+    }
+
+    .category-tabs-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .tab-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: 9999px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-cairo);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .tab-pill.active {
+      background: #FFFFFF;
+      color: #0B1221;
+      border-color: #FFFFFF;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    .tab-counter {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--brand-orange);
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Carousel */
+    .carousel-section {
+      margin-top: 4px;
+      min-height: 114px;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 4px 2px 10px;
+      scroll-snap-type: x mandatory;
+    }
+
+    /* Circular Item Card */
+    .item-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      width: 82px;
+      text-align: center;
+      scroll-snap-align: start;
+    }
+
+    .item-circle {
+      width: 66px;
+      height: 66px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 2px solid var(--border-subtle);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      overflow: visible;
+    }
+    .item-card:active .item-circle {
+      transform: scale(0.92);
+    }
+    .item-card.selected .item-circle {
+      border-color: var(--brand-orange);
+      box-shadow: 0 0 16px rgba(249, 78, 30, 0.45);
+    }
+
+    .item-badge-check {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      min-width: 20px;
+      height: 20px;
+      padding: 0 4px;
+      border-radius: 9999px;
+      background: var(--brand-orange);
+      color: white;
+      font-size: 11px;
+      font-weight: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      z-index: 5;
+    }
+    .item-card.selected .item-badge-check {
+      display: flex;
+    }
+
+    .item-btn-minus {
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #FFFFFF;
+      color: #0B1221;
+      font-size: 13px;
+      font-weight: 900;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+      cursor: pointer;
+      z-index: 5;
+      transition: transform 0.15s ease;
+    }
+    .item-btn-minus:active {
+      transform: scale(0.85);
+    }
+    .item-card.selected .item-btn-minus {
+      display: flex;
+    }
+
+    .item-name {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-white);
+      margin-top: 6px;
+      line-height: 1.2;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .item-price {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--brand-orange);
+      margin-top: 2px;
+    }
+    .item-price.free {
+      color: #10B981;
+    }
+
+    /* Wings Quantity Selector Bar */
+    .quantity-pill-bar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9999px;
+      padding: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2px;
+    }
+
+    .qty-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-cairo);
+      padding: 6px 0;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    .qty-btn.active {
+      background: #FFFFFF;
+      color: #0B1221;
+      font-weight: 900;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Bottom CTA Button */
+    .cta-button {
+      width: 100%;
+      background: var(--brand-orange);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 9999px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 900;
+      font-family: var(--font-cairo);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 8px 20px rgba(249, 78, 30, 0.45);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .cta-button:active {
+      transform: scale(0.98);
+      box-shadow: 0 4px 12px rgba(249, 78, 30, 0.3);
+    }
+
+    /* ==========================================================
+       READY BOXES VIEW (وجبات جاهزة)
+       ========================================================== */
+    .ready-boxes-view {
+      display: none;
+      flex: 1;
+      padding: 10px 16px 20px;
+      overflow-y: auto;
+      gap: 12px;
+      flex-direction: column;
+    }
+    .ready-boxes-view.active {
+      display: flex;
+    }
+
+    .ready-box-card {
+      background: #131E33;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 22px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+    .ready-box-card:hover {
+      border-color: rgba(249, 78, 30, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .box-card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .box-code {
+      font-size: 12px;
+      font-weight: 900;
+      color: #FFFFFF;
+      background: #0B1221;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .box-badge {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--brand-orange);
+      background: rgba(249, 78, 30, 0.15);
+      padding: 3px 8px;
+      border-radius: 9999px;
+    }
+
+    .box-details-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .box-icon-wrap {
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      background: #0B1221;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .box-text-wrap {
+      flex: 1;
+    }
+    .box-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    .box-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      line-height: 1.35;
+    }
+
+    .box-pills-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 6px;
+    }
+    .box-content-pill {
+      font-size: 10px;
+      font-weight: 700;
+      color: #E2E8F0;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    .box-footer-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .box-price {
+      font-size: 17px;
+      font-weight: 900;
+      color: var(--brand-orange);
+    }
+    .box-action-btn {
+      background: var(--brand-orange);
+      color: #FFFFFF;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 800;
+      font-family: var(--font-cairo);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s ease;
+    }
+    .box-action-btn:hover {
+      background: var(--brand-orange-hover);
+    }
+
+    /* Ready Box Customizer Modal */
+    .ready-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 110;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .ready-modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .ready-modal-panel {
+      width: 100%;
+      max-width: 430px;
+      background: #101726;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 16px 20px 24px;
+      max-height: 85vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.32, 1, 0.23, 1);
+    }
+    .ready-modal-overlay.open .ready-modal-panel {
+      transform: translateY(0);
+    }
+
+    /* ==========================================================
+       ORDER SUMMARY & CHECKOUT BOTTOM SHEET DRAWER
+       ========================================================== */
+    .drawer-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.78);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .drawer-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .drawer-panel {
+      width: 100%;
+      max-width: 430px;
+      background: #101726;
+      border-top-left-radius: 28px;
+      border-top-right-radius: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 16px 20px 26px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.32s cubic-bezier(0.32, 1, 0.23, 1);
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+    }
+    .drawer-overlay.open .drawer-panel {
+      transform: translateY(0);
+    }
+
+    .drawer-handle {
+      width: 36px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255, 255, 255, 0.2);
+      margin: 0 auto 14px;
+    }
+
+    .drawer-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .drawer-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+
+    /* Delivery Banner */
+    .delivery-banner {
+      background: rgba(249, 78, 30, 0.12);
+      border: 1px solid rgba(249, 78, 30, 0.3);
+      border-radius: 16px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .delivery-banner-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .delivery-banner-text {
+      flex: 1;
+    }
+    .delivery-banner-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    .delivery-banner-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .badge-price {
+      color: var(--brand-orange);
+      font-weight: 800;
+    }
+
+    .drawer-summary-card {
+      background: #162033;
+      border-radius: 18px;
+      padding: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      margin-bottom: 14px;
+    }
+    .drawer-item-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .drawer-item-row:last-child {
+      border-bottom: none;
+    }
+    .drawer-item-label {
+      color: var(--text-muted);
+    }
+    .drawer-item-value {
+      font-weight: 700;
+      color: #FFFFFF;
+      text-align: left;
+    }
+
+    /* Customer Form */
+    .customer-form-section {
+      background: #141E32;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 16px;
+    }
+    .form-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      font-weight: 800;
+      color: #FFFFFF;
+    }
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+    .form-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #CBD5E1;
+      display: block;
+      margin-bottom: 6px;
+    }
+    .req-star {
+      color: #EF4444;
+      font-weight: 900;
+    }
+    .form-hint {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 500;
+      margin-right: 4px;
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      background: #0B1221;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #FFFFFF;
+      font-family: var(--font-cairo);
+      outline: none;
+      text-align: right;
+      transition: all 0.2s ease;
+    }
+    .form-input:focus, .form-textarea:focus {
+      border-color: var(--brand-orange);
+      box-shadow: 0 0 0 3px rgba(249, 78, 30, 0.2);
+    }
+    .form-input.input-error, .form-textarea.input-error {
+      border-color: #EF4444 !important;
+      background: rgba(239, 68, 68, 0.06);
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.25) !important;
+    }
+    .form-error-msg {
+      font-size: 10px;
+      font-weight: 700;
+      color: #F87171;
+      margin-top: 4px;
+      display: none;
+    }
+    .form-error-msg.visible {
+      display: block;
+      animation: fadeInError 0.2s ease;
+    }
+    @keyframes fadeInError {
+      from { opacity: 0; transform: translateY(-2px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .confirm-btn {
+      width: 100%;
+      background: var(--brand-orange);
+      color: #FFFFFF;
+      border: none;
+      border-radius: 9999px;
+      padding: 14px 20px;
+      font-size: 15px;
+      font-weight: 800;
+      font-family: var(--font-cairo);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 6px 16px rgba(249, 78, 30, 0.4);
+      transition: all 0.2s ease;
+    }
+    .confirm-btn:active {
+      transform: scale(0.98);
+      background: var(--brand-orange-hover);
+    }
+
+    .restaurant-footer-note {
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 10px;
+    }
+
+    /* Order Confirmation Success Screen */
+    .success-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 10px 0;
+    }
+    .success-icon-wrap {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid #10B981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+      animation: popInBadge 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .success-title {
+      font-size: 20px;
+      font-weight: 900;
+      color: #FFFFFF;
+      margin-bottom: 6px;
+    }
+    .order-id-pill {
+      background: #141E32;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 4px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--brand-gold);
+      margin-bottom: 8px;
+    }
+    .eta-text {
+      font-size: 12px;
+      color: #A7F3D0;
+      margin-bottom: 16px;
+    }
+    .success-recap-card {
+      width: 100%;
+      background: #141E32;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 14px;
+      text-align: right;
+      margin-bottom: 16px;
+    }
+    .whatsapp-btn {
+      width: 100%;
+      background: #25D366;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 9999px;
+      padding: 13px 20px;
+      font-size: 14px;
+      font-weight: 800;
+      font-family: var(--font-cairo);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.35);
+      margin-bottom: 10px;
+      transition: background 0.2s ease;
+    }
+    .whatsapp-btn:hover {
+      background: #20BA5A;
+    }
+    .new-order-btn {
+      width: 100%;
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-muted);
+      border-radius: 9999px;
+      padding: 11px 20px;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: var(--font-cairo);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .new-order-btn:hover {
+      color: #FFFFFF;
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sleek Mobile Viewport Container -->
+  <main class="app-viewport">
+
+    <!-- 1. Top Bar -->
+    <header class="top-bar">
+      <button class="icon-btn" onclick="handleGoBack()" title="رجوع" aria-label="رجوع">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+      </button>
+
+      <div class="brand-title-wrap">
+        <div class="brand-title">WINGS</div>
+        <div class="brand-subtitle">المدية، الجزائر</div>
+      </div>
+
+      <div style="display: flex; gap: 8px;">
+        <button class="icon-btn" onclick="handleResetMenu()" title="إعادة تعيين" aria-label="إعادة تعيين">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="1 4 1 10 7 10"></polyline>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+          </svg>
+        </button>
+
+        <button class="icon-btn" onclick="openOrderDrawer()" title="السلة" aria-label="السلة">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <path d="M16 10a4 4 0 0 1-8 0"></path>
+          </svg>
+          <div class="cart-badge" id="cartBadgeCount">1</div>
+        </button>
+      </div>
+    </header>
+
+    <!-- 2. Header Row: MODE SWITCHER (صمّم وجبتك | وجبات جاهزة) -->
+    <section class="header-row">
+      <div>
+        <h1 class="header-headline" id="mainHeaderTitle">صمّم وجبتك</h1>
+        <p class="header-tagline" id="mainHeaderTagline">أجنحة دجاج مقرمشة طازجة</p>
+      </div>
+
+      <!-- Segmented Mode Switcher -->
+      <div class="mode-toggle-container">
+        <div class="mode-slider" id="modeToggleSlider"></div>
+        <button class="mode-toggle-btn active" id="btnModeBuild" onclick="setMode('build')">صمّم وجبتك</button>
+        <button class="mode-toggle-btn" id="btnModeReady" onclick="setMode('ready_boxes')">وجبات جاهزة</button>
+      </div>
+    </section>
+
+    <!-- ========================================================
+         VIEW 1: BUILD YOUR OWN (صمّم وجبتك — Default Active View)
+         ======================================================== -->
+    <div id="buildMealViewWrapper" style="display: flex; flex-direction: column; flex: 1;">
+
+      <!-- 3. TOP-DOWN STAGE (~40%): Zero Overlap & Direct Floating Wings Box (No White Plate) -->
+      <section class="stage-container" aria-label="لوحة عرض الأجنحة التفاعلية">
+        <!-- Ambient Lighting Glow -->
+        <div class="plate-ambient-glow" id="plateAmbientGlow"></div>
+
+        <!-- Dedicated Left Dips Zone (Up to 6 slots in compact 2-column cluster) -->
+        <div class="orbit-ramekin dip-slot-0" id="orbitRamekin0"></div>
+        <div class="orbit-ramekin dip-slot-1" id="orbitRamekin1"></div>
+        <div class="orbit-ramekin dip-slot-2" id="orbitRamekin2"></div>
+        <div class="orbit-ramekin dip-slot-3" id="orbitRamekin3"></div>
+        <div class="orbit-ramekin dip-slot-4" id="orbitRamekin4"></div>
+        <div class="orbit-ramekin dip-slot-5" id="orbitRamekin5"></div>
+
+        <!-- Dedicated Sides Zone: Cleanly tucked below wings box (2 slots) -->
+        <div class="orbit-side-plate side-slot-0" id="orbitSidePlate0"></div>
+        <div class="orbit-side-plate side-slot-1" id="orbitSidePlate1"></div>
+
+        <!-- Main Focal Point: Transparent PNG Wings Box Floating Directly on Dark Navy Stage (No White Plate) -->
+        <div class="main-plate-wrap" id="mainPlateWrap">
+          <!-- Real PNG Image Overlay: Transparent PNG with Soft Realistic Drop Shadow -->
+          <img id="realWingImg" class="real-wing-overlay" src="" alt="Chicken Wings" 
+               onerror="handleWingImgError(this)" 
+               onload="handleWingImgLoad(this)" />
+
+          <!-- Procedural Vector Fallback (ONLY shown if PNG fails, transparent backdrop, no white dish) -->
+          <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240">
+            <defs>
+              <!-- Crispy Golden Wing Base Gradient (Fallback) -->
+              <radialGradient id="crispyWingGrad" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stop-color="#FBBF24"/>
+                <stop offset="40%" stop-color="#D97706"/>
+                <stop offset="80%" stop-color="#B45309"/>
+                <stop offset="100%" stop-color="#78350F"/>
+              </radialGradient>
+
+              <!-- Dynamic Sauce Glaze Gradient (Fallback) -->
+              <radialGradient id="sauceGlazeGrad" cx="30%" cy="25%" r="75%">
+                <stop id="sauceStop0" offset="0%" stop-color="#F97316"/>
+                <stop id="sauceStop1" offset="50%" stop-color="#EA580C"/>
+                <stop id="sauceStop2" offset="100%" stop-color="#9A3412"/>
+              </radialGradient>
+            </defs>
+
+            <!-- Dynamic Procedural Wings Group (SVG Fallback ONLY) -->
+            <g id="wingsGroup" style="display: none; filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));"></g>
+
+            <!-- Steam effect when Spicy is active -->
+            <g id="steamGroup" style="display: none;">
+              <path class="steam-line" d="M100 90 Q105 75 98 60 T104 40" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+              <path class="steam-line" d="M125 85 Q130 68 122 52 T128 35" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6" style="animation-delay: 0.6s;"/>
+              <path class="steam-line" d="M145 92 Q150 78 143 62 T148 45" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5" style="animation-delay: 1.2s;"/>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Dedicated Vertical Spice Thermometer on Right Side -->
+        <div class="spice-thermometer-wrap" id="spiceThermometer" onclick="cycleSpiceLevel()" title="انقر لتبديل مستوى الحرارة">
+          <div class="thermo-header-icon" id="thermoHeaderIcon">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+            </svg>
+          </div>
+          <div class="thermometer-glass">
+            <div class="thermo-ticks-guide">
+              <div class="thermo-tick-line" style="width: 7px;"></div>
+              <div class="thermo-tick-line" style="width: 5px;"></div>
+              <div class="thermo-tick-line" style="width: 7px;"></div>
+              <div class="thermo-tick-line" style="width: 5px;"></div>
+              <div class="thermo-tick-line" style="width: 7px;"></div>
+            </div>
+            <div class="thermo-mercury" id="thermoMercury" style="height: 65%; background: #F97316;"></div>
+          </div>
+          <div class="thermo-bulb" id="thermoBulb" style="border-color: rgba(249, 115, 22, 0.6); box-shadow: 0 0 12px rgba(249, 115, 22, 0.4);">
+            <div class="thermo-bulb-inner" id="thermoBulbInner" style="background: #F97316;"></div>
+          </div>
+          <div class="thermo-label" id="thermoLabel" style="color: #F97316;">حار</div>
+        </div>
+
+        <!-- Active Sauce Name Badge on Stage -->
+        <div class="stage-sauce-badge" id="stageSauceBadge">
+          <span class="sauce-badge-dot" id="stageSauceBadgeDot" style="background-color: #F59E0B;"></span>
+          <span id="stageSauceBadgeText">أجنحة مقرمشة ذهبية</span>
+        </div>
+      </section>
+
+      <!-- 4. LOWER INTERACTIVE CONTROLS (~48%) -->
+      <section class="controls-container">
+
+        <!-- Category Pill Tabs -->
+        <div>
+          <div class="category-tabs-row" role="tablist">
+            <button class="tab-pill active" id="tabSauce" onclick="setActiveTab('sauce')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2v6a3 3 0 0 1-3 3 3 3 0 0 1-3-3V2"/>
+                <path d="M15 2v19"/>
+                <path d="M6 2v19"/>
+                <path d="M9 2a3 3 0 0 0-3 3v2a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+              </svg>
+              <span>صوص الأجنحة</span>
+              <span class="tab-counter" id="badgeSauceCount">1</span>
+            </button>
+
+            <button class="tab-pill" id="tabDips" onclick="setActiveTab('dips')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+              </svg>
+              <span>الصوصات الجانبية</span>
+              <span class="tab-counter" id="badgeDipsCount" style="display: none;">0</span>
+            </button>
+
+            <button class="tab-pill" id="tabSides" onclick="setActiveTab('sides')">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+              </svg>
+              <span>الإضافات</span>
+              <span class="tab-counter" id="badgeSidesCount" style="display: none;">0</span>
+            </button>
+          </div>
+
+          <!-- Circular Item Carousel -->
+          <div class="carousel-section">
+            <div class="carousel-track" id="carouselTrack">
+              <!-- Dynamically populated by renderCarousel() -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Wings Quantity Compact Selector -->
+        <div>
+          <div class="quantity-pill-bar" role="group" aria-label="اختر عدد الأجنحة">
+            <button class="qty-btn" id="qty3" onclick="setWingsCount(3)">3 قطع</button>
+            <button class="qty-btn active" id="qty6" onclick="setWingsCount(6)">6 قطع</button>
+            <button class="qty-btn" id="qty9" onclick="setWingsCount(9)">9 قطع</button>
+            <button class="qty-btn" id="qty12" onclick="setWingsCount(12)">12 قطعة</button>
+            <button class="qty-btn" id="qty20" onclick="setWingsCount(20)">20 قطعة</button>
+          </div>
+        </div>
+
+        <!-- Bottom Full-Width CTA Button -->
+        <div>
+          <button class="cta-button" onclick="openOrderDrawer()">
+            <span>عرض الطلب والتوصيل</span>
+            <span id="ctaPriceText">850 دج</span>
+          </button>
+        </div>
+
+      </section>
+    </div>
+
+    <!-- ========================================================
+         VIEW 2: READY BOXES VIEW (وجبات جاهزة)
+         ======================================================== -->
+    <div class="ready-boxes-view" id="readyBoxesViewWrapper">
+      <!-- Populated dynamically by renderReadyBoxes() -->
+    </div>
+
+  </main>
+
+  <!-- ==========================================================
+       READY BOX CUSTOMIZATION MODAL
+       ========================================================== -->
+  <div class="ready-modal-overlay" id="readyBoxModalOverlay" onclick="handleReadyModalOverlayClick(event)">
+    <div class="ready-modal-panel" id="readyBoxModalPanel">
+      <div class="drawer-handle"></div>
+
+      <div class="drawer-header">
+        <h2 class="drawer-title" id="readyModalTitle">تخصيص البوكس</h2>
+        <button class="icon-btn" onclick="closeReadyBoxModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <p id="readyModalSubtitle" style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;"></p>
+
+      <!-- Sauce Choice -->
+      <div style="margin-bottom: 14px;">
+        <label style="font-size: 12px; font-weight: 800; color: #FFFFFF; display: block; margin-bottom: 8px;">
+          اختر صوص الأجنحة:
+        </label>
+        <div id="readySauceOptions" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px;"></div>
+      </div>
+
+      <!-- Spice Level -->
+      <div style="margin-bottom: 14px;">
+        <label style="font-size: 12px; font-weight: 800; color: #FFFFFF; display: block; margin-bottom: 8px;">
+          اختر درجة الحرارة:
+        </label>
+        <div id="readySpiceOptions" style="display: flex; gap: 6px;"></div>
+      </div>
+
+      <!-- Modal CTA -->
+      <button class="confirm-btn" onclick="handleAddReadyBoxToCart()">
+        <span id="readyModalAddBtnText">أضف البوكس للطلب</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       ORDER SUMMARY & CHECKOUT BOTTOM SHEET DRAWER
+       ========================================================== -->
+  <div class="drawer-overlay" id="orderDrawerOverlay" onclick="handleOverlayClick(event)">
+    <div class="drawer-panel" id="orderDrawerPanel">
+      <div class="drawer-handle"></div>
+
+      <!-- State 1: Active Checkout Form & Itemized Review -->
+      <div id="drawerCheckoutState">
+        <div class="drawer-header">
+          <h2 class="drawer-title">ملخص طلبك</h2>
+          <button class="icon-btn" onclick="closeOrderDrawer()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Delivery Only Banner -->
+        <div class="delivery-banner">
+          <div class="delivery-banner-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="3" width="15" height="13"></rect>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon>
+              <circle cx="5.5" cy="18.5" r="2.5"></circle>
+              <circle cx="18.5" cy="18.5" r="2.5"></circle>
+            </svg>
+          </div>
+          <div class="delivery-banner-text">
+            <div class="delivery-banner-title">خدمة التوصيل السريع داخل ولاية المدية</div>
+            <div class="delivery-banner-subtitle">رسوم التوصيل: <span class="badge-price" id="drawerDeliveryFeeText">200 دج</span> (مضافة للمجموع النهائي)</div>
+          </div>
+        </div>
+
+        <!-- Itemized Summary Card -->
+        <div class="drawer-summary-card" id="drawerSummaryContent">
+          <!-- Filled dynamically -->
+        </div>
+
+        <!-- Customer Details Form (Always Visible) -->
+        <div class="customer-form-section">
+          <div class="form-title-row">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+            <span>معلومات التوصيل (مطلوبة)</span>
+          </div>
+
+          <!-- Phone Number -->
+          <div class="form-group" id="formGroupPhone">
+            <label class="form-label" for="customerPhoneInput">
+              رقم الهاتف <span class="req-star">*</span>
+              <span class="form-hint">(موبيليس، جيزي، أوريدو)</span>
+            </label>
+            <input 
+              type="tel" 
+              id="customerPhoneInput" 
+              class="form-input" 
+              placeholder="05 / 06 / 07 XX XX XX XX" 
+              autocomplete="tel"
+              maxlength="14"
+              oninput="handlePhoneInput(this)"
+            />
+            <div class="form-error-msg" id="errorPhone"></div>
+          </div>
+
+          <!-- Delivery Address -->
+          <div class="form-group" id="formGroupAddress">
+            <label class="form-label" for="customerAddressInput">
+              عنوان التوصيل بالمدية <span class="req-star">*</span>
+            </label>
+            <input 
+              type="text" 
+              id="customerAddressInput" 
+              class="form-input" 
+              placeholder="مثال: حي المصلى، عمارة 4، قرب مسجد النور (المدية)" 
+              autocomplete="street-address"
+              oninput="handleAddressInput(this)"
+            />
+            <div class="form-error-msg" id="errorAddress"></div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label class="form-label" for="customerNotesInput">
+              ملاحظات للمطبخ أو الموصّل (اختياري)
+            </label>
+            <textarea 
+              id="customerNotesInput" 
+              class="form-textarea" 
+              rows="2" 
+              placeholder="مثال: الأجنحة مقرمشة زيادة، الاتصال عند الوصول..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Confirmation CTA -->
+        <button class="confirm-btn" onclick="handleConfirmOrder()" id="btnSubmitOrder">
+          <span>تأكيد الطلب الآن</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </button>
+
+        <p class="restaurant-footer-note">
+          مطعم WINGS — المدية، الجزائر • هاتف: 0555 98 76 54
+        </p>
+      </div>
+
+      <!-- State 2: Order Confirmation Screen -->
+      <div id="drawerSuccessState" style="display: none;">
+        <!-- Populated on successful confirmation -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ==========================================================
+       CENTRALIZED CONFIG & JAVASCRIPT LOGIC
+       ========================================================== -->
+  <script>
+    /**
+     * CENTRALIZED MENU CONFIG
+     * All items, pricing, rules, and optional image paths in DZD (دج).
+     */
+    const MENU_CONFIG = {
+      restaurant: {
+        name: "WINGS",
+        location: "المدية، الجزائر",
+        locationEn: "Médéa, Algeria",
+        currency: "دج",
+        phone: "+213 555 98 76 54",
+        whatsapp: "213555987654",
+      },
+      wingCounts: [
+        { count: 3, label: "3 قطع", price: 350, freeDips: 1 },
+        { count: 6, label: "6 قطع", price: 650, freeDips: 1, isDefault: true },
+        { count: 9, label: "9 قطع", price: 950, freeDips: 2 },
+        { count: 12, label: "12 قطعة", price: 1250, freeDips: 2 },
+        { count: 20, label: "20 قطعة", price: 1950, freeDips: 3 },
+      ],
+      rules: {
+        extraDipPrice: 30, // 30 دج لكل صوص إضافي
+        deliveryFee: 200,   // رسوم التوصيل في ولاية المدية: 200 دج
+      },
+      spiceLevels: [
+        { level: 0, id: "mild", title: "غير حار", titleEn: "Mild", color: "#10B981", mercuryHeight: "26%", glowClass: "" },
+        { level: 1, id: "medium", title: "حار", titleEn: "Medium", color: "#F97316", mercuryHeight: "65%", glowClass: "glow-medium" },
+        { level: 2, id: "extra_hot", title: "حار جداً", titleEn: "Extra Hot", color: "#EF4444", mercuryHeight: "100%", glowClass: "glow-extra-hot" }
+      ],
+      /**
+       * COATING SAUCES: Exactly 4 options with exact IDs: crispy, algeria, bbq, buffalo (Zero Emojis)
+       */
+      coatingSauces: [
+        {
+          id: "crispy",
+          name: "بدون صوص (مقرمش فقط)",
+          nameEn: "Crispy (No Sauce)",
+          color: "#D97706",
+          stops: ["#FBBF24", "#D97706", "#78350F"],
+          isPlain: true,
+          description: "أجنحة ذهبية مقلية مقرمشة بدون أي صوص للحفاظ على القرمشة القصوى",
+        },
+        {
+          id: "algeria",
+          name: "الصوص الجزائرية",
+          nameEn: "Algerian Sauce",
+          color: "#EA580C",
+          stops: ["#FB923C", "#EA580C", "#9A3412"],
+          isSignature: true,
+          badge: "SIGNATURE",
+          description: "صوص مميز بالعلامة، متوازن ومتبل بالبصل والبهارات الجزائرية",
+        },
+        {
+          id: "bbq",
+          name: "باربكيو",
+          nameEn: "Smokey BBQ",
+          color: "#451A03",
+          stops: ["#78350F", "#451A03", "#1C0A02"],
+          description: "صوص باربكيو مدخن غني بالكراميل ولمحة حلاوة خفيفة",
+        },
+        {
+          id: "buffalo",
+          name: "بافالو",
+          nameEn: "Classic Buffalo",
+          color: "#DC2626",
+          stops: ["#EF4444", "#B91C1C", "#7F1D1D"],
+          hasHeatGlow: true,
+          description: "الصوص الأمريكي الكلاسيكي الأصلي بلون أحمر ناري ولذعة لاذعة",
+        },
+      ],
+      /**
+       * SIDE DIPS: Exactly 6 items mapped to /images/dip-${id}.png with automatic fallback
+       */
+      dips: [
+        { id: "buffalo", name: "بافالو", nameEn: "Buffalo", color: "#DC2626", sauceColor: "#EF4444", image: "/images/dip-buffalo.png" },
+        { id: "algeria", name: "الصوص الجزائرية", nameEn: "Algerian Sauce", color: "#EA580C", sauceColor: "#F97316", isSignature: true, image: "/images/dip-algeria.png" },
+        { id: "ranch", name: "رانش", nameEn: "Ranch", color: "#F8FAFC", sauceColor: "#FFFFFF", image: "/images/dip-ranch.png" },
+        { id: "cheese", name: "صوص الجبن", nameEn: "Cheese Sauce", color: "#F59E0B", sauceColor: "#FBBF24", image: "/images/dip-cheese.png" },
+        { id: "bbq", name: "باربكيو", nameEn: "BBQ", color: "#451A03", sauceColor: "#451A03", image: "/images/dip-bbq.png" },
+        { id: "ketchup", name: "كاتشب", nameEn: "Ketchup", color: "#B91C1C", sauceColor: "#DC2626", image: "/images/dip-ketchup.png" },
+      ],
+      /**
+       * SIDES: Exactly 2 items mapped to /images/side-${id}.png with automatic fallback
+       */
+      sides: [
+        { id: "fries", name: "بطاطا مقلية", nameEn: "Fries", price: 200, type: "fries", image: "/images/side-fries.png" },
+        { id: "coleslaw", name: "سلطة الكرنب", nameEn: "Coleslaw", price: 220, type: "coleslaw", image: "/images/side-coleslaw.png" },
+      ],
+      readyBoxes: [
+        {
+          id: "ready_solo",
+          code: "SOLO BOX",
+          nameAr: "سولو بوكس",
+          price: 850,
+          wingsCount: 6,
+          freeDips: 1,
+          description: "6 أجنحة دجاج مقرمشة + بطاطا مقلية + 1 صوص جانبي",
+          serves: "وجبة فردية",
+          badge: "الأكثر طلباً",
+          itemsSummary: ["6 أجنحة", "بطاطا مقلية", "1 صوص"],
+        },
+        {
+          id: "ready_double",
+          code: "DOUBLE BOX",
+          nameAr: "دابل بوكس",
+          price: 1450,
+          wingsCount: 10,
+          freeDips: 2,
+          description: "10 أجنحة دجاج + بطاطا مقلية عائلية + 2 صوص جانبي",
+          serves: "يكفي شخصين",
+          badge: "توفير عائلي",
+          itemsSummary: ["10 أجنحة", "بطاطا عائلية", "2 صوص"],
+        },
+        {
+          id: "ready_friends",
+          code: "FRIENDS BOX",
+          nameAr: "فريندز بوكس",
+          price: 2150,
+          wingsCount: 15,
+          freeDips: 3,
+          description: "15 جناح دجاج + بطاطا كبيرة + 3 صوصات جانبية",
+          serves: "3 إلى 4 أشخاص",
+          badge: "لمة الأصحاب",
+          itemsSummary: ["15 جناح", "بطاطا كبيرة", "3 صوصات"],
+        },
+        {
+          id: "ready_party",
+          code: "PARTY BOX",
+          nameAr: "بارتي بوكس",
+          price: 2750,
+          wingsCount: 20,
+          freeDips: 4,
+          description: "20 جناح دجاج + حصتين بطاطا كبيرة + 4 صوصات جانبية",
+          serves: "4 إلى 6 أشخاص",
+          badge: "الأفضل قيمة",
+          itemsSummary: ["20 جناح", "حصتين بطاطا", "4 صوصات"],
+        },
+      ]
+    };
+
+    /**
+     * IMAGE RESOLUTION HELPER
+     * Supports both Vite local server and direct offline file:// opening.
+     */
+    function resolveImagePath(path) {
+      if (!path) return "";
+      if (window.location.protocol === 'file:') {
+        return path.startsWith('/') ? 'public' + path : 'public/' + path;
+      }
+      return path;
+    }
+
+    function getWingImagePath(sauceId, count) {
+      return resolveImagePath(`/images/wings-${sauceId}-${count}.png`);
+    }
+
+    /**
+     * APPLICATION STATE
+     */
+    let state = {
+      viewMode: "build", // "build" | "ready_boxes"
+      wingsCount: 6,
+      selectedSauceId: "crispy", // default to crispy
+      spiceLevel: 1, // 0: mild, 1: medium, 2: extra_hot
+      selectedDips: {}, // { [dipId]: quantity }
+      selectedSides: {}, // { [sideId]: quantity }
+      activeTab: "sauce", // "sauce" | "dips" | "sides"
+      cartReadyBoxes: [],
+      activeModalBox: null,
+      modalSelectedSauceId: "crispy",
+      modalSelectedSpiceLevel: 1,
+    };
+
+    let currentWingImgLoadedSrc = "";
+
+    /**
+     * INITIALIZATION & IMAGE PRELOADING
+     */
+    window.addEventListener("DOMContentLoaded", () => {
+      preloadAllWingImages();
+      renderAll();
+    });
+
+    /**
+     * PRELOAD ALL 20 WINGS IMAGES FOR INSTANT MOBILE SWITCHING
+     */
+    function preloadAllWingImages() {
+      const sauces = ["crispy", "algeria", "bbq", "buffalo"];
+      const counts = [3, 6, 9, 12, 20];
+      sauces.forEach(s => {
+        counts.forEach(c => {
+          const img = new Image();
+          img.src = getWingImagePath(s, c);
+        });
+      });
+    }
+
+    /**
+     * MAIN RENDER DISPATCHER
+     */
+    function renderAll() {
+      updateModeUI();
+      if (state.viewMode === "build") {
+        renderWingsImage();
+        renderWingsSvg();
+        updateStageSauceBadge();
+        updateThermometerUI();
+        renderOrbitingDips();
+        renderOrbitingSides();
+        renderTabs();
+        renderCarousel();
+        updateQuantityPillBar();
+        updateLivePrice();
+      } else {
+        renderReadyBoxes();
+      }
+      updateCartBadge();
+    }
+
+    /**
+     * MODE SWITCHER (صمّم وجبتك | وجبات جاهزة)
+     */
+    function setMode(mode) {
+      state.viewMode = mode;
+      renderAll();
+    }
+
+    function updateModeUI() {
+      const slider = document.getElementById("modeToggleSlider");
+      const btnBuild = document.getElementById("btnModeBuild");
+      const btnReady = document.getElementById("btnModeReady");
+      const buildWrap = document.getElementById("buildMealViewWrapper");
+      const readyWrap = document.getElementById("readyBoxesViewWrapper");
+      const headline = document.getElementById("mainHeaderTitle");
+      const tagline = document.getElementById("mainHeaderTagline");
+
+      if (state.viewMode === "ready_boxes") {
+        slider.classList.add("ready-pos");
+        btnReady.classList.add("active");
+        btnBuild.classList.remove("active");
+        buildWrap.style.display = "none";
+        readyWrap.classList.add("active");
+        headline.innerText = "البوكسات الجاهزة";
+        tagline.innerText = "عروض كومبو متكاملة وموفرة";
+      } else {
+        slider.classList.remove("ready-pos");
+        btnBuild.classList.add("active");
+        btnReady.classList.remove("active");
+        buildWrap.style.display = "flex";
+        readyWrap.classList.remove("active");
+        headline.innerText = "صمّم وجبتك";
+        tagline.innerText = "أجنحة دجاج مقرمشة طازجة";
+      }
+    }
+
+    /**
+     * VERTICAL SPICE THERMOMETER
+     */
+    function cycleSpiceLevel() {
+      state.spiceLevel = (state.spiceLevel + 1) % 3;
+      updateThermometerUI();
+      renderWingsSvg();
+    }
+
+    function updateThermometerUI() {
+      const current = MENU_CONFIG.spiceLevels[state.spiceLevel];
+      const mercury = document.getElementById("thermoMercury");
+      const bulb = document.getElementById("thermoBulb");
+      const bulbInner = document.getElementById("thermoBulbInner");
+      const label = document.getElementById("thermoLabel");
+      const headerIcon = document.getElementById("thermoHeaderIcon");
+
+      if (!mercury || !bulb) return;
+
+      mercury.style.height = current.mercuryHeight;
+      mercury.style.background = current.color;
+      bulbInner.style.background = current.color;
+      bulb.style.borderColor = current.color;
+      bulb.style.boxShadow = `0 0 12px ${current.color}88`;
+      label.style.color = current.color;
+
+      const flameIcon = `<svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor" style="display:inline-block;vertical-align:-1px;"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>`;
+      const thermoSvg = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/></svg>`;
+
+      headerIcon.innerHTML = thermoSvg;
+
+      if (state.spiceLevel === 0) {
+        label.innerHTML = "<span>غير حار</span>";
+      } else if (state.spiceLevel === 1) {
+        label.innerHTML = `<span style="display:inline-flex;align-items:center;gap:3px;justify-content:center;">حار ${flameIcon}</span>`;
+      } else {
+        label.innerHTML = `<span style="display:inline-flex;align-items:center;gap:3px;justify-content:center;">حار جداً ${flameIcon}${flameIcon}</span>`;
+      }
+    }
+
+    /**
+     * WINGS QUANTITY SELECTOR
+     */
+    function setWingsCount(count) {
+      state.wingsCount = count;
+      const plateWrap = document.getElementById("mainPlateWrap");
+      plateWrap.style.transform = "scale(0.96)";
+      setTimeout(() => { plateWrap.style.transform = "scale(1)"; }, 150);
+      renderAll();
+    }
+
+    function updateQuantityPillBar() {
+      [3, 6, 9, 12, 20].forEach(count => {
+        const btn = document.getElementById("qty" + count);
+        if (btn) btn.classList.toggle("active", state.wingsCount === count);
+      });
+    }
+
+    /**
+     * DYNAMIC REAL WINGS PNG RENDERER WITH < 250ms TRANSITION
+     */
+    function renderWingsImage() {
+      const img = document.getElementById("realWingImg");
+      if (!img) return;
+
+      const targetSrc = getWingImagePath(state.selectedSauceId, state.wingsCount);
+
+      if (currentWingImgLoadedSrc !== targetSrc) {
+        img.classList.add("switching");
+        currentWingImgLoadedSrc = targetSrc;
+        img.src = targetSrc;
+        // Trigger subtle transition removal
+        setTimeout(() => {
+          img.classList.remove("switching");
+        }, 50);
+      }
+    }
+
+    function handleWingImgError(img) {
+      img.style.display = "none";
+      const g = document.getElementById("wingsGroup");
+      if (g) g.style.display = "block";
+    }
+
+    function handleWingImgLoad(img) {
+      img.style.display = "block";
+      img.classList.remove("switching");
+      const g = document.getElementById("wingsGroup");
+      if (g) g.style.display = "none";
+    }
+
+    /**
+     * RENDER PROCEDURAL SVG FALLBACK & AMBIENT EFFECTS
+     */
+    function renderWingsSvg() {
+      const g = document.getElementById("wingsGroup");
+      const glow = document.getElementById("plateAmbientGlow");
+      const steam = document.getElementById("steamGroup");
+
+      const currentSauce = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) || MENU_CONFIG.coatingSauces[0];
+      const isPlain = currentSauce.isPlain;
+
+      // Update SVG glaze gradient stops for fallback
+      const stop0 = document.getElementById("sauceStop0");
+      const stop1 = document.getElementById("sauceStop1");
+      const stop2 = document.getElementById("sauceStop2");
+      if (stop0 && stop1 && stop2 && !isPlain) {
+        stop0.setAttribute("stop-color", currentSauce.stops[0]);
+        stop1.setAttribute("stop-color", currentSauce.stops[1]);
+        stop2.setAttribute("stop-color", currentSauce.stops[2]);
+      }
+
+      // Lighting & Steam VFX
+      glow.className = "plate-ambient-glow";
+      steam.style.display = "none";
+
+      const currentSpice = MENU_CONFIG.spiceLevels[state.spiceLevel];
+      if (currentSpice.glowClass) glow.classList.add(currentSpice.glowClass);
+      if (state.spiceLevel === 2 || (!isPlain && currentSauce.hasSteam)) {
+        steam.style.display = "block";
+      }
+
+      // Fallback SVG Layout
+      const wingLayouts = {
+        3: [[120, 120, 24, 14, -15, true], [98, 114, 22, 13, 35, false], [142, 118, 23, 14, -40, true]],
+        6: [[120, 122, 24, 14, -10, true], [96, 106, 22, 13, 40, false], [144, 104, 23, 14, -45, true], [92, 138, 22, 13, -25, false], [148, 136, 23, 14, 45, true], [120, 92, 21, 13, 15, false]],
+        9: [[120, 120, 23, 14, 0, true], [94, 102, 22, 13, 35, false], [146, 100, 22, 14, -40, true], [88, 136, 21, 13, -25, false], [152, 134, 22, 14, 45, true], [120, 88, 21, 13, 15, false], [76, 118, 20, 12, 55, true], [164, 116, 20, 13, -50, false], [120, 148, 21, 13, -10, true]],
+        12: [[120, 120, 23, 14, 0, true], [94, 102, 22, 13, 35, false], [146, 100, 22, 14, -40, true], [88, 136, 21, 13, -25, false], [152, 134, 22, 14, 45, true], [120, 88, 21, 13, 15, false], [74, 118, 20, 12, 55, true], [166, 116, 20, 13, -50, false], [120, 150, 21, 13, -10, true], [100, 75, 19, 12, 30, true], [140, 75, 19, 12, -30, false], [120, 112, 21, 13, -15, true]],
+        20: [[120, 120, 23, 14, 0, true], [94, 102, 22, 13, 35, false], [146, 100, 22, 14, -40, true], [88, 136, 21, 13, -25, false], [152, 134, 22, 14, 45, true], [120, 88, 21, 13, 15, false], [74, 118, 20, 12, 55, true], [166, 116, 20, 13, -50, false], [120, 150, 21, 13, -10, true], [100, 74, 19, 12, 30, true], [140, 74, 19, 12, -30, false], [72, 94, 19, 12, 45, false], [168, 92, 19, 12, -45, true], [74, 142, 19, 12, -35, true], [166, 140, 19, 12, 35, false], [96, 160, 19, 12, 15, true], [144, 158, 19, 12, -20, false], [108, 114, 21, 13, 10, true], [132, 114, 21, 13, -15, false], [120, 130, 20, 12, 5, true]]
+      };
+
+      const wings = wingLayouts[state.wingsCount] || wingLayouts[6];
+      let svgHtml = "";
+
+      wings.forEach(([cx, cy, rx, ry, rot, isDrum]) => {
+        svgHtml += `
+          <ellipse cx="${cx + 2}" cy="${cy + 4}" rx="${rx + 2}" ry="${ry + 1}" 
+            transform="rotate(${rot} ${cx} ${cy})" fill="#000000" opacity="0.32" />
+          <g transform="rotate(${rot} ${cx} ${cy})">
+            <ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="url(#crispyWingGrad)" />
+            <circle cx="${cx - rx*0.4}" cy="${cy - ry*0.2}" r="3" fill="#FCD34D" opacity="0.7"/>
+            <circle cx="${cx + rx*0.3}" cy="${cy + ry*0.1}" r="3.5" fill="#78350F" opacity="0.6"/>
+            <circle cx="${cx - rx*0.1}" cy="${cy + ry*0.3}" r="2.5" fill="#D97706" opacity="0.8"/>
+            <circle cx="${cx + rx*0.1}" cy="${cy - ry*0.3}" r="3" fill="#FDE68A" opacity="0.6"/>
+            ${isDrum ? `<ellipse cx="${cx + rx - 2}" cy="${cy}" rx="3.5" ry="4" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="0.8"/>` : ''}
+        `;
+
+        if (!isPlain) {
+          svgHtml += `
+            <ellipse class="wing-glaze-layer" cx="${cx}" cy="${cy}" rx="${rx - 1}" ry="${ry - 1}" fill="url(#sauceGlazeGrad)" opacity="0.94" />
+            <path d="M ${cx - rx*0.5} ${cy - ry*0.4} Q ${cx} ${cy - ry*0.7} ${cx + rx*0.4} ${cy - ry*0.3}" 
+              stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round" fill="none" opacity="0.65" />
+          `;
+        }
+
+        svgHtml += `</g>`;
+      });
+
+      g.innerHTML = svgHtml;
+    }
+
+    function updateStageSauceBadge() {
+      const badgeText = document.getElementById("stageSauceBadgeText");
+      const badgeDot = document.getElementById("stageSauceBadgeDot");
+
+      const sauce = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
+      if (sauce) {
+        badgeText.innerText = sauce.name;
+        badgeDot.style.backgroundColor = sauce.color;
+      }
+    }
+
+    /**
+     * DIPS ORBIT WITH REAL PNG & SVG FALLBACK
+     */
+    function renderOrbitingDips() {
+      const distinctDipIds = Object.keys(state.selectedDips).filter(id => state.selectedDips[id] > 0);
+      const maxSlots = 6;
+
+      for (let i = 0; i < maxSlots; i++) {
+        const el = document.getElementById("orbitRamekin" + i);
+        if (!el) continue;
+
+        if (i < distinctDipIds.length) {
+          const dipId = distinctDipIds[i];
+          const qty = state.selectedDips[dipId];
+          const dipObj = MENU_CONFIG.dips.find(d => d.id === dipId) || MENU_CONFIG.dips[0];
+          const qtyBadgeHtml = qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : "";
+
+          el.innerHTML = `
+            ${createRamekinContent(dipObj)}
+            ${qtyBadgeHtml}
+          `;
+          el.classList.add("visible");
+        } else {
+          el.classList.remove("visible");
+          el.innerHTML = "";
+        }
+      }
+    }
+
+    function createRamekinContent(dipObj) {
+      const svg = createRamekinSvg(dipObj.sauceColor);
+      const imgPath = resolveImagePath(dipObj.image || `/images/dip-${dipObj.id}.png`);
+      return `
+        <img src="${imgPath}" alt="${dipObj.name}"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+             onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
+             style="display: none; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55));" />
+        <div style="width: 100%; height: 100%;">${svg}</div>
+      `;
+    }
+
+    function createRamekinSvg(sauceColor) {
+      return `
+        <svg viewBox="0 0 60 60" width="100%" height="100%" style="filter: drop-shadow(0 6px 12px rgba(0,0,0,0.55));">
+          <circle cx="30" cy="32" r="26" fill="#000000" opacity="0.35" />
+          <circle cx="30" cy="30" r="26" fill="${sauceColor}" />
+          <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.2" />
+          <path d="M 18 22 A 14 14 0 0 1 38 18 A 17 17 0 0 0 20 28 Z" fill="#FFFFFF" opacity="0.4" />
+        </svg>
+      `;
+    }
+
+    /**
+     * SIDES ORBIT WITH REAL PNG & SVG FALLBACK
+     */
+    function renderOrbitingSides() {
+      const distinctSideIds = Object.keys(state.selectedSides).filter(id => state.selectedSides[id] > 0);
+      const maxSlots = 2;
+
+      for (let i = 0; i < maxSlots; i++) {
+        const el = document.getElementById("orbitSidePlate" + i);
+        if (!el) continue;
+
+        if (i < distinctSideIds.length) {
+          const sideId = distinctSideIds[i];
+          const qty = state.selectedSides[sideId];
+          const sideObj = MENU_CONFIG.sides.find(s => s.id === sideId) || MENU_CONFIG.sides[0];
+          const qtyBadgeHtml = qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : "";
+
+          el.innerHTML = `
+            ${createSideContent(sideObj)}
+            ${qtyBadgeHtml}
+          `;
+          el.classList.add("visible");
+        } else {
+          el.classList.remove("visible");
+          el.innerHTML = "";
+        }
+      }
+    }
+
+    function createSideContent(sideObj) {
+      const svg = createSidePlateSvg(sideObj ? sideObj.type : "fries");
+      const imgPath = resolveImagePath(sideObj ? (sideObj.image || `/images/side-${sideObj.id}.png`) : "");
+      return `
+        <img src="${imgPath}" alt="${sideObj ? sideObj.name : ''}"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+             onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
+             style="display: none; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));" />
+        <div style="width: 100%; height: 100%;">${svg}</div>
+      `;
+    }
+
+    function createSidePlateSvg(sideType) {
+      let foodContent = "";
+      if (sideType === "fries" || sideType === "fries_seasoned") {
+        foodContent = `
+          <rect x="22" y="28" width="38" height="6.5" rx="2" transform="rotate(-25 41 31)" fill="#FBBF24" stroke="#D97706" stroke-width="0.8"/>
+          <rect x="26" y="38" width="36" height="6.5" rx="2" transform="rotate(15 44 41)" fill="#F59E0B" stroke="#B45309" stroke-width="0.8"/>
+          <rect x="20" y="44" width="36" height="6.5" rx="2" transform="rotate(45 38 47)" fill="#FBBF24"/>
+        `;
+      } else if (sideType === "cheese_fries") {
+        foodContent = `
+          <rect x="22" y="32" width="38" height="6.5" rx="2" transform="rotate(-20 41 35)" fill="#FBBF24"/>
+          <path d="M 24 35 Q 36 28 48 36 Q 54 44 46 50 Q 34 52 26 44 Z" fill="#F59E0B" opacity="0.95"/>
+          <path d="M 28 38 Q 38 32 46 40" stroke="#FDE68A" stroke-width="3" stroke-linecap="round" fill="none"/>
+        `;
+      } else if (sideType === "coleslaw") {
+        foodContent = `
+          <circle cx="42" cy="42" r="19" fill="#F8FAFC"/>
+          <path d="M 28 36 Q 36 34 44 40" stroke="#86EFAC" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+          <path d="M 34 48 Q 44 40 54 42" stroke="#F97316" stroke-width="2" stroke-linecap="round" fill="none"/>
+        `;
+      } else {
+        foodContent = `
+          <ellipse cx="36" cy="38" rx="14" ry="9" fill="#D97706" transform="rotate(-20 36 38)"/>
+          <ellipse cx="36" cy="38" rx="12" ry="7" fill="#FDE68A" transform="rotate(-20 36 38)"/>
+          <ellipse cx="48" cy="46" rx="14" ry="9" fill="#D97706" transform="rotate(25 48 46)"/>
+          <ellipse cx="48" cy="46" rx="12" ry="7" fill="#FDE68A" transform="rotate(25 48 46)"/>
+        `;
+      }
+
+      return `
+        <svg viewBox="0 0 84 84" width="100%" height="100%" style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6));">
+          <circle cx="42" cy="44" r="34" fill="#000000" opacity="0.4"/>
+          <circle cx="42" cy="42" r="34" fill="#131E33"/>
+          <circle cx="42" cy="42" r="33" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
+          ${foodContent}
+        </svg>
+      `;
+    }
+
+    /**
+     * TABS & CAROUSEL RENDERING
+     */
+    function setActiveTab(tab) {
+      state.activeTab = tab;
+      renderTabs();
+      renderCarousel();
+    }
+
+    function renderTabs() {
+      ["sauce", "dips", "sides"].forEach(t => {
+        const el = document.getElementById("tab" + capitalize(t));
+        if (el) el.classList.toggle("active", state.activeTab === t);
+      });
+
+      const badgeSauce = document.getElementById("badgeSauceCount");
+      const badgeDips = document.getElementById("badgeDipsCount");
+      const badgeSides = document.getElementById("badgeSidesCount");
+
+      badgeSauce.innerText = "1";
+      badgeSauce.style.display = "flex";
+
+      const totalDipsCount = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
+      if (totalDipsCount > 0) {
+        badgeDips.style.display = "flex";
+        badgeDips.innerText = totalDipsCount;
+      } else {
+        badgeDips.style.display = "none";
+      }
+
+      const totalSidesCount = Object.values(state.selectedSides).reduce((a, b) => a + b, 0);
+      if (totalSidesCount > 0) {
+        badgeSides.style.display = "flex";
+        badgeSides.innerText = totalSidesCount;
+      } else {
+        badgeSides.style.display = "none";
+      }
+    }
+
+    function updateCartBadge() {
+      const buildCount = 1;
+      const readyBoxesCount = state.cartReadyBoxes.reduce((a, b) => a + (b.quantity || 1), 0);
+      document.getElementById("cartBadgeCount").innerText = buildCount + readyBoxesCount;
+    }
+
+    function renderCarousel() {
+      const track = document.getElementById("carouselTrack");
+      track.innerHTML = "";
+
+      if (state.activeTab === "sauce") {
+        renderSauceCarousel(track);
+      } else if (state.activeTab === "dips") {
+        renderDipsCarousel(track);
+      } else if (state.activeTab === "sides") {
+        renderSidesCarousel(track);
+      }
+    }
+
+    /**
+     * COATING SAUCE CAROUSEL (EXACTLY 4 CHOICES WITH PREVIEWS)
+     */
+    function renderSauceCarousel(track) {
+      MENU_CONFIG.coatingSauces.forEach(sauce => {
+        const isSelected = state.selectedSauceId === sauce.id;
+        const card = document.createElement("div");
+        card.className = "item-card" + (isSelected ? " selected" : "");
+
+        const previewImgSrc = getWingImagePath(sauce.id, 6);
+
+        let fallbackIcon = `
+          <svg width="42" height="42" viewBox="0 0 42 42">
+            <circle cx="21" cy="22" r="16" fill="#000000" opacity="0.3"/>
+            <circle cx="21" cy="20" r="16" fill="${sauce.color}"/>
+            <path d="M 12 16 A 10 10 0 0 1 28 14 A 12 12 0 0 0 14 20 Z" fill="#FFFFFF" opacity="0.4"/>
+          </svg>
+        `;
+
+        card.innerHTML = `
+          <div class="item-circle">
+            <span class="item-badge-check">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <img src="${previewImgSrc}" alt="${sauce.name}"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                 onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
+                 style="display: none; width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
+            <div style="width: 42px; height: 42px;">${fallbackIcon}</div>
+          </div>
+          <div class="item-name">${sauce.name}</div>
+          <div class="item-price free">${sauce.isSignature ? `<span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>مميز</span>` : "مشمول"}</div>
+        `;
+
+        card.onclick = () => {
+          state.selectedSauceId = sauce.id;
+          renderAll();
+        };
+
+        track.appendChild(card);
+      });
+    }
+
+    /**
+     * DIPS CAROUSEL (MULTI-SELECT & UNLIMITED QUANTITIES)
+     */
+    function renderDipsCarousel(track) {
+      const currentWingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
+      const freeAllowance = currentWingsObj.freeDips;
+      const totalSelectedDips = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
+
+      MENU_CONFIG.dips.forEach(dip => {
+        const qty = state.selectedDips[dip.id] || 0;
+        const isSelected = qty > 0;
+        const isFree = totalSelectedDips < freeAllowance;
+        const priceLabel = isFree ? "مجاني" : `+${MENU_CONFIG.rules.extraDipPrice} دج`;
+        const imgPath = resolveImagePath(dip.image || `/images/dip-${dip.id}.png`);
+
+        const card = document.createElement("div");
+        card.className = "item-card" + (isSelected ? " selected" : "");
+
+        card.innerHTML = `
+          <div class="item-circle">
+            <span class="item-badge-check">${qty > 1 ? `×${qty}` : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'}</span>
+            <span class="item-btn-minus" onclick="handleDecrementDip(event, '${dip.id}')">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+            <img src="${imgPath}" alt="${dip.name}"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                 onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
+                 style="display: none; width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
+            <svg width="44" height="44" viewBox="0 0 44 44">
+              <circle cx="22" cy="24" r="17" fill="#000000" opacity="0.35"/>
+              <circle cx="22" cy="22" r="17" fill="#F8FAFC"/>
+              <circle cx="22" cy="22" r="13" fill="${dip.sauceColor}"/>
+              <circle cx="18" cy="18" r="2" fill="#FFFFFF" opacity="0.6"/>
+            </svg>
+          </div>
+          <div class="item-name">${dip.name}</div>
+          <div class="item-price ${isFree ? 'free' : ''}">${priceLabel}</div>
+        `;
+
+        card.onclick = (e) => {
+          if (e.target.classList.contains("item-btn-minus")) return;
+          state.selectedDips[dip.id] = (state.selectedDips[dip.id] || 0) + 1;
+          renderAll();
+        };
+
+        track.appendChild(card);
+      });
+    }
+
+    function handleDecrementDip(e, dipId) {
+      e.stopPropagation();
+      if (!state.selectedDips[dipId]) return;
+      if (state.selectedDips[dipId] > 1) {
+        state.selectedDips[dipId]--;
+      } else {
+        delete state.selectedDips[dipId];
+      }
+      renderAll();
+    }
+
+    /**
+     * SIDES CAROUSEL (MULTI-SELECT & UNLIMITED QUANTITIES)
+     */
+    function renderSidesCarousel(track) {
+      MENU_CONFIG.sides.forEach(side => {
+        const qty = state.selectedSides[side.id] || 0;
+        const isSelected = qty > 0;
+        const imgPath = resolveImagePath(side.image || `/images/side-${side.id}.png`);
+
+        const card = document.createElement("div");
+        card.className = "item-card" + (isSelected ? " selected" : "");
+
+        card.innerHTML = `
+          <div class="item-circle">
+            <span class="item-badge-check">${qty > 1 ? `×${qty}` : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'}</span>
+            <span class="item-btn-minus" onclick="handleDecrementSide(event, '${side.id}')">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </span>
+            <img src="${imgPath}" alt="${side.name}"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                 onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
+                 style="display: none; width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
+            <div style="width: 44px; height: 44px;">
+              ${createSidePlateSvg(side.type)}
+            </div>
+          </div>
+          <div class="item-name">${side.name}</div>
+          <div class="item-price">+${side.price} دج</div>
+        `;
+
+        card.onclick = (e) => {
+          if (e.target.classList.contains("item-btn-minus")) return;
+          state.selectedSides[side.id] = (state.selectedSides[side.id] || 0) + 1;
+          renderAll();
+        };
+
+        track.appendChild(card);
+      });
+    }
+
+    function handleDecrementSide(e, sideId) {
+      e.stopPropagation();
+      if (!state.selectedSides[sideId]) return;
+      if (state.selectedSides[sideId] > 1) {
+        state.selectedSides[sideId]--;
+      } else {
+        delete state.selectedSides[sideId];
+      }
+      renderAll();
+    }
+
+    /**
+     * READY BOXES COMBO MEALS RENDERING
+     */
+    function renderReadyBoxes() {
+      const container = document.getElementById("readyBoxesViewWrapper");
+      container.innerHTML = "";
+
+      MENU_CONFIG.readyBoxes.forEach(box => {
+        const card = document.createElement("div");
+        card.className = "ready-box-card";
+
+        const pillsHtml = box.itemsSummary.map(item => `
+          <span class="box-content-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-left:3px;"><polyline points="20 6 9 17 4 12"></polyline></svg>${item}</span>
+        `).join("");
+
+        card.innerHTML = `
+          <div class="box-card-top">
+            <span class="box-code">${box.code}</span>
+            <span class="box-badge">${box.badge}</span>
+          </div>
+
+          <div class="box-details-row">
+            <div class="box-icon-wrap">
+              <svg width="44" height="44" viewBox="0 0 60 60">
+                <circle cx="30" cy="30" r="26" fill="#F8FAFC"/>
+                <circle cx="30" cy="30" r="21" fill="#E2E8F0"/>
+                <ellipse cx="27" cy="28" rx="10" ry="6" fill="#F59E0B" transform="rotate(-20 27 28)"/>
+                <ellipse cx="33" cy="33" rx="10" ry="6" fill="#EA580C" transform="rotate(25 33 33)"/>
+              </svg>
+            </div>
+
+            <div class="box-text-wrap">
+              <div class="box-title">${box.nameAr}</div>
+              <div class="box-desc">${box.description}</div>
+              <div class="box-pills-wrap">${pillsHtml}</div>
+            </div>
+          </div>
+
+          <div class="box-footer-row">
+            <div class="box-price">${box.price.toLocaleString("fr-DZ")} دج</div>
+            <button class="box-action-btn" onclick="openReadyBoxModal('${box.id}')">
+              <span>تخصيص وطلب</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
+    }
+
+    /**
+     * READY BOX CUSTOMIZER MODAL
+     */
+    function openReadyBoxModal(boxId) {
+      const box = MENU_CONFIG.readyBoxes.find(b => b.id === boxId);
+      if (!box) return;
+
+      state.activeModalBox = box;
+      state.modalSelectedSauceId = "crispy";
+      state.modalSelectedSpiceLevel = 1;
+
+      document.getElementById("readyModalTitle").innerText = `تخصيص ${box.code} (${box.nameAr})`;
+      document.getElementById("readyModalSubtitle").innerText = `${box.description} — السعر: ${box.price} دج`;
+      document.getElementById("readyModalAddBtnText").innerText = `أضف للسلة (${box.price} دج)`;
+
+      const sauceWrap = document.getElementById("readySauceOptions");
+      sauceWrap.innerHTML = "";
+      MENU_CONFIG.coatingSauces.forEach(sauce => {
+        const isSel = state.modalSelectedSauceId === sauce.id;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.style.cssText = `
+          padding: 8px 10px; border-radius: 12px; font-size: 11px; font-weight: 800;
+          font-family: var(--font-cairo); cursor: pointer; text-align: right;
+          border: 1.5px solid ${isSel ? 'var(--brand-orange)' : 'rgba(255,255,255,0.1)'};
+          background: ${isSel ? 'rgba(249, 78, 30, 0.2)' : '#162033'};
+          color: white; transition: all 0.2s;
+        `;
+        btn.innerText = sauce.name;
+        btn.onclick = () => {
+          state.modalSelectedSauceId = sauce.id;
+          openReadyBoxModal(boxId);
+        };
+        sauceWrap.appendChild(btn);
+      });
+
+      const spiceWrap = document.getElementById("readySpiceOptions");
+      spiceWrap.innerHTML = "";
+      MENU_CONFIG.spiceLevels.forEach(spice => {
+        const isSel = state.modalSelectedSpiceLevel === spice.level;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.style.cssText = `
+          flex: 1; padding: 8px 6px; border-radius: 12px; font-size: 11px; font-weight: 800;
+          font-family: var(--font-cairo); cursor: pointer; text-align: center;
+          border: 1.5px solid ${isSel ? spice.color : 'rgba(255,255,255,0.1)'};
+          background: ${isSel ? `${spice.color}25` : '#162033'};
+          color: white; transition: all 0.2s;
+        `;
+        btn.innerText = spice.title;
+        btn.onclick = () => {
+          state.modalSelectedSpiceLevel = spice.level;
+          openReadyBoxModal(boxId);
+        };
+        spiceWrap.appendChild(btn);
+      });
+
+      document.getElementById("readyBoxModalOverlay").classList.add("open");
+    }
+
+    function closeReadyBoxModal() {
+      document.getElementById("readyBoxModalOverlay").classList.remove("open");
+      state.activeModalBox = null;
+    }
+
+    function handleReadyModalOverlayClick(e) {
+      if (e.target.id === "readyBoxModalOverlay") closeReadyBoxModal();
+    }
+
+    function handleAddReadyBoxToCart() {
+      if (!state.activeModalBox) return;
+
+      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.modalSelectedSauceId);
+      const spiceObj = MENU_CONFIG.spiceLevels[state.modalSelectedSpiceLevel];
+
+      state.cartReadyBoxes.push({
+        boxId: state.activeModalBox.id,
+        code: state.activeModalBox.code,
+        nameAr: state.activeModalBox.nameAr,
+        price: state.activeModalBox.price,
+        sauceName: sauceObj ? sauceObj.name : "مقرمش بدون صوص",
+        spiceTitle: spiceObj ? spiceObj.title : "حار",
+        quantity: 1,
+      });
+
+      closeReadyBoxModal();
+      updateCartBadge();
+      updateLivePrice();
+      alert(`تمت إضافة ${state.activeModalBox.nameAr} إلى طلبك بنجاح`);
+    }
+
+    /**
+     * LIVE PRICE CALCULATION (INCLUDING 200 DZD DELIVERY)
+     */
+    function calculateBuildMealTotal() {
+      const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
+      let total = wingsObj.price;
+
+      const freeDips = wingsObj.freeDips;
+      const totalDipsCount = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
+      const extraDipsCount = Math.max(0, totalDipsCount - freeDips);
+      total += extraDipsCount * MENU_CONFIG.rules.extraDipPrice;
+
+      Object.entries(state.selectedSides).forEach(([id, qty]) => {
+        const sideObj = MENU_CONFIG.sides.find(s => s.id === id);
+        if (sideObj) total += sideObj.price * qty;
+      });
+
+      return total;
+    }
+
+    function calculateGrandTotal() {
+      const buildTotal = calculateBuildMealTotal();
+      const readyTotal = state.cartReadyBoxes.reduce((acc, box) => acc + (box.price * (box.quantity || 1)), 0);
+      const deliveryFee = MENU_CONFIG.rules.deliveryFee;
+      return buildTotal + readyTotal + deliveryFee;
+    }
+
+    function updateLivePrice() {
+      const total = calculateGrandTotal();
+      document.getElementById("ctaPriceText").innerText = `${total.toLocaleString("fr-DZ")} دج`;
+      const drawerFee = document.getElementById("drawerDeliveryFeeText");
+      if (drawerFee) drawerFee.innerText = `${MENU_CONFIG.rules.deliveryFee} دج`;
+    }
+
+    /**
+     * ORDER SUMMARY DRAWER & REAL-TIME VALIDATION
+     */
+    function openOrderDrawer() {
+      document.getElementById("drawerCheckoutState").style.display = "block";
+      document.getElementById("drawerSuccessState").style.display = "none";
+
+      const overlay = document.getElementById("orderDrawerOverlay");
+      overlay.classList.add("open");
+
+      const content = document.getElementById("drawerSummaryContent");
+      const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount);
+      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
+      const spiceObj = MENU_CONFIG.spiceLevels[state.spiceLevel];
+
+      // Dips itemized text
+      let dipsListHtml = '<span class="drawer-item-value" style="color: var(--text-muted);">بدون صوصات</span>';
+      const distinctDipIds = Object.keys(state.selectedDips).filter(id => state.selectedDips[id] > 0);
+      const totalDipsCount = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
+      const extraDipsCount = Math.max(0, totalDipsCount - wingsObj.freeDips);
+
+      if (distinctDipIds.length > 0) {
+        const dipNames = distinctDipIds.map(id => {
+          const d = MENU_CONFIG.dips.find(x => x.id === id);
+          const q = state.selectedDips[id];
+          return `${d ? d.name : id} ${q > 1 ? `(×${q})` : ''}`;
+        }).join(" + ");
+
+        const extraNote = extraDipsCount > 0 ? ` <span style="color: var(--brand-orange); font-size: 11px;">(${extraDipsCount} إضافي: +${extraDipsCount * MENU_CONFIG.rules.extraDipPrice} دج)</span>` : ` <span style="color: #10B981; font-size: 11px;">(${wingsObj.freeDips} مشمول)</span>`;
+        dipsListHtml = `<span class="drawer-item-value">${dipNames}${extraNote}</span>`;
+      }
+
+      // Sides itemized text
+      let sidesListHtml = '<span class="drawer-item-value" style="color: var(--text-muted);">بدون إضافات</span>';
+      const distinctSideIds = Object.keys(state.selectedSides).filter(id => state.selectedSides[id] > 0);
+      if (distinctSideIds.length > 0) {
+        const sideItems = distinctSideIds.map(id => {
+          const s = MENU_CONFIG.sides.find(x => x.id === id);
+          const q = state.selectedSides[id];
+          const cost = s ? s.price * q : 0;
+          return `${s ? s.name : id} ${q > 1 ? `(×${q})` : ''} <span style="color: var(--brand-orange); font-size: 11px;">(+${cost} دج)</span>`;
+        }).join("<br/>");
+        sidesListHtml = `<span class="drawer-item-value" style="line-height: 1.4;">${sideItems}</span>`;
+      }
+
+      const buildTotal = calculateBuildMealTotal();
+      const deliveryFee = MENU_CONFIG.rules.deliveryFee;
+      const grandTotal = calculateGrandTotal();
+
+      let html = `
+        <div style="font-size: 13px; font-weight: 800; color: var(--brand-orange); margin-bottom: 8px;">
+          وجبتك المخصصة (${wingsObj.label}) — ${buildTotal.toLocaleString("fr-DZ")} دج
+        </div>
+        <div class="drawer-item-row">
+          <span class="drawer-item-label">صوص الأجنحة:</span>
+          <span class="drawer-item-value">${sauceObj ? sauceObj.name : "مقرمش بدون صوص"}</span>
+        </div>
+        <div class="drawer-item-row">
+          <span class="drawer-item-label">درجة الحرارة (Spice Level):</span>
+          <span class="drawer-item-value" style="color: ${spiceObj.color};">${spiceObj.title}</span>
+        </div>
+        <div class="drawer-item-row">
+          <span class="drawer-item-label">الصوصات الجانبية:</span>
+          ${dipsListHtml}
+        </div>
+        <div class="drawer-item-row" style="align-items: flex-start;">
+          <span class="drawer-item-label" style="padding-top: 2px;">الإضافات:</span>
+          ${sidesListHtml}
+        </div>
+      `;
+
+      if (state.cartReadyBoxes.length > 0) {
+        html += `
+          <div style="font-size: 13px; font-weight: 800; color: var(--brand-gold); margin-top: 12px; margin-bottom: 6px; border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 8px;">
+            البوكسات الجاهزة المضافة:
+          </div>
+        `;
+        state.cartReadyBoxes.forEach((b) => {
+          html += `
+            <div class="drawer-item-row">
+              <span class="drawer-item-label">${b.code} (${b.sauceName} • ${b.spiceTitle}):</span>
+              <span class="drawer-item-value">${b.price.toLocaleString("fr-DZ")} دج</span>
+            </div>
+          `;
+        });
+      }
+
+      html += `
+        <div class="drawer-item-row" style="margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px;">
+          <span class="drawer-item-label">رسوم التوصيل (المدية):</span>
+          <span class="drawer-item-value" style="color: var(--brand-orange);">${deliveryFee} دج</span>
+        </div>
+        <div class="drawer-item-row" style="margin-top: 4px; border-top: 1px solid rgba(255,255,255,0.15); padding-top: 8px;">
+          <span class="drawer-item-label" style="font-weight: 900; color: white;">المجموع الإجمالي للدفع:</span>
+          <span class="drawer-item-value" style="color: var(--brand-orange); font-size: 17px; font-weight: 900;">
+            ${grandTotal.toLocaleString("fr-DZ")} دج
+          </span>
+        </div>
+      `;
+
+      content.innerHTML = html;
+    }
+
+    function closeOrderDrawer() {
+      document.getElementById("orderDrawerOverlay").classList.remove("open");
+    }
+
+    function handleOverlayClick(e) {
+      if (e.target.id === "orderDrawerOverlay") closeOrderDrawer();
+    }
+
+    /**
+     * REAL-TIME FORM INPUT HANDLERS
+     */
+    function handlePhoneInput(input) {
+      input.classList.remove("input-error");
+      const errEl = document.getElementById("errorPhone");
+      if (errEl) {
+        errEl.classList.remove("visible");
+        errEl.innerText = "";
+      }
+    }
+
+    function handleAddressInput(input) {
+      input.classList.remove("input-error");
+      const errEl = document.getElementById("errorAddress");
+      if (errEl) {
+        errEl.classList.remove("visible");
+        errEl.innerText = "";
+      }
+    }
+
+    function showError(inputId, errorId, message) {
+      const input = document.getElementById(inputId);
+      const errorEl = document.getElementById(errorId);
+      if (input) input.classList.add("input-error");
+      if (errorEl) {
+        errorEl.innerText = message;
+        errorEl.classList.add("visible");
+      }
+    }
+
+    /**
+     * ORDER CONFIRMATION & STRICT ALGERIAN VALIDATION
+     */
+    function handleConfirmOrder() {
+      const phoneInput = document.getElementById("customerPhoneInput");
+      const addressInput = document.getElementById("customerAddressInput");
+      const notesInput = document.getElementById("customerNotesInput");
+
+      const rawPhone = phoneInput.value.trim();
+      const rawAddress = addressInput.value.trim();
+      const notes = notesInput ? notesInput.value.trim() : "";
+
+      const cleanPhone = rawPhone.replace(/[\s\-\.\(\)]/g, "");
+      let hasError = false;
+      let firstInvalidInput = null;
+
+      // Validate Phone Number (Algerian Format: 10 digits starting with 05, 06, or 07)
+      if (!cleanPhone) {
+        showError("customerPhoneInput", "errorPhone", "يرجى إدخال رقم الهاتف للتواصل معك لتسليم الطلب");
+        hasError = true;
+        if (!firstInvalidInput) firstInvalidInput = phoneInput;
+      } else if (!/^(05|06|07)[0-9]{8}$/.test(cleanPhone)) {
+        showError("customerPhoneInput", "errorPhone", "رقم هاتف جزائري غير صحيح. يجب أن يتكون من 10 أرقام ويبدأ بـ 05 أو 06 أو 07");
+        hasError = true;
+        if (!firstInvalidInput) firstInvalidInput = phoneInput;
+      }
+
+      // Validate Delivery Address
+      if (!rawAddress || rawAddress.length < 4) {
+        showError("customerAddressInput", "errorAddress", "يرجى كتابة عنوان التوصيل بالتفصيل (الحي، الشارع، المعلم بالمدية)");
+        hasError = true;
+        if (!firstInvalidInput) firstInvalidInput = addressInput;
+      }
+
+      if (hasError) {
+        if (firstInvalidInput) {
+          firstInvalidInput.scrollIntoView({ behavior: "smooth", block: "center" });
+          firstInvalidInput.focus();
+        }
+        return;
+      }
+
+      const orderId = Math.floor(100000 + Math.random() * 900000);
+      const grandTotal = calculateGrandTotal();
+      const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
+      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
+      const spiceObj = MENU_CONFIG.spiceLevels[state.spiceLevel];
+
+      // Build WhatsApp Message (Clean, professional, zero emojis)
+      let msg = `*طلب جديد من مطعم WINGS (المدية)*\n`;
+      msg += `------------------------------------\n`;
+      msg += `• رقم الطلب: #${orderId}\n`;
+      msg += `• نوع الخدمة: توصيل سريع داخل ولاية المدية\n`;
+      msg += `• رقم الهاتف: ${cleanPhone}\n`;
+      msg += `• عنوان التوصيل: ${rawAddress}\n`;
+      if (notes) msg += `• ملاحظات: ${notes}\n`;
+      msg += `------------------------------------\n`;
+      msg += `• الوجبة المخصصة: ${wingsObj.label} (${wingsObj.price} دج)\n`;
+      msg += `  - صوص الأجنحة: ${sauceObj ? sauceObj.name : "مقرمش بدون صوص"}\n`;
+      msg += `  - درجة الحرارة: ${spiceObj.title}\n`;
+
+      const distinctDips = Object.keys(state.selectedDips).filter(id => state.selectedDips[id] > 0);
+      if (distinctDips.length > 0) {
+        msg += `• الصوصات الجانبية:\n`;
+        distinctDips.forEach(id => {
+          const d = MENU_CONFIG.dips.find(x => x.id === id);
+          const qty = state.selectedDips[id];
+          msg += `  - ${d ? d.name : id} ×${qty}\n`;
+        });
+      }
+
+      const distinctSides = Object.keys(state.selectedSides).filter(id => state.selectedSides[id] > 0);
+      if (distinctSides.length > 0) {
+        msg += `• الإضافات:\n`;
+        distinctSides.forEach(id => {
+          const s = MENU_CONFIG.sides.find(x => x.id === id);
+          const qty = state.selectedSides[id];
+          msg += `  - ${s ? s.name : id} ×${qty} (${(s ? s.price * qty : 0)} دج)\n`;
+        });
+      }
+
+      if (state.cartReadyBoxes.length > 0) {
+        msg += `------------------------------------\n`;
+        msg += `• البوكسات الجاهزة:\n`;
+        state.cartReadyBoxes.forEach(b => {
+          msg += `  - ${b.code} (${b.sauceName} | ${b.spiceTitle}) - ${b.price} دج\n`;
+        });
+      }
+
+      msg += `------------------------------------\n`;
+      msg += `تكلفة الوجبات: ${(grandTotal - MENU_CONFIG.rules.deliveryFee).toLocaleString('fr-DZ')} دج\n`;
+      msg += `رسوم التوصيل: ${MENU_CONFIG.rules.deliveryFee} دج\n`;
+      msg += `*المجموع النهائي للدفع: ${grandTotal.toLocaleString('fr-DZ')} دج*\n`;
+      msg += `مطعم WINGS — المدية، الجزائر`;
+
+      const whatsappUrl = `https://wa.me/${MENU_CONFIG.restaurant.whatsapp}?text=${encodeURIComponent(msg)}`;
+
+      renderOrderSuccessScreen(orderId, cleanPhone, rawAddress, notes, grandTotal, whatsappUrl);
+    }
+
+    function renderOrderSuccessScreen(orderId, phone, address, notes, total, whatsappUrl) {
+      document.getElementById("drawerCheckoutState").style.display = "none";
+      const successContainer = document.getElementById("drawerSuccessState");
+      successContainer.style.display = "block";
+
+      successContainer.innerHTML = `
+        <div class="success-screen">
+          <div class="success-icon-wrap">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          </div>
+          
+          <h2 class="success-title">تم تسجيل طلبك بنجاح!</h2>
+          <div class="order-id-pill">رقم الطلب: #${orderId}</div>
+          <p class="eta-text">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-left:4px;">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            وقت التوصيل المقدر: 30 - 45 دقيقة (ولاية المدية)
+          </p>
+
+          <div class="success-recap-card">
+            <div style="font-size: 13px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px;">
+              بيانات التوصيل المسجلة:
+            </div>
+            <div class="drawer-item-row">
+              <span class="drawer-item-label">الهاتف:</span>
+              <span class="drawer-item-value" dir="ltr">${phone}</span>
+            </div>
+            <div class="drawer-item-row">
+              <span class="drawer-item-label">العنوان:</span>
+              <span class="drawer-item-value">${address}</span>
+            </div>
+            ${notes ? `
+              <div class="drawer-item-row">
+                <span class="drawer-item-label">ملاحظات:</span>
+                <span class="drawer-item-value">${notes}</span>
+              </div>
+            ` : ''}
+            <div class="drawer-item-row" style="margin-top: 6px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 6px;">
+              <span class="drawer-item-label" style="font-weight: 800; color: white;">المبلغ للدفع عند الاستلام:</span>
+              <span class="drawer-item-value" style="color: var(--brand-orange); font-size: 16px; font-weight: 900;">
+                ${total.toLocaleString("fr-DZ")} دج
+              </span>
+            </div>
+          </div>
+
+          <a href="${whatsappUrl}" target="_blank" class="whatsapp-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+            </svg>
+            <span>إرسال وتأكيد الطلب عبر واتساب</span>
+          </a>
+
+          <button class="new-order-btn" onclick="handleNewOrder()" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+            <span>طلب وجبة جديدة</span>
+          </button>
+        </div>
+      `;
+    }
+
+    function handleNewOrder() {
+      handleResetMenu();
+      document.getElementById("customerPhoneInput").value = "";
+      document.getElementById("customerAddressInput").value = "";
+      if (document.getElementById("customerNotesInput")) {
+        document.getElementById("customerNotesInput").value = "";
+      }
+      closeOrderDrawer();
+    }
+
+    function handleResetMenu() {
+      state.wingsCount = 6;
+      state.selectedSauceId = "crispy";
+      state.spiceLevel = 1;
+      state.selectedDips = {};
+      state.selectedSides = {};
+      state.activeTab = "sauce";
+      state.cartReadyBoxes = [];
+      currentWingImgLoadedSrc = "";
+      renderAll();
+    }
+
+    function handleGoBack() {
+      if (confirm("هل ترغب في إعادة ضبط الوجبة والعودة للبداية؟")) {
+        handleResetMenu();
+      }
+    }
+
+    function capitalize(s) {
+      return s.charAt(0).toUpperCase() + s.slice(1);
+    }
+  </script>
+</body>
+</html>
