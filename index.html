@@ -1707,9 +1707,24 @@
     }
 
   </style>
+  <script>
+    if (window.location.pathname.startsWith('/admin')) {
+      document.documentElement.classList.add('is-admin-route');
+    }
+  </script>
+  <style>
+    html.is-admin-route #customer-storefront {
+      display: none !important;
+    }
+    html.is-admin-route #admin-root {
+      display: block !important;
+    }
+  </style>
 </head>
 <body>
 
+  <!-- Customer Storefront Wrapper -->
+  <div id="customer-storefront" style="width: 100%; display: flex; justify-content: center;">
   <!-- Sleek Mobile Viewport Container -->
   <main class="app-viewport">
 
@@ -1744,6 +1759,16 @@
         </button>
       </div>
     </header>
+
+    <!-- Store Closed Alert Banner (driven by Supabase store_settings.is_open) -->
+    <div id="storeClosedBanner" style="display: none; align-items: center; justify-content: center; gap: 8px; background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.35); color: #FCA5A5; padding: 10px 14px; border-radius: 12px; margin: 4px 18px 8px; font-size: 13px; font-weight: 700;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <line x1="12" y1="8" x2="12" y2="12"></line>
+        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+      </svg>
+      <span>المطعم مغلق حالياً — يمكنك استعراض القائمة وسنعاود استقبال الطلبات قريباً</span>
+    </div>
 
     <!-- 2. Header Row: MODE SWITCHER (صمّم وجبتك | وجبات جاهزة) -->
     <section class="header-row">
@@ -2121,6 +2146,10 @@
 
     </div>
   </div>
+  </div><!-- /customer-storefront -->
+
+  <!-- Admin Dashboard React Root -->
+  <div id="admin-root" style="display: none; width: 100%; min-height: 100vh;"></div>
 
   <!-- ==========================================================
        CENTRALIZED CONFIG & JAVASCRIPT LOGIC
@@ -2300,6 +2329,9 @@
       activeModalBox: null,
       modalSelectedSauceId: "crispy",
       modalSelectedSpiceLevel: 1,
+      storeSettings: null,
+      dbMenuItems: [],
+      isStoreOpen: true,
     };
 
     let currentWingImgLoadedSrc = "";
@@ -2308,11 +2340,156 @@
      * INITIALIZATION, CART RESTORATION & COMPLETE PNG ASSET PRELOADING
      */
     window.addEventListener("DOMContentLoaded", () => {
+      if (window.location.pathname.startsWith("/admin")) return;
       loadCartFromStorage();
       preloadAllAssets();
       renderAll();
       updateCartBadge();
+      if (window.supabase) {
+        initSupabaseStorefront();
+      }
     });
+
+    window.addEventListener("supabase-ready", () => {
+      initSupabaseStorefront();
+    });
+
+    /**
+     * DYNAMIC SUPABASE INTEGRATION (STORE SETTINGS & MENU ITEMS)
+     */
+    async function initSupabaseStorefront() {
+      if (window.location.pathname.startsWith("/admin")) return;
+      if (!window.supabase) return;
+
+      try {
+        // 1. Fetch store_settings (ID 1)
+        const { data: settings, error: sErr } = await window.supabase
+          .from("store_settings")
+          .select("*")
+          .eq("id", 1)
+          .maybeSingle();
+
+        if (!sErr && settings) {
+          state.storeSettings = settings;
+          if (typeof settings.delivery_fee === "number") {
+            MENU_CONFIG.rules.deliveryFee = settings.delivery_fee;
+          }
+          applyStoreOpenStatus(settings.is_open !== false);
+        }
+
+        // 2. Fetch menu_items from Supabase
+        const { data: items, error: mErr } = await window.supabase
+          .from("menu_items")
+          .select("*")
+          .order("sort_order", { ascending: true });
+
+        if (!mErr && items && items.length > 0) {
+          applyMenuItemsToConfig(items);
+          renderAll();
+        }
+      } catch (err) {
+        console.error("Failed to load storefront data from Supabase:", err);
+      }
+    }
+    window.initSupabaseStorefront = initSupabaseStorefront;
+
+    function applyStoreOpenStatus(isOpen) {
+      state.isStoreOpen = isOpen;
+      const banner = document.getElementById("storeClosedBanner");
+      const btnAddToCart = document.getElementById("btnAddToCart");
+
+      if (!isOpen) {
+        if (banner) banner.style.display = "flex";
+        if (btnAddToCart) {
+          btnAddToCart.style.opacity = "0.55";
+          btnAddToCart.style.cursor = "not-allowed";
+        }
+      } else {
+        if (banner) banner.style.display = "none";
+        if (btnAddToCart) {
+          btnAddToCart.style.opacity = "1";
+          btnAddToCart.style.cursor = "pointer";
+        }
+      }
+      updateLivePrice();
+    }
+
+    function applyMenuItemsToConfig(items) {
+      state.dbMenuItems = items;
+
+      items.forEach(dbItem => {
+        const isAvail = dbItem.is_available !== false;
+        const priceNum = typeof dbItem.price === "number" ? dbItem.price : null;
+
+        if (dbItem.category === "wings_count") {
+          const match = MENU_CONFIG.wingCounts.find(w => {
+            const numMatch = dbItem.name_ar.match(/\d+/);
+            return numMatch ? w.count === parseInt(numMatch[0]) : false;
+          });
+          if (match) {
+            if (priceNum !== null) match.price = priceNum;
+            match.is_available = isAvail;
+          }
+        } else if (dbItem.category === "coating_sauce") {
+          const name = dbItem.name_ar;
+          let sId = null;
+          if (name.includes("كريسبي")) sId = "crispy";
+          else if (name.includes("جزائرية")) sId = "algeria";
+          else if (name.includes("باربكيو")) sId = "bbq";
+          else if (name.includes("بافالو")) sId = "buffalo";
+
+          if (sId) {
+            const match = MENU_CONFIG.coatingSauces.find(s => s.id === sId);
+            if (match) match.is_available = isAvail;
+          }
+        } else if (dbItem.category === "dips") {
+          const name = dbItem.name_ar;
+          let dId = null;
+          if (name.includes("بافالو")) dId = "buffalo";
+          else if (name.includes("هوني") || name.includes("ماسترد")) dId = "honey-mustard";
+          else if (name.includes("رانش")) dId = "ranch";
+          else if (name.includes("جبن")) dId = "cheese";
+          else if (name.includes("باربكيو")) dId = "bbq";
+          else if (name.includes("كاتشب")) dId = "ketchup";
+
+          if (dId) {
+            const match = MENU_CONFIG.dips.find(d => d.id === dId);
+            if (match) {
+              if (priceNum !== null) match.price = priceNum;
+              match.is_available = isAvail;
+            }
+          }
+        } else if (dbItem.category === "sides") {
+          const name = dbItem.name_ar;
+          let sId = null;
+          if (name.includes("بطاطا")) sId = "fries";
+          else if (name.includes("كرنب") || name.includes("كولسلو")) sId = "coleslaw";
+
+          if (sId) {
+            const match = MENU_CONFIG.sides.find(s => s.id === sId);
+            if (match) {
+              if (priceNum !== null) match.price = priceNum;
+              match.is_available = isAvail;
+            }
+          }
+        } else if (dbItem.category === "ready_boxes") {
+          const name = dbItem.name_ar;
+          let bId = null;
+          if (name.includes("سولو") || name.includes("SOLO")) bId = "ready_solo";
+          else if (name.includes("دابل") || name.includes("DOUBLE")) bId = "ready_double";
+          else if (name.includes("فريندز") || name.includes("FRIENDS")) bId = "ready_friends";
+          else if (name.includes("ميغا") || name.includes("MEGA") || name.includes("بارتي") || name.includes("PARTY")) bId = "ready_party";
+
+          if (bId) {
+            const match = MENU_CONFIG.readyBoxes.find(b => b.id === bId);
+            if (match) {
+              if (priceNum !== null) match.price = priceNum;
+              match.is_available = isAvail;
+            }
+          }
+        }
+      });
+    }
 
     function loadCartFromStorage() {
       try {
@@ -2500,6 +2677,11 @@
      * WINGS QUANTITY SELECTOR
      */
     function setWingsCount(count) {
+      const wObj = MENU_CONFIG.wingCounts.find(w => w.count === count);
+      if (wObj && wObj.is_available === false) {
+        showToast("هذا الحجم غير متوفر حالياً");
+        return;
+      }
       state.wingsCount = count;
       const img = document.getElementById("realWingImg");
       if (img) {
@@ -2512,7 +2694,20 @@
     function updateQuantityPillBar() {
       [3, 6, 9, 12, 20].forEach(count => {
         const btn = document.getElementById("qty" + count);
-        if (btn) btn.classList.toggle("active", state.wingsCount === count);
+        if (btn) {
+          const wObj = MENU_CONFIG.wingCounts.find(w => w.count === count);
+          const isAvail = !wObj || wObj.is_available !== false;
+          btn.classList.toggle("active", state.wingsCount === count);
+          if (!isAvail) {
+            btn.style.opacity = "0.35";
+            btn.style.pointerEvents = "none";
+            btn.title = "غير متوفر";
+          } else {
+            btn.style.opacity = "1";
+            btn.style.pointerEvents = "auto";
+            btn.title = "";
+          }
+        }
       });
     }
 
@@ -2826,8 +3021,14 @@
     function renderSauceCarousel(track) {
       MENU_CONFIG.coatingSauces.forEach(sauce => {
         const isSelected = state.selectedSauceId === sauce.id;
+        const isAvail = sauce.is_available !== false;
         const card = document.createElement("div");
         card.className = "item-card" + (isSelected ? " selected" : "");
+        if (!isAvail) {
+          card.style.opacity = "0.45";
+          card.style.filter = "grayscale(0.7)";
+          card.style.cursor = "not-allowed";
+        }
 
         const previewImgSrc = getWingImagePath(sauce.id, 6);
 
@@ -2842,10 +3043,14 @@
                  style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${sauce.name}</div>
-          <div class="item-price free">${sauce.subtitle ? sauce.subtitle : (sauce.isSignature ? `<span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>مميز</span>` : "مشمول")}</div>
+          <div class="item-price free">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : (sauce.subtitle ? sauce.subtitle : (sauce.isSignature ? `<span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>مميز</span>` : "مشمول"))}</div>
         `;
 
         card.onclick = () => {
+          if (!isAvail) {
+            showToast("هذا الصوص غير متوفر حالياً");
+            return;
+          }
           state.selectedSauceId = sauce.id;
           renderAll();
         };
@@ -2865,12 +3070,18 @@
       MENU_CONFIG.dips.forEach(dip => {
         const qty = state.selectedDips[dip.id] || 0;
         const isSelected = qty > 0;
+        const isAvail = dip.is_available !== false;
         const isFree = totalSelectedDips < freeAllowance;
-        const priceLabel = isFree ? "مجاني" : `+${MENU_CONFIG.rules.extraDipPrice} دج`;
+        const priceLabel = !isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : (isFree ? "مجاني" : `+${MENU_CONFIG.rules.extraDipPrice} دج`);
         const imgPath = resolveImagePath(dip.image || `/images/dip-${dip.id}.png`);
 
         const card = document.createElement("div");
         card.className = "item-card" + (isSelected ? " selected" : "");
+        if (!isAvail) {
+          card.style.opacity = "0.45";
+          card.style.filter = "grayscale(0.7)";
+          card.style.cursor = "not-allowed";
+        }
 
         card.innerHTML = `
           <div class="item-circle">
@@ -2882,11 +3093,15 @@
                  style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${dip.name}</div>
-          <div class="item-price ${isFree ? 'free' : ''}">${priceLabel}</div>
+          <div class="item-price ${isFree && isAvail ? 'free' : ''}">${priceLabel}</div>
         `;
 
         card.onclick = (e) => {
           if (e.target.classList.contains("item-btn-minus") || e.target.closest(".item-btn-minus")) return;
+          if (!isAvail) {
+            showToast("هذا الصوص الجانبي غير متوفر حالياً");
+            return;
+          }
           const currentTotalDips = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
           const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
           if (currentTotalDips >= wingsObj.freeDips) {
@@ -2918,10 +3133,16 @@
       MENU_CONFIG.sides.forEach(side => {
         const qty = state.selectedSides[side.id] || 0;
         const isSelected = qty > 0;
+        const isAvail = side.is_available !== false;
         const imgPath = resolveImagePath(side.image || `/images/side-${side.id}.png`);
 
         const card = document.createElement("div");
         card.className = "item-card" + (isSelected ? " selected" : "");
+        if (!isAvail) {
+          card.style.opacity = "0.45";
+          card.style.filter = "grayscale(0.7)";
+          card.style.cursor = "not-allowed";
+        }
 
         card.innerHTML = `
           <div class="item-circle">
@@ -2933,11 +3154,15 @@
                  style="width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${side.name}</div>
-          <div class="item-price">+${side.price} دج</div>
+          <div class="item-price">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : `+${side.price} دج`}</div>
         `;
 
         card.onclick = (e) => {
           if (e.target.classList.contains("item-btn-minus") || e.target.closest(".item-btn-minus")) return;
+          if (!isAvail) {
+            showToast("هذه الإضافة غير متوفرة حالياً");
+            return;
+          }
           showFloatingPriceFeedback(`+${side.price} دج`, e);
           state.selectedSides[side.id] = (state.selectedSides[side.id] || 0) + 1;
           renderAll();
@@ -2966,8 +3191,12 @@
       container.innerHTML = "";
 
       MENU_CONFIG.readyBoxes.forEach(box => {
+        const isAvail = box.is_available !== false;
         const card = document.createElement("div");
         card.className = "ready-box-card";
+        if (!isAvail) {
+          card.style.opacity = "0.55";
+        }
 
         const pillsHtml = box.itemsSummary.map(item => `
           <span class="box-content-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-left:3px;"><polyline points="20 6 9 17 4 12"></polyline></svg>${item}</span>
@@ -2976,7 +3205,7 @@
         card.innerHTML = `
           <div class="box-card-top">
             <span class="box-code">${box.code}</span>
-            <span class="box-badge">${box.badge}</span>
+            <span class="box-badge" ${!isAvail ? 'style="background: #EF4444; color: white;"' : ''}>${!isAvail ? 'غير متوفر' : box.badge}</span>
           </div>
 
           <div class="box-details-row">
@@ -2998,8 +3227,8 @@
 
           <div class="box-footer-row">
             <div class="box-price">${box.price.toLocaleString("fr-DZ")} دج</div>
-            <button class="box-action-btn" onclick="openReadyBoxModal('${box.id}')">
-              <span>تخصيص وطلب</span>
+            <button class="box-action-btn" ${!isAvail ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : `onclick="openReadyBoxModal('${box.id}')"`}>
+              <span>${!isAvail ? 'غير متوفر حالياً' : 'تخصيص وطلب'}</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </button>
           </div>
@@ -3079,6 +3308,10 @@
     }
 
     function handleAddReadyBoxToCart() {
+      if (state.isStoreOpen === false) {
+        showToast("المطعم مغلق حالياً — سنعاود استقبال الطلبات قريباً");
+        return;
+      }
       if (!state.activeModalBox) return;
 
       const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.modalSelectedSauceId) || MENU_CONFIG.coatingSauces[0];
@@ -3113,6 +3346,10 @@
      * ADD CURRENT CUSTOM CONFIGURED MEAL TO CART
      */
     function handleAddToCart(event) {
+      if (state.isStoreOpen === false) {
+        showToast("المطعم مغلق حالياً — سنعاود استقبال الطلبات قريباً");
+        return;
+      }
       const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
       const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) || MENU_CONFIG.coatingSauces[0];
       const spiceObj = MENU_CONFIG.spiceLevels[state.spiceLevel];
@@ -3335,13 +3572,23 @@
 
       content.innerHTML = itemsHtml;
       if (submitBtn) {
-        submitBtn.innerHTML = `
-          <span>تأكيد الطلب الآن</span>
-          <span>(${grandTotal.toLocaleString("fr-DZ")} دج)</span>
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        `;
+        if (state.isStoreOpen === false) {
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = "0.55";
+          submitBtn.style.cursor = "not-allowed";
+          submitBtn.innerHTML = `<span>المطعم مغلق حالياً</span>`;
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = "1";
+          submitBtn.style.cursor = "pointer";
+          submitBtn.innerHTML = `
+            <span>تأكيد الطلب الآن</span>
+            <span>(${grandTotal.toLocaleString("fr-DZ")} دج)</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+          `;
+        }
       }
     }
 
@@ -3409,7 +3656,12 @@
     /**
      * ORDER CONFIRMATION & STRICT ALGERIAN VALIDATION
      */
-    function handleConfirmOrder() {
+    async function handleConfirmOrder() {
+      if (state.isStoreOpen === false) {
+        alert("المطعم مغلق حالياً — سنعاود استقبال الطلبات قريباً");
+        return;
+      }
+
       const phoneInput = document.getElementById("customerPhoneInput");
       const addressInput = document.getElementById("customerAddressInput");
       const notesInput = document.getElementById("customerNotesInput");
@@ -3453,11 +3705,83 @@
         return;
       }
 
+      const submitBtn = document.getElementById("btnSubmitOrder");
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `<span>جارٍ تسجيل الطلب...</span>`;
+      }
+
       const orderId = Math.floor(100000 + Math.random() * 900000);
       const subtotal = calculateCartSubtotal();
       const grandTotal = subtotal + MENU_CONFIG.rules.deliveryFee;
+      const orderedItems = [...state.cartItems];
 
-      // Build WhatsApp Message (Clean, professional, zero emojis)
+      // 1. Insert into Supabase 'orders' table (anon insert without .select())
+      if (window.supabase) {
+        try {
+          const orderPayload = {
+            order_number: `#${orderId}`,
+            customer_phone: cleanPhone,
+            customer_address: rawAddress,
+            notes: notes || "",
+            items: orderedItems,
+            subtotal: subtotal,
+            delivery_fee: MENU_CONFIG.rules.deliveryFee,
+            total: grandTotal,
+            status: "new",
+          };
+
+          const { error: insertErr } = await window.supabase.from("orders").insert(orderPayload);
+          if (insertErr) {
+            console.error("Supabase insert order error:", insertErr);
+          } else {
+            console.log("Order saved to Supabase successfully!");
+          }
+        } catch (e) {
+          console.error("Failed to save order to Supabase:", e);
+        }
+      }
+
+      // 2. Trigger Telegram Alert if credentials are configured
+      if (state.storeSettings && state.storeSettings.telegram_bot_token && state.storeSettings.telegram_chat_id) {
+        try {
+          let teleText = `🍗 *طلب جديد #${orderId}*\n`;
+          teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
+          teleText += `📞 *الهاتف:* \`${cleanPhone}\`\n`;
+          teleText += `📍 *العنوان:* ${rawAddress}\n`;
+          if (notes) teleText += `📝 *ملاحظات:* ${notes}\n`;
+          teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
+          teleText += `📦 *الوجبات (${orderedItems.length}):*\n`;
+          orderedItems.forEach((it, idx) => {
+            const lTot = it.unitPrice * (it.qty || 1);
+            teleText += `• [${idx + 1}] *${it.title}* (×${it.qty || 1}) — ${lTot} دج\n`;
+            if (it.type === "custom") {
+              teleText += `   - حرارة: ${it.spiceTitle}\n`;
+            } else {
+              teleText += `   - صوص: ${it.sauceName} • حرارة: ${it.spiceTitle}\n`;
+            }
+          });
+          teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
+          teleText += `💰 *المجموع الفرعي:* ${subtotal.toLocaleString("fr-DZ")} دج\n`;
+          teleText += `🛵 *التوصيل:* ${MENU_CONFIG.rules.deliveryFee} دج\n`;
+          teleText += `💵 *المجموع النهائي:* *${grandTotal.toLocaleString("fr-DZ")} دج*\n`;
+          teleText += `⏰ *الوقت:* ${new Date().toLocaleTimeString("ar-DZ")}\n`;
+
+          await fetch(`https://api.telegram.org/bot${state.storeSettings.telegram_bot_token}/sendMessage`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              chat_id: state.storeSettings.telegram_chat_id,
+              text: teleText,
+              parse_mode: "Markdown"
+            })
+          });
+        } catch (tErr) {
+          console.error("Telegram notification error:", tErr);
+        }
+      }
+
+      // 3. Build WhatsApp Message (Clean, professional, zero emojis)
       let msg = `*طلب جديد من مطعم WINGS (المدية)*\n`;
       msg += `------------------------------------\n`;
       msg += `• رقم الطلب: #${orderId}\n`;
@@ -3468,7 +3792,7 @@
       msg += `------------------------------------\n`;
       msg += `• وجبات الطلب (${getCartCount()}):\n`;
 
-      state.cartItems.forEach((item, index) => {
+      orderedItems.forEach((item, index) => {
         const lineTotal = item.unitPrice * (item.qty || 1);
         if (item.type === "custom") {
           msg += `[${index + 1}] ${item.title} (×${item.qty || 1}) — ${lineTotal} دج\n`;
@@ -3480,7 +3804,7 @@
               const d = MENU_CONFIG.dips.find(x => x.id === id);
               return `${d ? d.name : id} ×${item.selectedDips[id]}`;
             }).join(", ");
-            msg += `    - الصوصات: ${dipsStr}\n`;
+            msg += `    - الصصوصات: ${dipsStr}\n`;
           }
 
           const distinctSides = item.selectedSides ? Object.keys(item.selectedSides).filter(id => item.selectedSides[id] > 0) : [];
@@ -3506,8 +3830,7 @@
 
       const whatsappUrl = `https://api.whatsapp.com/send?phone=${MENU_CONFIG.restaurant.whatsapp}&text=${encodeURIComponent(msg)}`;
 
-      // Clear Cart Upon Successful Order
-      const orderedItems = [...state.cartItems];
+      // 4. Clear Cart Upon Successful Order
       state.cartItems = [];
       saveCartToStorage();
       updateCartBadge();
@@ -3636,5 +3959,8 @@
       return s.charAt(0).toUpperCase() + s.slice(1);
     }
   </script>
+
+  <!-- Vite Main Entry Point (Mounts /admin when on /admin, exposes window.supabase) -->
+  <script type="module" src="/src/main.jsx"></script>
 </body>
 </html>
