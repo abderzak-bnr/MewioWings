@@ -1724,7 +1724,7 @@
        * SIDES: Exactly 2 items mapped to /images/side-${id}.png with automatic fallback
        */
       sides: [
-        { id: "fries", name: "بطاطا مقلية", nameEn: "Fries", price: 200, type: "fries", image: "/images/side-fries.png" },
+        { id: "fries", name: "بطاطا مقلية", nameEn: "Fries", price: 200, type: "fries", image: "/images/side-fries.png?v=2" },
         { id: "coleslaw", name: "سلطة الكرنب", nameEn: "Coleslaw", price: 220, type: "coleslaw", image: "/images/side-coleslaw.png" },
       ],
       readyBoxes: [
@@ -1786,7 +1786,8 @@
     function resolveImagePath(path) {
       if (!path) return "";
       if (window.location.protocol === 'file:') {
-        return path.startsWith('/') ? 'public' + path : 'public/' + path;
+        const cleanPath = path.split('?')[0];
+        return cleanPath.startsWith('/') ? 'public' + cleanPath : 'public/' + cleanPath;
       }
       return path;
     }
