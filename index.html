@@ -603,6 +603,90 @@
       min-height: 114px;
     }
 
+    /* Dips Free Allowance Banner */
+    .dips-allowance-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 12px;
+      margin-bottom: 8px;
+      border-radius: 12px;
+      font-size: 11.5px;
+      font-weight: 800;
+      font-family: var(--font-cairo);
+      color: #FFFFFF;
+      background: rgba(249, 78, 30, 0.12);
+      border: 1px solid rgba(249, 78, 30, 0.3);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      transition: all 0.25s ease;
+    }
+
+    .dips-allowance-banner.quota-filled {
+      background: rgba(16, 185, 129, 0.12);
+      border-color: rgba(16, 185, 129, 0.35);
+      color: #E2E8F0;
+    }
+
+    .dips-allowance-banner.special-offer {
+      background: linear-gradient(90deg, rgba(234, 88, 12, 0.25), rgba(245, 158, 11, 0.2));
+      border-color: rgba(245, 158, 11, 0.45);
+    }
+
+    .allowance-content {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      min-width: 0;
+      flex: 1;
+      text-align: right;
+    }
+
+    .allowance-badge-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background: rgba(249, 78, 30, 0.2);
+      color: var(--brand-orange);
+    }
+
+    .allowance-badge-icon.special {
+      background: rgba(245, 158, 11, 0.25);
+      color: #FBBF24;
+    }
+
+    .allowance-text {
+      font-size: 11.5px;
+      font-weight: 800;
+      line-height: 1.35;
+      color: inherit;
+    }
+
+    .allowance-counter-pill {
+      font-size: 10.5px;
+      font-weight: 900;
+      padding: 3px 9px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
+      flex-shrink: 0;
+      letter-spacing: 0.5px;
+    }
+
+    .allowance-counter-pill.filled {
+      background: #10B981;
+      color: #FFFFFF;
+    }
+
+    .allowance-counter-pill.special {
+      background: #F59E0B;
+      color: #111827;
+    }
+
     .carousel-track {
       display: flex;
       gap: 12px;
@@ -1954,6 +2038,7 @@
 
           <!-- Circular Item Carousel -->
           <div class="carousel-section">
+            <div id="dipsAllowanceBanner" class="dips-allowance-banner" style="display: none;"></div>
             <div class="carousel-track" id="carouselTrack">
               <!-- Dynamically populated by renderCarousel() -->
             </div>
@@ -2173,6 +2258,76 @@
        ========================================================== -->
   <script>
     /**
+     * TIERED FREE SIDE DIPS ALLOWANCE BY WING SIZE
+     * 3 قطع (3 pcs): 1 صوص جانبية مجانية
+     * 6 قطع (6 pcs): 2 صوصات جانبية مجانية
+     * 9 قطع (9 pcs): 3 صوصات جانبية مجانية
+     * 12 قطعة (12 pcs): 4 صوصات جانبية مجانية
+     * 20 قطعة (20 pcs): 8 صوصات جانبية مجانية — عرض خاص
+     */
+    function getFreeDipsAllowance(countOrLabel) {
+      let count = 6;
+      if (typeof countOrLabel === "number") {
+        count = countOrLabel;
+      } else if (typeof countOrLabel === "string") {
+        const match = countOrLabel.match(/\d+/);
+        if (match) count = parseInt(match[0], 10);
+      }
+      if (count <= 3) return 1;
+      if (count <= 6) return 2;
+      if (count <= 9) return 3;
+      if (count <= 12) return 4;
+      return 8; // 20 pcs (and any size >= 20): 8 free dips
+    }
+
+    /**
+     * HELPER: CALCULATE DIPS BREAKDOWN & PRICING WITH FREE ALLOWANCE
+     */
+    function calculateDipsBreakdown(selectedDips, freeAllowance) {
+      let totalDipsCount = 0;
+      let freeDipsUsed = 0;
+      let paidDipsCount = 0;
+      let extraDipsCost = 0;
+
+      const dipItems = [];
+
+      Object.entries(selectedDips || {}).forEach(([id, qty]) => {
+        if (qty > 0) {
+          const dipObj = MENU_CONFIG.dips.find(d => d.id === id);
+          const name = dipObj ? dipObj.name : id;
+          const price = dipObj && typeof dipObj.price === "number" ? dipObj.price : MENU_CONFIG.rules.extraDipPrice;
+          totalDipsCount += qty;
+          dipItems.push({ id, name, qty, price });
+        }
+      });
+
+      let remainingFree = freeAllowance;
+      dipItems.forEach(item => {
+        const freeQty = Math.min(item.qty, remainingFree);
+        const paidQty = item.qty - freeQty;
+        const cost = paidQty * item.price;
+
+        item.freeQty = freeQty;
+        item.paidQty = paidQty;
+        item.cost = cost;
+
+        remainingFree -= freeQty;
+        freeDipsUsed += freeQty;
+        paidDipsCount += paidQty;
+        extraDipsCost += cost;
+      });
+
+      return {
+        totalDipsCount,
+        freeAllowance,
+        freeDipsUsed,
+        paidDipsCount,
+        extraDipsCost,
+        items: dipItems
+      };
+    }
+
+    /**
      * CENTRALIZED MENU CONFIG
      * All items, pricing, rules, and optional image paths in DZD (دج).
      */
@@ -2187,10 +2342,10 @@
       },
       wingCounts: [
         { count: 3, label: "3 قطع", price: 350, freeDips: 1 },
-        { count: 6, label: "6 قطع", price: 650, freeDips: 1, isDefault: true },
-        { count: 9, label: "9 قطع", price: 950, freeDips: 2 },
-        { count: 12, label: "12 قطعة", price: 1250, freeDips: 2 },
-        { count: 20, label: "20 قطعة", price: 1950, freeDips: 3 },
+        { count: 6, label: "6 قطع", price: 650, freeDips: 2, isDefault: true },
+        { count: 9, label: "9 قطع", price: 950, freeDips: 3 },
+        { count: 12, label: "12 قطعة", price: 1250, freeDips: 4 },
+        { count: 20, label: "20 قطعة", price: 1950, freeDips: 8 },
       ],
       rules: {
         extraDipPrice: 30, // 30 دج لكل صوص إضافي
@@ -2360,6 +2515,7 @@
       if (window.location.pathname.startsWith("/admin")) return;
       loadCartFromStorage();
       loadCachedStorefrontData(); // Render cached menu and settings immediately
+      syncActiveSelectionsWithAvailability();
       preloadAllAssets();
       renderAll();
       updateCartBadge();
@@ -2478,9 +2634,9 @@
       // 1. Rebuild Wing Counts (Strictly from Supabase)
       if (wingSizes.length > 0) {
         MENU_CONFIG.wingCounts = wingSizes.map(dbItem => {
-          const countMatch = (dbItem.id && dbItem.id.match(/\d+/)) || dbItem.name_ar.match(/\d+/);
+          const countMatch = (dbItem.id && dbItem.id.match(/\d+/)) || (dbItem.name_ar && dbItem.name_ar.match(/\d+/));
           const count = countMatch ? parseInt(countMatch[0], 10) : 6;
-          const freeDips = count <= 3 ? 1 : (count <= 6 ? 1 : (count <= 9 ? 2 : (count <= 12 ? 2 : 3)));
+          const freeDips = getFreeDipsAllowance(count);
           return {
             id: dbItem.id,
             count: count,
@@ -2678,20 +2834,33 @@
       }
 
       // Synchronize currently active selections if any item became unavailable
-      if (MENU_CONFIG.wingCounts.length > 0) {
-        const currentCountObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount);
-        if (!currentCountObj || currentCountObj.is_available === false) {
+      syncActiveSelectionsWithAvailability();
+    }
+
+    /**
+     * AUTO-SWITCH AWAY FROM UNAVAILABLE DEFAULTS
+     * Validates currently selected wing_size, coating_sauce, dips, and sides.
+     * Switches to first available item, or null if none are available.
+     */
+    function syncActiveSelectionsWithAvailability() {
+      if (Array.isArray(MENU_CONFIG.wingCounts) && MENU_CONFIG.wingCounts.length > 0) {
+        const currentCountObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount && w.is_available !== false);
+        if (!currentCountObj) {
           const firstAvail = MENU_CONFIG.wingCounts.find(w => w.is_available !== false);
-          if (firstAvail) state.wingsCount = firstAvail.count;
+          state.wingsCount = firstAvail ? firstAvail.count : null;
         }
+      } else {
+        state.wingsCount = null;
       }
 
-      if (MENU_CONFIG.coatingSauces.length > 0) {
-        const currentSauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
-        if (!currentSauceObj || currentSauceObj.is_available === false) {
+      if (Array.isArray(MENU_CONFIG.coatingSauces) && MENU_CONFIG.coatingSauces.length > 0) {
+        const currentSauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId && s.is_available !== false);
+        if (!currentSauceObj) {
           const firstAvail = MENU_CONFIG.coatingSauces.find(s => s.is_available !== false);
-          if (firstAvail) state.selectedSauceId = firstAvail.id;
+          state.selectedSauceId = firstAvail ? firstAvail.id : null;
         }
+      } else {
+        state.selectedSauceId = null;
       }
 
       Object.keys(state.selectedDips).forEach(dipId => {
@@ -2896,8 +3065,8 @@
      */
     function setWingsCount(count) {
       const wObj = MENU_CONFIG.wingCounts.find(w => w.count === count);
-      if (wObj && wObj.is_available === false) {
-        showToast("هذا الحجم غير متوفر حالياً");
+      if (!wObj || wObj.is_available === false) {
+        showToast("هذا الحجم غير متوفر حالياً، يرجى اختيار حجم آخر");
         return;
       }
       state.wingsCount = count;
@@ -2916,17 +3085,24 @@
       container.innerHTML = "";
       MENU_CONFIG.wingCounts.forEach(w => {
         const isAvail = w.is_available !== false;
+        const isSel = Boolean(state.wingsCount === w.count && isAvail);
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "qty-btn" + (state.wingsCount === w.count ? " active" : "");
+        btn.className = "qty-btn" + (isSel ? " active" : "");
         btn.id = "qty" + w.count;
         btn.innerText = w.label || `${w.count} قطع`;
 
         if (!isAvail) {
+          btn.disabled = true;
           btn.style.opacity = "0.35";
+          btn.style.cursor = "not-allowed";
           btn.style.pointerEvents = "none";
           btn.title = "غير متوفر";
         } else {
+          btn.disabled = false;
+          btn.style.opacity = "1";
+          btn.style.cursor = "pointer";
+          btn.style.pointerEvents = "auto";
           btn.onclick = () => setWingsCount(w.count);
         }
         container.appendChild(btn);
@@ -2940,20 +3116,22 @@
       const img = document.getElementById("realWingImg");
       if (!img) return;
 
+      const currentCount = state.wingsCount || 6;
       const wingScales = { 3: 0.82, 6: 0.88, 9: 0.92, 12: 0.96, 20: 1.0 };
-      const currentScale = wingScales[state.wingsCount] || 0.88;
-      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
+      const currentScale = wingScales[currentCount] || 0.88;
+      const currentSauceId = state.selectedSauceId || "crispy";
+      const sauceObj = state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) : null;
 
       // Known sauces with custom box PNGs in codebase
       const knownTraySauces = ["crispy", "algeria", "bbq", "buffalo"];
       let targetSrc = "";
 
-      if (knownTraySauces.includes(state.selectedSauceId)) {
-        targetSrc = getWingImagePath(state.selectedSauceId, state.wingsCount);
+      if (knownTraySauces.includes(currentSauceId)) {
+        targetSrc = getWingImagePath(currentSauceId, currentCount);
       } else if (sauceObj && sauceObj.image_url) {
         targetSrc = resolveImagePath(sauceObj.image_url);
       } else {
-        targetSrc = getWingImagePath("crispy", state.wingsCount);
+        targetSrc = getWingImagePath("crispy", currentCount);
       }
 
       if (currentWingImgLoadedSrc !== targetSrc) {
@@ -2983,7 +3161,7 @@
       };
       const glow = document.getElementById("plateAmbientGlow");
       if (glow) {
-        const glowColor = (sauceObj && sauceObj.color) ? `${sauceObj.color}35` : (glowColors[state.selectedSauceId] || glowColors.crispy);
+        const glowColor = (sauceObj && sauceObj.color) ? `${sauceObj.color}35` : (glowColors[currentSauceId] || glowColors.crispy);
         glow.style.background = `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`;
       }
     }
@@ -3080,11 +3258,16 @@
     function updateStageSauceBadge() {
       const badgeText = document.getElementById("stageSauceBadgeText");
       const badgeDot = document.getElementById("stageSauceBadgeDot");
+      if (!badgeText || !badgeDot) return;
 
-      const sauce = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId);
+      const sauce = state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId && s.is_available !== false) : null;
       if (sauce) {
         badgeText.innerText = sauce.subtitle ? `${sauce.name} (${sauce.subtitle})` : sauce.name;
         badgeDot.style.backgroundColor = sauce.color;
+        badgeDot.style.display = "inline-block";
+      } else {
+        badgeText.innerText = "يرجى اختيار صوص";
+        badgeDot.style.display = "none";
       }
     }
 
@@ -3244,14 +3427,76 @@
 
     function renderCarousel() {
       const track = document.getElementById("carouselTrack");
+      const allowanceBanner = document.getElementById("dipsAllowanceBanner");
+      if (!track) return;
       track.innerHTML = "";
 
       if (state.activeTab === "sauce") {
+        if (allowanceBanner) allowanceBanner.style.display = "none";
         renderSauceCarousel(track);
       } else if (state.activeTab === "dips") {
+        renderDipsAllowanceBanner(allowanceBanner);
         renderDipsCarousel(track);
       } else if (state.activeTab === "sides") {
+        if (allowanceBanner) allowanceBanner.style.display = "none";
         renderSidesCarousel(track);
+      }
+    }
+
+    /**
+     * DIPS FREE ALLOWANCE BANNER (TIERED BY WING SIZE)
+     */
+    function renderDipsAllowanceBanner(bannerEl) {
+      if (!bannerEl) return;
+      bannerEl.style.display = "flex";
+
+      const currentWingsObj = state.wingsCount ? MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount && w.is_available !== false) : null;
+      const count = currentWingsObj ? currentWingsObj.count : (state.wingsCount || 6);
+      const freeAllowance = currentWingsObj ? currentWingsObj.freeDips : getFreeDipsAllowance(count);
+      const totalSelectedDips = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
+
+      const isFilled = totalSelectedDips >= freeAllowance;
+      const isSpecial = count >= 20;
+
+      bannerEl.className = "dips-allowance-banner" + (isFilled ? " quota-filled" : (isSpecial ? " special-offer" : ""));
+
+      if (isFilled) {
+        bannerEl.innerHTML = `
+          <div class="allowance-content">
+            <span class="allowance-badge-icon" style="background: rgba(16, 185, 129, 0.2); color: #10B981;">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </span>
+            <span class="allowance-text">تم اختيار الصوصات المجانية — أي صوص إضافية تُحسب بسعرها العادي</span>
+          </div>
+          <span class="allowance-counter-pill filled">${totalSelectedDips} / ${freeAllowance}</span>
+        `;
+      } else if (isSpecial) {
+        bannerEl.innerHTML = `
+          <div class="allowance-content">
+            <span class="allowance-badge-icon special">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </span>
+            <span class="allowance-text">عرض خاص: اختر ${freeAllowance} صوصات مجانية (المختار: ${totalSelectedDips} / ${freeAllowance})</span>
+          </div>
+          <span class="allowance-counter-pill special">${totalSelectedDips} / ${freeAllowance}</span>
+        `;
+      } else {
+        bannerEl.innerHTML = `
+          <div class="allowance-content">
+            <span class="allowance-badge-icon">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 14 14"></polyline>
+              </svg>
+            </span>
+            <span class="allowance-text">لك ${freeAllowance} صوصات مجانية مع هذا الحجم (المختار: ${totalSelectedDips} / ${freeAllowance})</span>
+          </div>
+          <span class="allowance-counter-pill">${totalSelectedDips} / ${freeAllowance}</span>
+        `;
       }
     }
 
@@ -3260,13 +3505,13 @@
      */
     function renderSauceCarousel(track) {
       MENU_CONFIG.coatingSauces.forEach(sauce => {
-        const isSelected = state.selectedSauceId === sauce.id;
         const isAvail = sauce.is_available !== false;
+        const isSelected = Boolean(state.selectedSauceId && state.selectedSauceId === sauce.id && isAvail);
         const card = document.createElement("div");
         card.className = "item-card" + (isSelected ? " selected" : "");
         if (!isAvail) {
-          card.style.opacity = "0.45";
-          card.style.filter = "grayscale(0.7)";
+          card.style.opacity = "0.4";
+          card.style.filter = "grayscale(0.8)";
           card.style.cursor = "not-allowed";
         }
 
@@ -3293,14 +3538,18 @@
           <div class="item-price free">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : (sauce.subtitle ? sauce.subtitle : (sauce.isSignature ? `<span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>مميز</span>` : "مشمول"))}</div>
         `;
 
-        card.onclick = () => {
-          if (!isAvail) {
-            showToast("هذا الصوص غير متوفر حالياً");
-            return;
-          }
-          state.selectedSauceId = sauce.id;
-          renderAll();
-        };
+        if (!isAvail) {
+          card.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showToast("هذه الصوص غير متوفرة حالياً");
+          };
+        } else {
+          card.onclick = () => {
+            state.selectedSauceId = sauce.id;
+            renderAll();
+          };
+        }
 
         track.appendChild(card);
       });
@@ -3310,8 +3559,9 @@
      * DIPS CAROUSEL (MULTI-SELECT & UNLIMITED QUANTITIES)
      */
     function renderDipsCarousel(track) {
-      const currentWingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
-      const freeAllowance = currentWingsObj.freeDips;
+      const currentWingsObj = state.wingsCount ? MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount && w.is_available !== false) : null;
+      const count = currentWingsObj ? currentWingsObj.count : (state.wingsCount || 6);
+      const freeAllowance = currentWingsObj ? currentWingsObj.freeDips : getFreeDipsAllowance(count);
       const totalSelectedDips = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
 
       MENU_CONFIG.dips.forEach(dip => {
@@ -3319,14 +3569,15 @@
         const isSelected = qty > 0;
         const isAvail = dip.is_available !== false;
         const isFree = totalSelectedDips < freeAllowance;
-        const priceLabel = !isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : (isFree ? "مجاني" : `+${MENU_CONFIG.rules.extraDipPrice} دج`);
+        const dipPrice = typeof dip.price === "number" ? dip.price : MENU_CONFIG.rules.extraDipPrice;
+        const priceLabel = !isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : (isFree ? "مجاني" : `+${dipPrice} دج`);
         const imgPath = resolveImagePath(dip.image || `/images/dip-${dip.id}.png`);
 
         const card = document.createElement("div");
         card.className = "item-card" + (isSelected ? " selected" : "");
         if (!isAvail) {
-          card.style.opacity = "0.45";
-          card.style.filter = "grayscale(0.7)";
+          card.style.opacity = "0.4";
+          card.style.filter = "grayscale(0.8)";
           card.style.cursor = "not-allowed";
         }
 
@@ -3343,20 +3594,25 @@
           <div class="item-price ${isFree && isAvail ? 'free' : ''}">${priceLabel}</div>
         `;
 
-        card.onclick = (e) => {
-          if (e.target.classList.contains("item-btn-minus") || e.target.closest(".item-btn-minus")) return;
-          if (!isAvail) {
+        if (!isAvail) {
+          card.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             showToast("هذا الصوص الجانبي غير متوفر حالياً");
-            return;
-          }
-          const currentTotalDips = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
-          const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
-          if (currentTotalDips >= wingsObj.freeDips) {
-            showFloatingPriceFeedback(`+${MENU_CONFIG.rules.extraDipPrice} دج`, e);
-          }
-          state.selectedDips[dip.id] = (state.selectedDips[dip.id] || 0) + 1;
-          renderAll();
-        };
+          };
+        } else {
+          card.onclick = (e) => {
+            if (e.target.classList.contains("item-btn-minus") || e.target.closest(".item-btn-minus")) return;
+            const currentTotalDips = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
+            if (currentTotalDips >= freeAllowance) {
+              showFloatingPriceFeedback(`+${dipPrice} دج`, e);
+            } else {
+              showFloatingPriceFeedback("مجاني", e);
+            }
+            state.selectedDips[dip.id] = (state.selectedDips[dip.id] || 0) + 1;
+            renderAll();
+          };
+        }
 
         track.appendChild(card);
       });
@@ -3386,8 +3642,8 @@
         const card = document.createElement("div");
         card.className = "item-card" + (isSelected ? " selected" : "");
         if (!isAvail) {
-          card.style.opacity = "0.45";
-          card.style.filter = "grayscale(0.7)";
+          card.style.opacity = "0.4";
+          card.style.filter = "grayscale(0.8)";
           card.style.cursor = "not-allowed";
         }
 
@@ -3404,16 +3660,20 @@
           <div class="item-price">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : `+${side.price} دج`}</div>
         `;
 
-        card.onclick = (e) => {
-          if (e.target.classList.contains("item-btn-minus") || e.target.closest(".item-btn-minus")) return;
-          if (!isAvail) {
+        if (!isAvail) {
+          card.onclick = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
             showToast("هذه الإضافة غير متوفرة حالياً");
-            return;
-          }
-          showFloatingPriceFeedback(`+${side.price} دج`, e);
-          state.selectedSides[side.id] = (state.selectedSides[side.id] || 0) + 1;
-          renderAll();
-        };
+          };
+        } else {
+          card.onclick = (e) => {
+            if (e.target.classList.contains("item-btn-minus") || e.target.closest(".item-btn-minus")) return;
+            showFloatingPriceFeedback(`+${side.price} دج`, e);
+            state.selectedSides[side.id] = (state.selectedSides[side.id] || 0) + 1;
+            renderAll();
+          };
+        }
 
         track.appendChild(card);
       });
@@ -3490,10 +3750,14 @@
      */
     function openReadyBoxModal(boxId) {
       const box = MENU_CONFIG.readyBoxes.find(b => b.id === boxId);
-      if (!box) return;
+      if (!box || box.is_available === false) {
+        showToast("هذا البوكس غير متوفر حالياً");
+        return;
+      }
 
       state.activeModalBox = box;
-      state.modalSelectedSauceId = "crispy";
+      const firstAvailSauce = MENU_CONFIG.coatingSauces.find(s => s.is_available !== false);
+      state.modalSelectedSauceId = firstAvailSauce ? firstAvailSauce.id : "crispy";
       state.modalSelectedSpiceLevel = 1;
 
       document.getElementById("readyModalTitle").innerText = `تخصيص ${box.code} (${box.nameAr})`;
@@ -3503,21 +3767,26 @@
       const sauceWrap = document.getElementById("readySauceOptions");
       sauceWrap.innerHTML = "";
       MENU_CONFIG.coatingSauces.forEach(sauce => {
-        const isSel = state.modalSelectedSauceId === sauce.id;
+        const isAvail = sauce.is_available !== false;
+        const isSel = state.modalSelectedSauceId === sauce.id && isAvail;
         const btn = document.createElement("button");
         btn.type = "button";
         btn.style.cssText = `
           padding: 8px 10px; border-radius: 12px; font-size: 11px; font-weight: 800;
-          font-family: var(--font-cairo); cursor: pointer; text-align: right;
+          font-family: var(--font-cairo); cursor: ${!isAvail ? 'not-allowed' : 'pointer'}; text-align: right;
           border: 1.5px solid ${isSel ? 'var(--brand-orange)' : 'rgba(255,255,255,0.1)'};
           background: ${isSel ? 'rgba(249, 78, 30, 0.2)' : '#162033'};
-          color: white; transition: all 0.2s;
+          color: ${!isAvail ? '#6B7280' : 'white'}; opacity: ${!isAvail ? '0.45' : '1'}; transition: all 0.2s;
         `;
-        btn.innerText = sauce.name;
-        btn.onclick = () => {
-          state.modalSelectedSauceId = sauce.id;
-          openReadyBoxModal(boxId);
-        };
+        btn.innerText = sauce.name + (!isAvail ? " (غير متوفر)" : "");
+        if (!isAvail) {
+          btn.disabled = true;
+        } else {
+          btn.onclick = () => {
+            state.modalSelectedSauceId = sauce.id;
+            openReadyBoxModal(boxId);
+          };
+        }
         sauceWrap.appendChild(btn);
       });
 
@@ -3559,9 +3828,17 @@
         showToast("المطعم مغلق حالياً — سنعاود استقبال الطلبات قريباً");
         return;
       }
-      if (!state.activeModalBox) return;
+      if (!state.activeModalBox || state.activeModalBox.is_available === false) {
+        showToast("هذا البوكس غير متوفر حالياً");
+        return;
+      }
 
-      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.modalSelectedSauceId) || MENU_CONFIG.coatingSauces[0];
+      const sauceObj = state.modalSelectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.modalSelectedSauceId && s.is_available !== false) : null;
+      if (!sauceObj) {
+        showToast("يرجى اختيار صوص متوفرة للبوكس");
+        return;
+      }
+
       const spiceObj = MENU_CONFIG.spiceLevels[state.modalSelectedSpiceLevel] || MENU_CONFIG.spiceLevels[1];
       const boxObj = state.activeModalBox;
 
@@ -3597,26 +3874,45 @@
         showToast("المطعم مغلق حالياً — سنعاود استقبال الطلبات قريباً");
         return;
       }
-      const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
-      const sauceObj = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) || MENU_CONFIG.coatingSauces[0];
-      const spiceObj = MENU_CONFIG.spiceLevels[state.spiceLevel];
+
+      const wingsObj = state.wingsCount ? MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount && w.is_available !== false) : null;
+      if (!wingsObj) {
+        showToast("هذا الحجم غير متوفر حالياً، يرجى اختيار حجم آخر");
+        return;
+      }
+
+      const sauceObj = state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId && s.is_available !== false) : null;
+      if (!sauceObj) {
+        const anySauceAvail = MENU_CONFIG.coatingSauces.some(s => s.is_available !== false);
+        if (!anySauceAvail) {
+          showToast("لا توجد صوصات متوفرة حالياً");
+        } else {
+          showToast("هذه الصوص غير متوفرة حالياً، يرجى اختيار صوص أخرى");
+        }
+        return;
+      }
+
+      const spiceObj = MENU_CONFIG.spiceLevels[state.spiceLevel] || MENU_CONFIG.spiceLevels[1];
       const mealUnitPrice = calculateBuildMealTotal();
 
       const itemDips = { ...state.selectedDips };
       const itemSides = { ...state.selectedSides };
+      const dipsBreakdown = calculateDipsBreakdown(itemDips, wingsObj.freeDips);
 
       const cartItem = {
         cartItemId: "custom_" + Date.now() + "_" + Math.random().toString(36).substr(2, 5),
         type: "custom",
         title: `وجبة ${wingsObj.label} (${sauceObj.name})`,
-        wingsCount: state.wingsCount,
+        wingsCount: wingsObj.count,
         wingsLabel: wingsObj.label,
+        freeDipsAllowance: wingsObj.freeDips,
         sauceId: sauceObj.id,
         sauceName: sauceObj.name,
         spiceLevel: state.spiceLevel,
         spiceTitle: spiceObj.title,
         spiceColor: spiceObj.color,
         selectedDips: itemDips,
+        dipsBreakdown: dipsBreakdown,
         selectedSides: itemSides,
         qty: 1,
         unitPrice: mealUnitPrice,
@@ -3642,17 +3938,18 @@
      * LIVE PRICE CALCULATION (INCLUDING 200 DZD DELIVERY)
      */
     function calculateBuildMealTotal() {
-      const wingsObj = MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount) || MENU_CONFIG.wingCounts[1];
-      let total = wingsObj.price;
+      const wingsObj = state.wingsCount ? MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount && w.is_available !== false) : null;
+      if (!wingsObj) return 0;
 
-      const freeDips = wingsObj.freeDips;
-      const totalDipsCount = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
-      const extraDipsCount = Math.max(0, totalDipsCount - freeDips);
-      total += extraDipsCount * MENU_CONFIG.rules.extraDipPrice;
+      let total = wingsObj.price;
+      const dipsBreakdown = calculateDipsBreakdown(state.selectedDips, wingsObj.freeDips);
+      total += dipsBreakdown.extraDipsCost;
 
       Object.entries(state.selectedSides).forEach(([id, qty]) => {
-        const sideObj = MENU_CONFIG.sides.find(s => s.id === id);
-        if (sideObj) total += sideObj.price * qty;
+        if (qty > 0) {
+          const sideObj = MENU_CONFIG.sides.find(s => s.id === id && s.is_available !== false);
+          if (sideObj) total += sideObj.price * qty;
+        }
       });
 
       return total;
@@ -3668,9 +3965,35 @@
     }
 
     function updateLivePrice() {
-      const currentMealPrice = calculateBuildMealTotal();
+      const wingsObj = state.wingsCount ? MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount && w.is_available !== false) : null;
+      const sauceObj = state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId && s.is_available !== false) : null;
+
+      const btnAddToCart = document.getElementById("btnAddToCart");
       const ctaPriceEl = document.getElementById("ctaPriceText");
-      if (ctaPriceEl) ctaPriceEl.innerText = `${currentMealPrice.toLocaleString("fr-DZ")} دج`;
+      const isAvailable = Boolean(wingsObj && sauceObj && state.isStoreOpen !== false);
+
+      if (btnAddToCart) {
+        if (!isAvailable) {
+          btnAddToCart.disabled = true;
+          btnAddToCart.style.opacity = "0.5";
+          btnAddToCart.style.cursor = "not-allowed";
+        } else {
+          btnAddToCart.disabled = false;
+          btnAddToCart.style.opacity = "1";
+          btnAddToCart.style.cursor = "pointer";
+        }
+      }
+
+      const currentMealPrice = calculateBuildMealTotal();
+      if (ctaPriceEl) {
+        if (state.isStoreOpen === false) {
+          ctaPriceEl.innerText = "المطعم مغلق";
+        } else if (!wingsObj || !sauceObj) {
+          ctaPriceEl.innerText = "غير متوفر";
+        } else {
+          ctaPriceEl.innerText = `${currentMealPrice.toLocaleString("fr-DZ")} دج`;
+        }
+      }
 
       const drawerFee = document.getElementById("drawerDeliveryFeeText");
       if (drawerFee) drawerFee.innerText = `${MENU_CONFIG.rules.deliveryFee} دج`;
@@ -3731,16 +4054,20 @@
 
         let detailsHtml = "";
         if (item.type === "custom") {
+          const freeAllowance = item.freeDipsAllowance || getFreeDipsAllowance(item.wingsCount);
+          const dipsInfo = calculateDipsBreakdown(item.selectedDips, freeAllowance);
           const dipsArr = [];
-          if (item.selectedDips) {
-            Object.keys(item.selectedDips).forEach(dId => {
-              const q = item.selectedDips[dId];
-              if (q > 0) {
-                const dObj = MENU_CONFIG.dips.find(x => x.id === dId);
-                dipsArr.push(`${dObj ? dObj.name : dId} ${q > 1 ? `(×${q})` : ''}`);
-              }
-            });
-          }
+          dipsInfo.items.forEach(d => {
+            let dipText = `${d.name} (×${d.qty}`;
+            if (d.paidQty === 0) {
+              dipText += ` - مجاني)`;
+            } else if (d.freeQty === 0) {
+              dipText += ` - +${d.cost} دج)`;
+            } else {
+              dipText += ` - ${d.freeQty} مجاني + ${d.paidQty} بسعر ${d.cost} دج)`;
+            }
+            dipsArr.push(dipText);
+          });
 
           const sidesArr = [];
           if (item.selectedSides) {
@@ -3756,8 +4083,8 @@
           detailsHtml = `
             <div class="cart-item-details">
               <div>صوص الأجنحة: <strong>${item.sauceName}</strong> • <span style="color:${item.spiceColor};">${item.spiceTitle}</span></div>
-              ${dipsArr.length > 0 ? `<div>الصوصات: ${dipsArr.join(" + ")}</div>` : ''}
-              ${sidesArr.length > 0 ? `<div>الإضافات: ${sidesArr.join(" + ")}</div>` : ''}
+              ${dipsArr.length > 0 ? `<div>الصوصات (${freeAllowance} مجانية): <strong>${dipsArr.join(" + ")}</strong></div>` : ''}
+              ${sidesArr.length > 0 ? `<div>الإضافات: <strong>${sidesArr.join(" + ")}</strong></div>` : ''}
             </div>
           `;
         } else {
@@ -4077,11 +4404,33 @@
             teleText += `📦 *الوجبات (${orderedItems.length}):*\n`;
             orderedItems.forEach((it, idx) => {
               const lTot = it.unitPrice * (it.qty || 1);
-              teleText += `• [${idx + 1}] *${it.title}* (×${it.qty || 1}) — ${lTot} دج\n`;
+              teleText += `• [${idx + 1}] *${it.title}* (×${it.qty || 1}) — ${lTot.toLocaleString("fr-DZ")} دج\n`;
               if (it.type === "custom") {
                 teleText += `   - حرارة: ${it.spiceTitle}\n`;
+                if (it.selectedDips && Object.keys(it.selectedDips).length > 0) {
+                  const freeAllowance = it.freeDipsAllowance || getFreeDipsAllowance(it.wingsCount);
+                  const dipsInfo = calculateDipsBreakdown(it.selectedDips, freeAllowance);
+                  const dipsTextList = dipsInfo.items.map(d => {
+                    if (d.paidQty === 0) return `${d.name} ×${d.qty} (مجاني)`;
+                    if (d.freeQty === 0) return `${d.name} ×${d.qty} (+${d.cost} دج)`;
+                    return `${d.name} ×${d.qty} (${d.freeQty} مجاني + ${d.paidQty} مدفوع)`;
+                  });
+                  teleText += `   - الصوصات (${freeAllowance} مجانية): ${dipsTextList.join("، ")}\n`;
+                }
+                if (it.selectedSides && Object.keys(it.selectedSides).length > 0) {
+                  const sidesTextList = Object.entries(it.selectedSides)
+                    .filter(([_, q]) => q > 0)
+                    .map(([id, q]) => {
+                      const s = MENU_CONFIG.sides.find(x => x.id === id);
+                      return `${s ? s.name : id} ×${q}`;
+                    });
+                  if (sidesTextList.length > 0) {
+                    teleText += `   - الإضافات: ${sidesTextList.join("، ")}\n`;
+                  }
+                }
               } else {
                 teleText += `   - صوص: ${it.sauceName} • حرارة: ${it.spiceTitle}\n`;
+                teleText += `   - يتضمن: ${it.includesSummary}\n`;
               }
             });
             teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
@@ -4125,16 +4474,18 @@
       orderedItems.forEach((item, index) => {
         const lineTotal = item.unitPrice * (item.qty || 1);
         if (item.type === "custom") {
-          msg += `[${index + 1}] ${item.title} (×${item.qty || 1}) — ${lineTotal} دج\n`;
+          msg += `[${index + 1}] ${item.title} (×${item.qty || 1}) — ${lineTotal.toLocaleString("fr-DZ")} دج\n`;
           msg += `    - درجة الحرارة: ${item.spiceTitle}\n`;
 
-          const distinctDips = item.selectedDips ? Object.keys(item.selectedDips).filter(id => item.selectedDips[id] > 0) : [];
-          if (distinctDips.length > 0) {
-            const dipsStr = distinctDips.map(id => {
-              const d = MENU_CONFIG.dips.find(x => x.id === id);
-              return `${d ? d.name : id} ×${item.selectedDips[id]}`;
+          if (item.selectedDips && Object.keys(item.selectedDips).length > 0) {
+            const freeAllowance = item.freeDipsAllowance || getFreeDipsAllowance(item.wingsCount);
+            const dipsInfo = calculateDipsBreakdown(item.selectedDips, freeAllowance);
+            const dipsStr = dipsInfo.items.map(d => {
+              if (d.paidQty === 0) return `${d.name} ×${d.qty} (مجاني)`;
+              if (d.freeQty === 0) return `${d.name} ×${d.qty} (+${d.cost} دج)`;
+              return `${d.name} ×${d.qty} (${d.freeQty} مجاني + ${d.paidQty} مدفوع)`;
             }).join(", ");
-            msg += `    - الصصوصات: ${dipsStr}\n`;
+            msg += `    - الصوصات (${freeAllowance} مجانية): ${dipsStr}\n`;
           }
 
           const distinctSides = item.selectedSides ? Object.keys(item.selectedSides).filter(id => item.selectedSides[id] > 0) : [];
@@ -4146,7 +4497,7 @@
             msg += `    - الإضافات: ${sidesStr}\n`;
           }
         } else {
-          msg += `[${index + 1}] ${item.title} (${item.boxCode}) (×${item.qty || 1}) — ${lineTotal} دج\n`;
+          msg += `[${index + 1}] ${item.title} (${item.boxCode}) (×${item.qty || 1}) — ${lineTotal.toLocaleString("fr-DZ")} دج\n`;
           msg += `    - صوص: ${item.sauceName} • درجة الحرارة: ${item.spiceTitle}\n`;
         }
       });
@@ -4268,9 +4619,8 @@
     }
 
     function handleResetMenu() {
-      state.wingsCount = 6;
-      state.selectedSauceId = "crispy";
-      state.previousSauceId = "crispy";
+      syncActiveSelectionsWithAvailability();
+      state.previousSauceId = state.selectedSauceId;
       state.spiceLevel = 1;
       state.selectedDips = {};
       state.selectedSides = {};
