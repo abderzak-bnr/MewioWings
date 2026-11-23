@@ -206,9 +206,9 @@
        TOP-DOWN ORBITING STAGE (~40% height)
        ========================================================== */
     .stage-container {
-      height: 38vh;
-      min-height: 275px;
-      max-height: 345px;
+      height: 40vh;
+      min-height: 295px;
+      max-height: 355px;
       position: relative;
       display: flex;
       align-items: center;
@@ -261,8 +261,10 @@
     }
 
     .main-plate-wrap {
-      width: 205px;
-      height: 205px;
+      width: 100%;
+      max-width: 195px;
+      max-height: 165px;
+      height: 165px;
       position: relative;
       display: flex;
       align-items: center;
@@ -279,19 +281,18 @@
       pointer-events: none;
     }
 
-    /* Transparent PNG Wings Box: Direct on dark stage (#0B1221) with soft realistic drop shadow */
+    /* Transparent PNG Wings Box: Strict Bounding Box (Snappy 150ms Scale, Zero Lag) */
     .real-wing-overlay {
       width: 100%;
       height: 100%;
-      max-width: 215px;
-      max-height: 215px;
+      max-width: 195px;
+      max-height: 165px;
       object-fit: contain;
       z-index: 12;
       pointer-events: none;
-      filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));
-      transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.6));
+      transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1);
       opacity: 1;
-      transform: scale(1);
       transform-origin: center center;
     }
     .real-wing-overlay.switching {
@@ -380,10 +381,10 @@
        ========================================================== */
     .orbit-ramekin {
       position: absolute;
-      width: 42px;
-      height: 42px;
+      width: 36px;
+      height: 36px;
       z-index: 18;
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s ease;
       transform: scale(0);
       opacity: 0;
       pointer-events: none;
@@ -394,13 +395,13 @@
       pointer-events: auto;
     }
 
-    /* 6 Dip slots cleanly arranged in 2 columns on the left */
-    .dip-slot-0 { left: 12px; top: 20px; }
-    .dip-slot-1 { left: 54px; top: 48px; }
-    .dip-slot-2 { left: 10px; top: 80px; }
-    .dip-slot-3 { left: 52px; top: 110px; }
-    .dip-slot-4 { left: 10px; top: 142px; }
-    .dip-slot-5 { left: 50px; top: 174px; }
+    /* 6 Dip slots contained strictly inside the 76px left column */
+    .dip-slot-0 { left: 2px; top: 6px; }
+    .dip-slot-1 { right: 2px; top: 20px; }
+    .dip-slot-2 { left: 2px; top: 54px; }
+    .dip-slot-3 { right: 2px; top: 68px; }
+    .dip-slot-4 { left: 2px; top: 102px; }
+    .dip-slot-5 { right: 2px; top: 116px; }
 
     /* Dip quantity badge on single bowl */
     .dip-qty-badge {
@@ -446,14 +447,18 @@
        Consistent generous sizing, zero collision with wings bucket
        ========================================================== */
     .orbit-side-plate {
-      position: absolute;
-      width: 68px;
-      height: 68px;
+      position: relative;
+      width: 58px;
+      height: 58px;
       z-index: 16;
-      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s ease;
       transform: scale(0);
       opacity: 0;
       pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
     }
     .orbit-side-plate.visible {
       transform: scale(1);
@@ -461,9 +466,9 @@
       pointer-events: auto;
     }
 
-    /* Stacked vertically on the right side of the wings box */
-    .side-slot-0 { right: 12px; top: 44px; }
-    .side-slot-1 { right: 12px; top: 130px; }
+    /* Flex-stacked vertically inside 76px right column */
+    .side-slot-0 { margin-top: 4px; }
+    .side-slot-1 { margin-top: 4px; }
 
     .side-qty-badge {
       position: absolute;
@@ -507,25 +512,25 @@
       100% { transform: scale(1); }
     }
 
-    /* Active Sauce Name Badge on Stage (Top Center above Wings with ample margin) */
+    /* Active Sauce Name Badge on Stage (Dedicated Top Row Header inside Tray) */
     .stage-sauce-badge {
-      position: absolute;
-      top: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(11, 18, 33, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      backdrop-filter: blur(10px);
-      padding: 3px 12px;
+      position: relative;
+      margin: 0 auto;
+      background: rgba(11, 18, 33, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 4px 14px;
       border-radius: 9999px;
       font-size: 11px;
       font-weight: 800;
       color: #FFFFFF;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
-      z-index: 20;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      gap: 7px;
+      z-index: 24;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      white-space: nowrap;
     }
     .sauce-badge-dot {
       width: 7px;
@@ -1261,7 +1266,7 @@
        ========================================================== */
     .serving-tray {
       position: absolute;
-      inset: 8px 10px 40px 10px;
+      inset: 8px 10px 42px 10px;
       border-radius: 24px;
       background: radial-gradient(ellipse at 50% 45%, #151F33 0%, #0E1626 65%, #0A101C 100%);
       border: 1.5px solid rgba(255, 255, 255, 0.08);
@@ -1272,9 +1277,79 @@
         0 2px 6px rgba(0, 0, 0, 0.35);
       overflow: hidden;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
+    }
+
+    /* Structured Non-Overlapping Grid Inside Tray */
+    .tray-grid-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 6px 6px;
+      box-sizing: border-box;
+      z-index: 10;
+    }
+
+    /* Top Row: Dedicated Header inside Tray for Active Sauce Badge */
+    .tray-top-header {
+      height: 32px;
+      min-height: 32px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      flex-shrink: 0;
+    }
+
+    /* Middle Row: Strict 3-Column Grid (76px 1fr 76px) */
+    .tray-middle-grid {
+      display: grid;
+      grid-template-columns: 76px 1fr 76px;
+      align-items: center;
+      justify-items: center;
+      width: 100%;
+      flex: 1;
+      min-height: 0;
+      position: relative;
+      direction: ltr; /* Keeps Left column = Dips, Center = Wings, Right = Sides */
+    }
+
+    /* Left Column (76px): Dedicated to Side Dips */
+    .tray-col-dips {
+      width: 76px;
+      height: 100%;
+      position: relative;
+      direction: rtl;
+    }
+
+    /* Center Column (1fr): Dedicated to Main Wings Box */
+    .tray-col-wings {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-width: 0;
+    }
+
+    /* Right Column (76px): Dedicated to Sides (Fries, Coleslaw) */
+    .tray-col-sides {
+      width: 76px;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      direction: rtl;
     }
 
     /* Subtle Matte Liner Inset framing the meal */
@@ -1296,9 +1371,11 @@
       border-radius: 50%;
       background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 55%, transparent 75%);
       filter: blur(5px);
-      bottom: 22px;
+      bottom: 8px;
       left: 50%;
       transform: translateX(-50%);
+      width: 155px;
+      height: 18px;
       pointer-events: none;
       z-index: 9;
       transition: all 0.25s ease;
@@ -1334,18 +1411,7 @@
       z-index: 1;
     }
 
-    /* Underlay image for seamless transitions without flash */
-    .underlay-wing-img {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      pointer-events: none;
-      filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));
-      z-index: 11;
-      display: none;
-    }
+    
 
     /* Smart Sauce Transitions: Top-Down Sauce Pour / Glaze Wipe */
     @keyframes saucePourWipe {
@@ -1709,66 +1775,84 @@
           <!-- Ambient Lighting Glow Pulsing with Selected Sauce Color -->
           <div class="plate-ambient-glow" id="plateAmbientGlow"></div>
 
-          <!-- Grounded Contact Shadow directly underneath wings box -->
-          <div class="wings-contact-shadow" id="wingsContactShadow"></div>
+          <!-- Structured Non-Overlapping Grid Inside Tray -->
+          <div class="tray-grid-container">
 
-          <!-- Dedicated Left Dips Zone (Up to 6 slots in compact 2-column cluster) -->
-          <div class="orbit-ramekin dip-slot-0" id="orbitRamekin0"></div>
-          <div class="orbit-ramekin dip-slot-1" id="orbitRamekin1"></div>
-          <div class="orbit-ramekin dip-slot-2" id="orbitRamekin2"></div>
-          <div class="orbit-ramekin dip-slot-3" id="orbitRamekin3"></div>
-          <div class="orbit-ramekin dip-slot-4" id="orbitRamekin4"></div>
-          <div class="orbit-ramekin dip-slot-5" id="orbitRamekin5"></div>
+            <!-- Top Row: Dedicated Header inside Tray exclusively for Active Sauce Pill Badge -->
+            <div class="tray-top-header">
+              <div class="stage-sauce-badge" id="stageSauceBadge">
+                <span class="sauce-badge-dot" id="stageSauceBadgeDot" style="background-color: #F59E0B;"></span>
+                <span id="stageSauceBadgeText">أجنحة مقرمشة ذهبية</span>
+              </div>
+            </div>
 
-          <!-- Dedicated Sides Zone: Right Zone (2 slots) -->
-          <div class="orbit-side-plate side-slot-0" id="orbitSidePlate0"></div>
-          <div class="orbit-side-plate side-slot-1" id="orbitSidePlate1"></div>
+            <!-- Middle Row: Strict 3-Column Grid (76px 1fr 76px) -->
+            <div class="tray-middle-grid">
 
-          <!-- Dedicated Centered Flex Stage for Main Wings (Dead-Center Symmetrical Stage) -->
-          <div class="wings-center-stage">
-            <div class="main-plate-wrap" id="mainPlateWrap">
-              <!-- Underlay Image to prevent flash when swapping / pouring -->
-              <img id="underlayWingImg" class="underlay-wing-img" src="/images/wings-crispy-6.png" alt="Previous Wings" />
+              <!-- Left Column (76px): Dedicated Strictly to Side Dips -->
+              <div class="tray-col-dips" id="trayDipsCol">
+                <div class="orbit-ramekin dip-slot-0" id="orbitRamekin0"></div>
+                <div class="orbit-ramekin dip-slot-1" id="orbitRamekin1"></div>
+                <div class="orbit-ramekin dip-slot-2" id="orbitRamekin2"></div>
+                <div class="orbit-ramekin dip-slot-3" id="orbitRamekin3"></div>
+                <div class="orbit-ramekin dip-slot-4" id="orbitRamekin4"></div>
+                <div class="orbit-ramekin dip-slot-5" id="orbitRamekin5"></div>
+              </div>
 
-              <!-- Real PNG Image Overlay: Transparent PNG with Soft Realistic Drop Shadow -->
-              <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
-                   onerror="handleWingImgError(this)" 
-                   onload="handleWingImgLoad(this)" />
+              <!-- Center Column (1fr): Dedicated Strictly to Main Wings Box -->
+              <div class="tray-col-wings" id="trayWingsCol">
+                <!-- Grounded Contact Shadow directly underneath wings box -->
+                <div class="wings-contact-shadow" id="wingsContactShadow"></div>
 
-              <!-- Procedural Vector Fallback (ONLY shown if PNG fails, hidden by default to prevent flashing) -->
-              <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240" style="display: none;">
-              <defs>
-                <!-- Crispy Golden Wing Base Gradient (Fallback) -->
-                <radialGradient id="crispyWingGrad" cx="35%" cy="30%" r="70%">
-                  <stop offset="0%" stop-color="#FBBF24"/>
-                  <stop offset="40%" stop-color="#D97706"/>
-                  <stop offset="80%" stop-color="#B45309"/>
-                  <stop offset="100%" stop-color="#78350F"/>
-                </radialGradient>
+                <div class="main-plate-wrap" id="mainPlateWrap">
+                  <!-- Single Clean Real PNG Image (Snappy Instant Switching, Zero Layering/Lag) -->
+                  <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
+                       onerror="handleWingImgError(this)" 
+                       onload="handleWingImgLoad(this)" />
 
-                <!-- Dynamic Sauce Glaze Gradient (Fallback) -->
-                <radialGradient id="sauceGlazeGrad" cx="30%" cy="25%" r="75%">
-                  <stop id="sauceStop0" offset="0%" stop-color="#F97316"/>
-                  <stop id="sauceStop1" offset="50%" stop-color="#EA580C"/>
-                  <stop id="sauceStop2" offset="100%" stop-color="#9A3412"/>
-                </radialGradient>
-              </defs>
+                  <!-- Procedural Vector Fallback (Hidden by default to prevent flashing) -->
+                  <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240" style="display: none;">
+                  <defs>
+                    <!-- Crispy Golden Wing Base Gradient (Fallback) -->
+                    <radialGradient id="crispyWingGrad" cx="35%" cy="30%" r="70%">
+                      <stop offset="0%" stop-color="#FBBF24"/>
+                      <stop offset="40%" stop-color="#D97706"/>
+                      <stop offset="80%" stop-color="#B45309"/>
+                      <stop offset="100%" stop-color="#78350F"/>
+                    </radialGradient>
 
-              <!-- Dynamic Procedural Wings Group (SVG Fallback ONLY) -->
-              <g id="wingsGroup" style="display: none; filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));"></g>
+                    <!-- Dynamic Sauce Glaze Gradient (Fallback) -->
+                    <radialGradient id="sauceGlazeGrad" cx="30%" cy="25%" r="75%">
+                      <stop id="sauceStop0" offset="0%" stop-color="#F97316"/>
+                      <stop id="sauceStop1" offset="50%" stop-color="#EA580C"/>
+                      <stop id="sauceStop2" offset="100%" stop-color="#9A3412"/>
+                    </radialGradient>
+                  </defs>
 
-              <!-- Steam effect when Spicy is active -->
-              <g id="steamGroup" style="display: none;">
-                <path class="steam-line" d="M100 90 Q105 75 98 60 T104 40" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5"/>
-                <path class="steam-line" d="M125 85 Q130 68 122 52 T128 35" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6" style="animation-delay: 0.6s;"/>
-                <path class="steam-line" d="M145 92 Q150 78 143 62 T148 45" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5" style="animation-delay: 1.2s;"/>
-              </g>
-            </svg>
+                  <!-- Dynamic Procedural Wings Group (SVG Fallback ONLY) -->
+                  <g id="wingsGroup" style="display: none; filter: drop-shadow(0 18px 28px rgba(0, 0, 0, 0.55));"></g>
+
+                  <!-- Steam effect when Spicy is active -->
+                  <g id="steamGroup" style="display: none;">
+                    <path class="steam-line" d="M100 90 Q105 75 98 60 T104 40" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5"/>
+                    <path class="steam-line" d="M125 85 Q130 68 122 52 T128 35" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.6" style="animation-delay: 0.6s;"/>
+                    <path class="steam-line" d="M145 92 Q150 78 143 62 T148 45" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5" style="animation-delay: 1.2s;"/>
+                  </g>
+                </svg>
+                </div>
+              </div>
+
+              <!-- Right Column (76px): Dedicated Strictly to Sides (Fries, Coleslaw) -->
+              <div class="tray-col-sides" id="traySidesCol">
+                <div class="orbit-side-plate side-slot-0" id="orbitSidePlate0"></div>
+                <div class="orbit-side-plate side-slot-1" id="orbitSidePlate1"></div>
+              </div>
+
             </div>
           </div>
         </div>
 
-        <!-- Sleek Horizontal 3-Step Spice Selector Bar (Bottom of Stage) -->
+        <!-- Sleek Horizontal 3-Step Spice Selector Bar (Cleanly Below the Tray) -->
         <div class="spice-bar-wrap" id="spiceBarWrap" role="radiogroup" aria-label="درجة الحرارة">
           <button type="button" class="spice-bar-btn" id="spiceBtn0" onclick="setSpiceLevel(0)">
             <span class="spice-dot" style="background: #10B981;"></span>
@@ -1788,12 +1872,6 @@
               <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
             </span>
           </button>
-        </div>
-
-        <!-- Active Sauce Name Badge on Stage (Top Center above Wings) -->
-        <div class="stage-sauce-badge" id="stageSauceBadge">
-          <span class="sauce-badge-dot" id="stageSauceBadgeDot" style="background-color: #F59E0B;"></span>
-          <span id="stageSauceBadgeText">أجنحة مقرمشة ذهبية</span>
         </div>
       </section>
 
@@ -2443,54 +2521,41 @@
      */
     function renderWingsImage() {
       const img = document.getElementById("realWingImg");
-      const underlay = document.getElementById("underlayWingImg");
       if (!img) return;
 
       const targetSrc = getWingImagePath(state.selectedSauceId, state.wingsCount);
-      const prevSauce = state.previousSauceId || "crispy";
-      const newSauce = state.selectedSauceId;
+      // Subtle proportional scaling between 3 and 20 pieces strictly within the bounding box (82% to 100%)
+      const wingScales = { 3: 0.82, 6: 0.88, 9: 0.92, 12: 0.96, 20: 1.0 };
+      const currentScale = wingScales[state.wingsCount] || 0.88;
 
       if (currentWingImgLoadedSrc !== targetSrc) {
-        // Keep previous image on underlay to prevent any flash during animation
-        if (underlay && currentWingImgLoadedSrc) {
-          underlay.src = currentWingImgLoadedSrc;
-          underlay.style.display = "block";
-        }
-
-        // Clean previous animation classes
-        img.classList.remove("sauce-pour-wipe", "box-swap-transition", "switching");
-
-        // Set new image
         currentWingImgLoadedSrc = targetSrc;
         img.src = targetSrc;
 
-        // Smart Context-Aware Animation:
-        // Case A: Switching FROM crispy TO any sauce -> Top-Down Sauce Pour / Glaze Wipe
-        // Case B: Switching between two sauces or back to crispy -> Fresh Box Swap
+        // Instant snappy switching with lightweight, fast 150ms subtle scale transition
+        img.style.transform = `scale(${currentScale * 0.96})`;
         img.offsetHeight; // force reflow
-        if (prevSauce === "crispy" && newSauce !== "crispy") {
-          img.classList.add("sauce-pour-wipe");
-        } else {
-          img.classList.add("box-swap-transition");
-        }
+        img.style.transform = `scale(${currentScale})`;
+      } else {
+        img.style.transform = `scale(${currentScale})`;
+      }
 
-        // Sauce Color Ambient Glow pulse on the tray
-        const glowColors = {
-          crispy: "rgba(245, 158, 11, 0.22)",
-          algeria: "rgba(234, 88, 12, 0.38)",
-          bbq: "rgba(180, 83, 9, 0.38)",
-          buffalo: "rgba(239, 68, 68, 0.44)"
-        };
-        const glow = document.getElementById("plateAmbientGlow");
-        if (glow) {
-          glow.style.background = `radial-gradient(circle, ${glowColors[newSauce] || glowColors.crispy} 0%, transparent 70%)`;
-        }
+      // Grounded contact shadow scale sync
+      const shadow = document.getElementById("wingsContactShadow");
+      if (shadow) {
+        shadow.style.transform = `translateX(-50%) scale(${currentScale})`;
+      }
 
-        state.previousSauceId = newSauce;
-
-        setTimeout(() => {
-          if (underlay) underlay.style.display = "none";
-        }, 320);
+      // Sauce Color Ambient Glow pulse on the tray
+      const glowColors = {
+        crispy: "rgba(245, 158, 11, 0.22)",
+        algeria: "rgba(234, 88, 12, 0.38)",
+        bbq: "rgba(180, 83, 9, 0.38)",
+        buffalo: "rgba(239, 68, 68, 0.44)"
+      };
+      const glow = document.getElementById("plateAmbientGlow");
+      if (glow) {
+        glow.style.background = `radial-gradient(circle, ${glowColors[state.selectedSauceId] || glowColors.crispy} 0%, transparent 70%)`;
       }
     }
 
