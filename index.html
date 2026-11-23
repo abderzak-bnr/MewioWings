@@ -1334,12 +1334,12 @@
         <div class="wings-center-stage">
           <div class="main-plate-wrap" id="mainPlateWrap">
             <!-- Real PNG Image Overlay: Transparent PNG with Soft Realistic Drop Shadow -->
-            <img id="realWingImg" class="real-wing-overlay" src="" alt="Chicken Wings" 
+            <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
                  onerror="handleWingImgError(this)" 
                  onload="handleWingImgLoad(this)" />
 
-            <!-- Procedural Vector Fallback (ONLY shown if PNG fails, transparent backdrop, no white dish) -->
-            <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240">
+            <!-- Procedural Vector Fallback (ONLY shown if PNG fails, hidden by default to prevent flashing) -->
+            <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240" style="display: none;">
             <defs>
               <!-- Crispy Golden Wing Base Gradient (Fallback) -->
               <radialGradient id="crispyWingGrad" cx="35%" cy="30%" r="70%">
@@ -1816,24 +1816,36 @@
     let currentWingImgLoadedSrc = "";
 
     /**
-     * INITIALIZATION & IMAGE PRELOADING
+     * INITIALIZATION & COMPLETE PNG ASSET PRELOADING (ZERO LOADING FLASH)
      */
     window.addEventListener("DOMContentLoaded", () => {
-      preloadAllWingImages();
+      preloadAllAssets();
       renderAll();
     });
 
     /**
-     * PRELOAD ALL 20 WINGS IMAGES FOR INSTANT MOBILE SWITCHING
+     * PRELOAD ALL PNG ASSETS ON APP MOUNT
+     * Preloads all 20 wing combinations, all 6 dips, and both sides into memory
      */
-    function preloadAllWingImages() {
-      const sauces = ["crispy", "algeria", "bbq", "buffalo"];
-      const counts = [3, 6, 9, 12, 20];
-      sauces.forEach(s => {
-        counts.forEach(c => {
+    function preloadAllAssets() {
+      // 1. All 20 Wings Combinations (4 sauces x 5 counts)
+      MENU_CONFIG.coatingSauces.forEach(sauce => {
+        MENU_CONFIG.wingCounts.forEach(w => {
           const img = new Image();
-          img.src = getWingImagePath(s, c);
+          img.src = getWingImagePath(sauce.id, w.count);
         });
+      });
+
+      // 2. All 6 Dips
+      MENU_CONFIG.dips.forEach(dip => {
+        const img = new Image();
+        img.src = resolveImagePath(dip.image || `/images/dip-${dip.id}.png`);
+      });
+
+      // 3. Both Sides
+      MENU_CONFIG.sides.forEach(side => {
+        const img = new Image();
+        img.src = resolveImagePath(side.image || `/images/side-${side.id}.png`);
       });
     }
 
@@ -2050,7 +2062,9 @@
     }
 
     /**
-     * DIPS ORBIT WITH REAL PNG & SVG FALLBACK
+     * DEDICATED LEFT DIPS ZONE (DIRECT PNG RENDERING WITH KEY STABILIZATION)
+     * - Zero SVG fallback flash: renders <img> directly
+     * - Key stabilization: when quantity changes, only badge updates; <img> remains mounted and rock-steady
      */
     function renderOrbitingDips() {
       const distinctDipIds = Object.keys(state.selectedDips).filter(id => state.selectedDips[id] > 0);
@@ -2064,45 +2078,31 @@
           const dipId = distinctDipIds[i];
           const qty = state.selectedDips[dipId];
           const dipObj = MENU_CONFIG.dips.find(d => d.id === dipId) || MENU_CONFIG.dips[0];
-          const qtyBadgeHtml = qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : "";
+          const imgPath = resolveImagePath(dipObj.image || `/images/dip-${dipObj.id}.png`);
 
-          el.innerHTML = `
-            ${createRamekinContent(dipObj)}
-            ${qtyBadgeHtml}
-          `;
+          // Key Check: if slot already displays this exact item.id, ONLY update badge text without re-mounting <img>
+          if (el.dataset.itemId === dipId) {
+            updateOrCreateBadge(el, qty, "dip-qty-badge");
+          } else {
+            el.dataset.itemId = dipId;
+            el.innerHTML = `
+              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55));" />
+              ${qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : ""}
+            `;
+          }
           el.classList.add("visible");
         } else {
           el.classList.remove("visible");
+          el.dataset.itemId = "";
           el.innerHTML = "";
         }
       }
     }
 
-    function createRamekinContent(dipObj) {
-      const svg = createRamekinSvg(dipObj.sauceColor);
-      const imgPath = resolveImagePath(dipObj.image || `/images/dip-${dipObj.id}.png`);
-      return `
-        <img src="${imgPath}" alt="${dipObj.name}"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-             onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
-             style="display: none; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55));" />
-        <div style="width: 100%; height: 100%;">${svg}</div>
-      `;
-    }
-
-    function createRamekinSvg(sauceColor) {
-      return `
-        <svg viewBox="0 0 60 60" width="100%" height="100%" style="filter: drop-shadow(0 6px 12px rgba(0,0,0,0.55));">
-          <circle cx="30" cy="32" r="26" fill="#000000" opacity="0.35" />
-          <circle cx="30" cy="30" r="26" fill="${sauceColor}" />
-          <circle cx="30" cy="30" r="25" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1.2" />
-          <path d="M 18 22 A 14 14 0 0 1 38 18 A 17 17 0 0 0 20 28 Z" fill="#FFFFFF" opacity="0.4" />
-        </svg>
-      `;
-    }
-
     /**
-     * SIDES ORBIT WITH REAL PNG & SVG FALLBACK
+     * DEDICATED RIGHT SIDES ZONE (DIRECT PNG RENDERING WITH KEY STABILIZATION)
+     * - Zero SVG fallback flash: renders <img> directly
+     * - Key stabilization: when quantity changes, only badge updates; <img> remains mounted and rock-steady
      */
     function renderOrbitingSides() {
       const distinctSideIds = Object.keys(state.selectedSides).filter(id => state.selectedSides[id] > 0);
@@ -2116,69 +2116,48 @@
           const sideId = distinctSideIds[i];
           const qty = state.selectedSides[sideId];
           const sideObj = MENU_CONFIG.sides.find(s => s.id === sideId) || MENU_CONFIG.sides[0];
-          const qtyBadgeHtml = qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : "";
+          const imgPath = resolveImagePath(sideObj.image || `/images/side-${sideObj.id}.png`);
 
-          el.innerHTML = `
-            ${createSideContent(sideObj)}
-            ${qtyBadgeHtml}
-          `;
+          // Key Check: if slot already displays this exact item.id, ONLY update badge text without re-mounting <img>
+          if (el.dataset.itemId === sideId) {
+            updateOrCreateBadge(el, qty, "side-qty-badge");
+          } else {
+            el.dataset.itemId = sideId;
+            el.innerHTML = `
+              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6));" />
+              ${qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : ""}
+            `;
+          }
           el.classList.add("visible");
         } else {
           el.classList.remove("visible");
+          el.dataset.itemId = "";
           el.innerHTML = "";
         }
       }
     }
 
-    function createSideContent(sideObj) {
-      const svg = createSidePlateSvg(sideObj ? sideObj.type : "fries");
-      const imgPath = resolveImagePath(sideObj ? (sideObj.image || `/images/side-${sideObj.id}.png`) : "");
-      return `
-        <img src="${imgPath}" alt="${sideObj ? sideObj.name : ''}"
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-             onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
-             style="display: none; width: 100%; height: 100%; object-fit: contain; border-radius: 50%; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.5));" />
-        <div style="width: 100%; height: 100%;">${svg}</div>
-      `;
-    }
-
-    function createSidePlateSvg(sideType) {
-      let foodContent = "";
-      if (sideType === "fries" || sideType === "fries_seasoned") {
-        foodContent = `
-          <rect x="22" y="28" width="38" height="6.5" rx="2" transform="rotate(-25 41 31)" fill="#FBBF24" stroke="#D97706" stroke-width="0.8"/>
-          <rect x="26" y="38" width="36" height="6.5" rx="2" transform="rotate(15 44 41)" fill="#F59E0B" stroke="#B45309" stroke-width="0.8"/>
-          <rect x="20" y="44" width="36" height="6.5" rx="2" transform="rotate(45 38 47)" fill="#FBBF24"/>
-        `;
-      } else if (sideType === "cheese_fries") {
-        foodContent = `
-          <rect x="22" y="32" width="38" height="6.5" rx="2" transform="rotate(-20 41 35)" fill="#FBBF24"/>
-          <path d="M 24 35 Q 36 28 48 36 Q 54 44 46 50 Q 34 52 26 44 Z" fill="#F59E0B" opacity="0.95"/>
-          <path d="M 28 38 Q 38 32 46 40" stroke="#FDE68A" stroke-width="3" stroke-linecap="round" fill="none"/>
-        `;
-      } else if (sideType === "coleslaw") {
-        foodContent = `
-          <circle cx="42" cy="42" r="19" fill="#F8FAFC"/>
-          <path d="M 28 36 Q 36 34 44 40" stroke="#86EFAC" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-          <path d="M 34 48 Q 44 40 54 42" stroke="#F97316" stroke-width="2" stroke-linecap="round" fill="none"/>
-        `;
+    /**
+     * HELPER: UPDATE OR CREATE QUANTITY BADGE WITHOUT TOUCHING <img>
+     */
+    function updateOrCreateBadge(container, qty, badgeClass) {
+      let badge = container.querySelector("." + badgeClass);
+      if (qty > 1) {
+        if (!badge) {
+          badge = document.createElement("span");
+          badge.className = badgeClass;
+          container.appendChild(badge);
+        }
+        if (badge.innerText !== `×${qty}`) {
+          badge.innerText = `×${qty}`;
+          // Fast pulse animation on quantity change while keeping <img> steady
+          badge.style.animation = "none";
+          badge.offsetHeight; // trigger reflow
+          badge.style.animation = "popInBadge 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)";
+        }
       } else {
-        foodContent = `
-          <ellipse cx="36" cy="38" rx="14" ry="9" fill="#D97706" transform="rotate(-20 36 38)"/>
-          <ellipse cx="36" cy="38" rx="12" ry="7" fill="#FDE68A" transform="rotate(-20 36 38)"/>
-          <ellipse cx="48" cy="46" rx="14" ry="9" fill="#D97706" transform="rotate(25 48 46)"/>
-          <ellipse cx="48" cy="46" rx="12" ry="7" fill="#FDE68A" transform="rotate(25 48 46)"/>
-        `;
+        if (badge) badge.remove();
       }
-
-      return `
-        <svg viewBox="0 0 84 84" width="100%" height="100%" style="filter: drop-shadow(0 8px 16px rgba(0,0,0,0.6));">
-          <circle cx="42" cy="44" r="34" fill="#000000" opacity="0.4"/>
-          <circle cx="42" cy="42" r="34" fill="#131E33"/>
-          <circle cx="42" cy="42" r="33" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1.2"/>
-          ${foodContent}
-        </svg>
-      `;
     }
 
     /**
@@ -2250,14 +2229,6 @@
 
         const previewImgSrc = getWingImagePath(sauce.id, 6);
 
-        let fallbackIcon = `
-          <svg width="42" height="42" viewBox="0 0 42 42">
-            <circle cx="21" cy="22" r="16" fill="#000000" opacity="0.3"/>
-            <circle cx="21" cy="20" r="16" fill="${sauce.color}"/>
-            <path d="M 12 16 A 10 10 0 0 1 28 14 A 12 12 0 0 0 14 20 Z" fill="#FFFFFF" opacity="0.4"/>
-          </svg>
-        `;
-
         card.innerHTML = `
           <div class="item-circle">
             <span class="item-badge-check">
@@ -2266,10 +2237,7 @@
               </svg>
             </span>
             <img src="${previewImgSrc}" alt="${sauce.name}"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                 onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
-                 style="display: none; width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
-            <div style="width: 42px; height: 42px;">${fallbackIcon}</div>
+                 style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${sauce.name}</div>
           <div class="item-price free">${sauce.subtitle ? sauce.subtitle : (sauce.isSignature ? `<span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>مميز</span>` : "مشمول")}</div>
@@ -2309,15 +2277,7 @@
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </span>
             <img src="${imgPath}" alt="${dip.name}"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                 onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
-                 style="display: none; width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
-            <svg width="44" height="44" viewBox="0 0 44 44">
-              <circle cx="22" cy="24" r="17" fill="#000000" opacity="0.35"/>
-              <circle cx="22" cy="22" r="17" fill="#F8FAFC"/>
-              <circle cx="22" cy="22" r="13" fill="${dip.sauceColor}"/>
-              <circle cx="18" cy="18" r="2" fill="#FFFFFF" opacity="0.6"/>
-            </svg>
+                 style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${dip.name}</div>
           <div class="item-price ${isFree ? 'free' : ''}">${priceLabel}</div>
@@ -2363,12 +2323,7 @@
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </span>
             <img src="${imgPath}" alt="${side.name}"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-                 onload="this.style.display='block'; this.nextElementSibling.style.display='none';"
-                 style="display: none; width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
-            <div style="width: 44px; height: 44px;">
-              ${createSidePlateSvg(side.type)}
-            </div>
+                 style="width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${side.name}</div>
           <div class="item-price">+${side.price} دج</div>
