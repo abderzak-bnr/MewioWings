@@ -247,16 +247,27 @@
       50% { opacity: 1; transform: scale(1.38); }
     }
 
-    /* Main Wings Box Wrapper: Centered slightly toward top-middle (Zero Overlap) */
-    .main-plate-wrap {
+    /* Dedicated Full-Size Centered Flex Container for Wings Box (Dead-Center, Zero RTL Shift Bug) */
+    .wings-center-stage {
       position: absolute;
-      left: 54%;
-      top: 44%;
-      transform: translate(-50%, -50%);
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 10;
+      padding-right: 38px; /* Comfortable breathing room from right-side vertical spice thermometer */
+      padding-bottom: 22px; /* Breathing room for sides below */
+    }
+
+    .main-plate-wrap {
       width: 215px;
       height: 215px;
-      z-index: 10;
-      transition: transform 0.22s ease-out;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
     }
 
     .plate-svg {
@@ -270,10 +281,10 @@
 
     /* Transparent PNG Wings Box: Direct on dark stage (#0B1221) with soft realistic drop shadow */
     .real-wing-overlay {
-      position: absolute;
-      inset: 0;
       width: 100%;
       height: 100%;
+      max-width: 215px;
+      max-height: 215px;
       object-fit: contain;
       z-index: 12;
       pointer-events: none;
@@ -281,6 +292,7 @@
       transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
       opacity: 1;
       transform: scale(1);
+      transform-origin: center center;
     }
     .real-wing-overlay.switching {
       opacity: 0.12;
@@ -1353,15 +1365,16 @@
         <div class="orbit-side-plate side-slot-0" id="orbitSidePlate0"></div>
         <div class="orbit-side-plate side-slot-1" id="orbitSidePlate1"></div>
 
-        <!-- Main Focal Point: Transparent PNG Wings Box Floating Directly on Dark Navy Stage (No White Plate) -->
-        <div class="main-plate-wrap" id="mainPlateWrap">
-          <!-- Real PNG Image Overlay: Transparent PNG with Soft Realistic Drop Shadow -->
-          <img id="realWingImg" class="real-wing-overlay" src="" alt="Chicken Wings" 
-               onerror="handleWingImgError(this)" 
-               onload="handleWingImgLoad(this)" />
+        <!-- Dedicated Centered Flex Stage for Main Wings (Dead-Center, Zero RTL Shift Bug) -->
+        <div class="wings-center-stage">
+          <div class="main-plate-wrap" id="mainPlateWrap">
+            <!-- Real PNG Image Overlay: Transparent PNG with Soft Realistic Drop Shadow -->
+            <img id="realWingImg" class="real-wing-overlay" src="" alt="Chicken Wings" 
+                 onerror="handleWingImgError(this)" 
+                 onload="handleWingImgLoad(this)" />
 
-          <!-- Procedural Vector Fallback (ONLY shown if PNG fails, transparent backdrop, no white dish) -->
-          <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240">
+            <!-- Procedural Vector Fallback (ONLY shown if PNG fails, transparent backdrop, no white dish) -->
+            <svg class="plate-svg" id="mainPlateSvg" viewBox="0 0 240 240">
             <defs>
               <!-- Crispy Golden Wing Base Gradient (Fallback) -->
               <radialGradient id="crispyWingGrad" cx="35%" cy="30%" r="70%">
@@ -1389,6 +1402,7 @@
               <path class="steam-line" d="M145 92 Q150 78 143 62 T148 45" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.5" style="animation-delay: 1.2s;"/>
             </g>
           </svg>
+          </div>
         </div>
 
         <!-- Dedicated Vertical Spice Thermometer on Right Side -->
@@ -1735,7 +1749,7 @@
        */
       dips: [
         { id: "buffalo", name: "بافالو", nameEn: "Buffalo", color: "#DC2626", sauceColor: "#EF4444", image: "/images/dip-buffalo.png" },
-        { id: "algeria", name: "الصوص الجزائرية", nameEn: "Algerian Sauce", color: "#EA580C", sauceColor: "#F97316", isSignature: true, image: "/images/dip-algeria.png" },
+        { id: "honey-mustard", name: "هوني ماسترد", nameEn: "Honey Mustard", color: "#EAB308", sauceColor: "#FACC15", image: "/images/dip-honey-mustard.png" },
         { id: "ranch", name: "رانش", nameEn: "Ranch", color: "#F8FAFC", sauceColor: "#FFFFFF", image: "/images/dip-ranch.png" },
         { id: "cheese", name: "صوص الجبن", nameEn: "Cheese Sauce", color: "#F59E0B", sauceColor: "#FBBF24", image: "/images/dip-cheese.png" },
         { id: "bbq", name: "باربكيو", nameEn: "BBQ", color: "#451A03", sauceColor: "#451A03", image: "/images/dip-bbq.png" },
@@ -1960,9 +1974,11 @@
      */
     function setWingsCount(count) {
       state.wingsCount = count;
-      const plateWrap = document.getElementById("mainPlateWrap");
-      plateWrap.style.transform = "scale(0.96)";
-      setTimeout(() => { plateWrap.style.transform = "scale(1)"; }, 150);
+      const img = document.getElementById("realWingImg");
+      if (img) {
+        img.style.transform = "scale(0.95)";
+        setTimeout(() => { img.style.transform = "scale(1)"; }, 150);
+      }
       renderAll();
     }
 
