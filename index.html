@@ -2024,8 +2024,7 @@
 
                 <div class="main-plate-wrap" id="mainPlateWrap">
                   <!-- Single Clean Real PNG Image (Snappy Instant Switching, Zero Layering/Lag) -->
-                  <img id="realWingImg" class="real-wing-overlay loading-skeleton" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
-                       loading="lazy" decoding="async"
+                  <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
                        onerror="handleWingImgError(this)" 
                        onload="handleWingImgLoad(this)" />
 
@@ -2936,6 +2935,9 @@
 
       // Synchronize currently active selections if any item became unavailable
       syncActiveSelectionsWithAvailability();
+      preloadAllAssets();
+      const carouselTrack = document.getElementById("carouselTrack");
+      if (carouselTrack) carouselTrack.innerHTML = "";
     }
 
     /**
@@ -3134,28 +3136,70 @@
 
     /**
      * PRELOAD ALL PNG ASSETS ON APP MOUNT
-     * Preloads all 20 wing combinations, all 6 dips, and both sides into memory
+     * Preloads all 20 wing combinations, fallback images, dips, and sides into memory
      */
+    const PRELOADED_IMAGES = {};
     function preloadAllAssets() {
-      // 1. All 20 Wings Combinations (4 sauces x 5 counts)
-      MENU_CONFIG.coatingSauces.forEach(sauce => {
-        MENU_CONFIG.wingCounts.forEach(w => {
-          const img = new Image();
-          img.src = getWingImagePath(sauce.id, w.count);
+      const allCounts = [3, 6, 9, 12, 20];
+      const allSauces = ["crispy", "algeria", "bbq", "buffalo"];
+
+      // 1. Unconditionally preload all 20 main tray combinations (4 sauces x 5 counts)
+      allSauces.forEach(sauceId => {
+        allCounts.forEach(cnt => {
+          const url = getWingImagePath(sauceId, cnt);
+          if (url && !PRELOADED_IMAGES[url]) {
+            const img = new Image();
+            img.src = url;
+            PRELOADED_IMAGES[url] = img;
+          }
         });
       });
 
-      // 2. All 6 Dips
-      MENU_CONFIG.dips.forEach(dip => {
+      // 2. Preload default fallback wing image
+      const defaultWingSrc = resolveImagePath("/images/wings-crispy-6.png");
+      if (defaultWingSrc && !PRELOADED_IMAGES[defaultWingSrc]) {
         const img = new Image();
-        img.src = resolveImagePath(dip.image || `/images/dip-${dip.id}.png`);
-      });
+        img.src = defaultWingSrc;
+        PRELOADED_IMAGES[defaultWingSrc] = img;
+      }
 
-      // 3. Both Sides
-      MENU_CONFIG.sides.forEach(side => {
-        const img = new Image();
-        img.src = resolveImagePath(side.image || `/images/side-${side.id}.png`);
-      });
+      // 3. Preload custom sauce image URLs from database if any
+      if (Array.isArray(MENU_CONFIG.coatingSauces)) {
+        MENU_CONFIG.coatingSauces.forEach(sauce => {
+          if (sauce.image_url) {
+            const url = resolveImagePath(sauce.image_url);
+            if (url && !PRELOADED_IMAGES[url]) {
+              const img = new Image();
+              img.src = url;
+              PRELOADED_IMAGES[url] = img;
+            }
+          }
+        });
+      }
+
+      // 4. Preload all dips
+      if (Array.isArray(MENU_CONFIG.dips)) {
+        MENU_CONFIG.dips.forEach(dip => {
+          const url = resolveImagePath(dip.image || `/images/dip-${dip.id}.png`);
+          if (url && !PRELOADED_IMAGES[url]) {
+            const img = new Image();
+            img.src = url;
+            PRELOADED_IMAGES[url] = img;
+          }
+        });
+      }
+
+      // 5. Preload all sides
+      if (Array.isArray(MENU_CONFIG.sides)) {
+        MENU_CONFIG.sides.forEach(side => {
+          const url = resolveImagePath(side.image || `/images/side-${side.id}.png`);
+          if (url && !PRELOADED_IMAGES[url]) {
+            const img = new Image();
+            img.src = url;
+            PRELOADED_IMAGES[url] = img;
+          }
+        });
+      }
     }
 
     /**
@@ -3344,22 +3388,22 @@
     }
 
     function handleWingImgError(img) {
-      if (img) {
-        img.style.display = "none";
-        img.classList.remove("loading-skeleton");
+      if (!img) return;
+      img.classList.remove("loading-skeleton");
+      img.classList.remove("switching");
+      const defaultWingSrc = resolveImagePath("/images/wings-crispy-6.png");
+      if (img.src !== defaultWingSrc && !img.src.endsWith("wings-crispy-6.png")) {
+        console.warn("Main tray wing image failed to load, falling back to default:", img.src);
+        img.src = defaultWingSrc;
       }
-      const g = document.getElementById("wingsGroup");
-      if (g) g.style.display = "block";
+      img.style.display = "block";
     }
 
     function handleWingImgLoad(img) {
-      if (img) {
-        img.style.display = "block";
-        img.classList.remove("switching");
-        img.classList.remove("loading-skeleton");
-      }
-      const g = document.getElementById("wingsGroup");
-      if (g) g.style.display = "none";
+      if (!img) return;
+      img.style.display = "block";
+      img.classList.remove("switching");
+      img.classList.remove("loading-skeleton");
     }
 
     /**
@@ -3483,7 +3527,7 @@
             el.dataset.itemId = dipId;
             el.innerHTML = `
               <div class="dip-contact-shadow"></div>
-              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img loading-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('loading-skeleton')" onerror="this.classList.remove('loading-skeleton')" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -3528,7 +3572,7 @@
             el.dataset.itemId = sideId;
             el.innerHTML = `
               <div class="side-contact-shadow"></div>
-              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img loading-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('loading-skeleton')" onerror="this.classList.remove('loading-skeleton')" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -3631,15 +3675,16 @@
       const track = document.getElementById("carouselTrack");
       const allowanceBanner = document.getElementById("dipsAllowanceBanner");
       if (!track) return;
-      track.innerHTML = "";
 
       if (state.activeTab === "sauce") {
         if (allowanceBanner) allowanceBanner.style.display = "none";
         renderSauceCarousel(track);
       } else if (state.activeTab === "dips") {
+        track.innerHTML = "";
         renderDipsAllowanceBanner(allowanceBanner);
         renderDipsCarousel(track);
       } else if (state.activeTab === "sides") {
+        track.innerHTML = "";
         if (allowanceBanner) allowanceBanner.style.display = "none";
         renderSidesCarousel(track);
       }
@@ -3703,29 +3748,48 @@
     }
 
     /**
-     * COATING SAUCE CAROUSEL (EXACTLY 4 CHOICES WITH PREVIEWS)
+     * COATING SAUCE CAROUSEL (STATIC THUMBNAILS, NEVER TIED TO SIZE, INSTANT PAINT)
      */
     function renderSauceCarousel(track) {
+      // Key Stabilization: If sauce cards already exist in the track, do NOT re-create them!
+      // Simply update the selected class in-place so thumbnails stay 100% static & visible without flashing!
+      const existingCards = track.querySelectorAll(".item-card[data-sauce-id]");
+      if (existingCards.length > 0 && existingCards.length === MENU_CONFIG.coatingSauces.length) {
+        existingCards.forEach(card => {
+          const sId = card.getAttribute("data-sauce-id");
+          const isSelected = Boolean(state.selectedSauceId && state.selectedSauceId === sId);
+          card.classList.toggle("selected", isSelected);
+        });
+        return;
+      }
+
+      track.innerHTML = "";
+      const defaultWingFallback = resolveImagePath("/images/wings-crispy-6.png");
+
       MENU_CONFIG.coatingSauces.forEach(sauce => {
         const isAvail = sauce.is_available !== false;
         const isSelected = Boolean(state.selectedSauceId && state.selectedSauceId === sauce.id && isAvail);
         const card = document.createElement("div");
         card.className = "item-card" + (isSelected ? " selected" : "");
+        card.setAttribute("data-sauce-id", sauce.id);
         if (!isAvail) {
           card.style.opacity = "0.4";
           card.style.filter = "grayscale(0.8)";
           card.style.cursor = "not-allowed";
         }
 
+        // Each sauce thumbnail MUST always use its own fixed sauce.image_url (or default icon),
+        // NEVER dynamically tied to selectedSize or the main tray image.
         let previewImgSrc = "";
         if (sauce.image_url) {
           previewImgSrc = resolveImagePath(sauce.image_url);
         } else if (['crispy', 'algeria', 'bbq', 'buffalo'].includes(sauce.id)) {
-          previewImgSrc = getWingImagePath(sauce.id, 6);
+          previewImgSrc = resolveImagePath(`/images/wings-${sauce.id}-6.png`);
         } else {
-          previewImgSrc = getWingImagePath("crispy", 6);
+          previewImgSrc = defaultWingFallback;
         }
 
+        // Static <img> tag: No loading="lazy", no loading-skeleton class, with clean onError fallback
         card.innerHTML = `
           <div class="item-circle">
             <span class="item-badge-check">
@@ -3733,7 +3797,8 @@
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </span>
-            <img src="${previewImgSrc}" alt="${sauce.name}" class="loading-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('loading-skeleton')" onerror="this.classList.remove('loading-skeleton')"
+            <img src="${previewImgSrc}" alt="${sauce.name}"
+                 onerror="this.onerror=null; this.src='${defaultWingFallback}';"
                  style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${sauce.name}</div>
@@ -3766,6 +3831,8 @@
       const freeAllowance = currentWingsObj ? currentWingsObj.freeDips : getFreeDipsAllowance(count);
       const totalSelectedDips = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
 
+      const defaultDipFallback = resolveImagePath("/images/dip-buffalo.png");
+
       MENU_CONFIG.dips.forEach(dip => {
         const qty = state.selectedDips[dip.id] || 0;
         const isSelected = qty > 0;
@@ -3789,7 +3856,8 @@
             <span class="item-btn-minus" onclick="handleDecrementDip(event, '${dip.id}')">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </span>
-            <img src="${imgPath}" alt="${dip.name}" class="loading-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('loading-skeleton')" onerror="this.classList.remove('loading-skeleton')"
+            <img src="${imgPath}" alt="${dip.name}"
+                 onerror="this.onerror=null; this.src='${defaultDipFallback}';"
                  style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${dip.name}</div>
@@ -3835,6 +3903,8 @@
      * SIDES CAROUSEL (MULTI-SELECT & UNLIMITED QUANTITIES)
      */
     function renderSidesCarousel(track) {
+      const defaultSideFallback = resolveImagePath("/images/side-fries.png");
+
       MENU_CONFIG.sides.forEach(side => {
         const qty = state.selectedSides[side.id] || 0;
         const isSelected = qty > 0;
@@ -3855,7 +3925,8 @@
             <span class="item-btn-minus" onclick="handleDecrementSide(event, '${side.id}')">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </span>
-            <img src="${imgPath}" alt="${side.name}" class="loading-skeleton" loading="lazy" decoding="async" onload="this.classList.remove('loading-skeleton')" onerror="this.classList.remove('loading-skeleton')"
+            <img src="${imgPath}" alt="${side.name}"
+                 onerror="this.onerror=null; this.src='${defaultSideFallback}';"
                  style="width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${side.name}</div>
