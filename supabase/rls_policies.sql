@@ -97,7 +97,7 @@ RETURNS boolean AS $$
 BEGIN
   RETURN (
     auth.role() = 'authenticated' AND
-    (auth.jwt() ->> 'email') = 'YOUR_ADMIN_EMAIL@example.com'
+    (auth.jwt() ->> 'email') = 'ali.boubn1@example.com'
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
