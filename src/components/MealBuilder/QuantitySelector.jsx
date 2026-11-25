@@ -14,7 +14,7 @@ export const QuantitySelector = ({ selectedQuantity, onSelectQuantity }) => {
             اختر عدد قطع الأجنحة
           </h3>
         </div>
-        <span className="text-[11px] font-bold text-[#B8A99A]">
+        <span className="text-[11px] font-bold text-[#D4C7BA]">
           دجاج طازج 100% يومياً
         </span>
       </div>
@@ -31,7 +31,7 @@ export const QuantitySelector = ({ selectedQuantity, onSelectQuantity }) => {
               className={`relative text-right p-3.5 rounded-2xl border-2 transition-transform duration-100 cursor-pointer flex flex-col justify-between active:scale-95 will-change-transform select-none ${
                 isSelected
                   ? 'border-[#FF7A00] bg-[#FF7A00]/15 shadow-glow ring-1 ring-[#FF7A00]/50 scale-[1.01]'
-                  : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'
+                  : 'border-[#5C200E] bg-[#3D1408] hover:border-[#FF7A00]/50 hover:bg-[#4A190B]'
               }`}
             >
               {/* Header row with badge and check */}
@@ -40,7 +40,7 @@ export const QuantitySelector = ({ selectedQuantity, onSelectQuantity }) => {
                   className={`text-[10px] font-black px-2 py-0.5 rounded-full ${
                     qty.recommended
                       ? 'bg-[#FF7A00] text-white shadow-sm'
-                      : 'bg-[#2C221F] text-[#B8A99A]'
+                      : 'bg-[#2B0D05] text-[#D4C7BA]'
                   }`}
                 >
                   {qty.badge}
@@ -50,7 +50,7 @@ export const QuantitySelector = ({ selectedQuantity, onSelectQuantity }) => {
                   className={`w-5 h-5 rounded-full flex items-center justify-center transition-all ${
                     isSelected
                       ? 'bg-[#FF7A00] text-white shadow-sm'
-                      : 'border border-[#3A2822] text-transparent'
+                      : 'border border-[#5C200E] text-transparent'
                   }`}
                 >
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
@@ -62,17 +62,17 @@ export const QuantitySelector = ({ selectedQuantity, onSelectQuantity }) => {
                 <h4 className="text-base font-black text-[#FFF8F0] font-tajawal">
                   {qty.title}
                 </h4>
-                <div className="text-[11px] text-[#B8A99A] font-medium">
+                <div className="text-[11px] text-[#D4C7BA] font-medium">
                   {qty.titleEn}
                 </div>
               </div>
 
               {/* Price and calories */}
-              <div className="mt-3 pt-2 border-t border-[#3A2822] flex items-center justify-between w-full">
+              <div className="mt-3 pt-2 border-t border-[#5C200E] flex items-center justify-between w-full">
                 <span className="text-base font-black text-[#FF7A00] font-tajawal">
                   {formatDZD(qty.price)}
                 </span>
-                <span className="text-[10px] text-[#B8A99A]">
+                <span className="text-[10px] text-[#D4C7BA]">
                   {qty.calories}
                 </span>
               </div>

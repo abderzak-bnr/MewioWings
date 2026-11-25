@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#14100E">
+  <meta name="theme-color" content="#FF7A00">
   <title>WINGO! — Build Your Wings | صمّم وجبتك (المدية)</title>
   
   <!-- Google Font: Cairo -->
@@ -39,17 +39,21 @@
     }
 
     :root {
-      --bg-midnight: #14100E;
-      --bg-surface: #211A17;
-      --bg-surface-elevated: #2C221F;
+      --bg-midnight: #F97316;
+      --bg-surface: #3D1408;
+      --bg-surface-elevated: #4A190B;
+      --bg-surface-dark: #2B0D05;
+      --brand-brown: #3D1408;
+      --brand-brown-hover: #2B0D05;
+      --brand-brown-border: #5C200E;
       --brand-orange: #FF7A00;
       --brand-orange-hover: #E56D00;
       --brand-gold: #F59E0B;
       --brand-green: #10B981;
       --text-white: #FFF8F0;
-      --text-muted: #B8A99A;
-      --text-secondary: #D4C7BA;
-      --border-subtle: #3A2822;
+      --text-muted: #E2D3C4;
+      --text-secondary: #F3E8DC;
+      --border-subtle: #5C200E;
       --font-cairo: 'Cairo', system-ui, -apple-system, sans-serif;
     }
 
@@ -69,8 +73,9 @@
     }
 
     body {
-      background-color: #0E0B0A;
-      color: var(--text-white);
+      background-color: #EA580C;
+      background: linear-gradient(180deg, #FF7A00 0%, #EA580C 100%);
+      color: #3D1408;
       font-family: var(--font-cairo);
       direction: rtl;
       text-align: right;
@@ -88,11 +93,12 @@
       width: 100%;
       max-width: 430px;
       min-height: 100vh;
-      background-color: var(--bg-midnight);
+      background-color: #F97316;
+      background: linear-gradient(180deg, #FF7A00 0%, #EA580C 100%);
       position: relative;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 0 1px #3A2822;
+      box-shadow: 0 0 50px rgba(61, 20, 8, 0.45), 0 0 0 1px #5C200E;
       overflow-x: hidden;
     }
 
@@ -116,7 +122,7 @@
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      background: rgba(255, 248, 240, 0.06);
+      background: #3D1408;
       border: 1px solid var(--border-subtle);
       color: var(--text-white);
       display: flex;
@@ -128,7 +134,7 @@
     }
     .icon-btn:active {
       transform: scale(0.92);
-      background: rgba(255, 248, 240, 0.12);
+      background: #2B0D05;
     }
 
     .header-actions {
@@ -148,7 +154,7 @@
       height: 40px;
       width: auto;
       object-fit: contain;
-      filter: drop-shadow(0 0 8px rgba(255, 248, 240, 0.35));
+      filter: drop-shadow(0 0 1px #FFF8F0) drop-shadow(0 0 6px rgba(255, 248, 240, 0.85)) drop-shadow(0 2px 5px rgba(61, 20, 8, 0.35));
       transition: transform 0.2s ease;
       display: inline-block;
       vertical-align: middle;
@@ -162,13 +168,13 @@
       font-size: 19px;
       font-weight: 900;
       letter-spacing: 1.5px;
-      color: var(--text-white);
+      color: #3D1408;
       line-height: 1.1;
     }
     .brand-subtitle {
       font-size: 10.5px;
-      color: var(--brand-orange);
-      font-weight: 700;
+      color: #3D1408;
+      font-weight: 800;
       line-height: 1.3;
       margin-top: 2px;
       text-align: right;
@@ -178,17 +184,18 @@
       position: absolute;
       top: -3px;
       left: -3px;
-      background: var(--brand-orange);
+      background: #3D1408;
       color: #FFF8F0;
+      border: 1.5px solid #5C200E;
       font-size: 10px;
       font-weight: 800;
-      width: 17px;
-      height: 17px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 6px rgba(255, 122, 0, 0.5);
+      box-shadow: 0 2px 6px rgba(61, 20, 8, 0.4);
     }
 
     /* ==========================================================
@@ -205,19 +212,19 @@
 
     .header-headline {
       font-size: 18px;
-      font-weight: 800;
-      color: var(--text-white);
+      font-weight: 900;
+      color: #3D1408;
       line-height: 1.35;
     }
     .header-tagline {
       font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 500;
+      color: #4A190B;
+      font-weight: 700;
       line-height: 1.4;
     }
 
     .mode-toggle-container {
-      background: rgba(255, 255, 255, 0.08);
+      background: #3D1408;
       border: 1px solid var(--border-subtle);
       border-radius: 9999px;
       padding: 3px;
@@ -225,6 +232,7 @@
       align-items: center;
       position: relative;
       flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(61, 20, 8, 0.25);
     }
 
     .mode-toggle-btn {
@@ -233,7 +241,7 @@
       padding: 6px 14px;
       font-size: 12px;
       font-weight: 800;
-      color: var(--text-muted);
+      color: #D4C7BA;
       border: none;
       background: transparent;
       cursor: pointer;
@@ -243,7 +251,7 @@
       white-space: nowrap;
     }
     .mode-toggle-btn.active {
-      color: #14100E;
+      color: #FFF8F0;
     }
 
     .mode-slider {
@@ -252,7 +260,7 @@
       bottom: 3px;
       right: 3px;
       width: calc(50% - 3px);
-      background: #FFF8F0;
+      background: #5C200E;
       border-radius: 9999px;
       z-index: 1;
       transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -401,8 +409,8 @@
       bottom: 9px;
       left: 50%;
       transform: translateX(-50%);
-      background: rgba(11, 18, 33, 0.9);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(61, 20, 8, 0.92);
+      border: 1px solid #5C200E;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       padding: 3px 4px;
@@ -411,7 +419,7 @@
       align-items: center;
       gap: 3px;
       z-index: 25;
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 18px rgba(35, 18, 6, 0.5);
     }
 
     .spice-bar-btn {
@@ -419,7 +427,7 @@
       background: transparent;
       padding: 4px 9px;
       border-radius: 9999px;
-      color: var(--text-muted);
+      color: #D4C7BA;
       font-size: 11px;
       font-weight: 800;
       font-family: var(--font-cairo);
@@ -434,22 +442,22 @@
       transform: scale(0.95);
     }
     .spice-bar-btn.active.mild {
-      background: rgba(16, 185, 129, 0.18);
+      background: rgba(16, 185, 129, 0.22);
       color: #10B981;
-      border-color: rgba(16, 185, 129, 0.4);
-      box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+      border-color: rgba(16, 185, 129, 0.5);
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
     }
     .spice-bar-btn.active.medium {
-      background: rgba(249, 115, 22, 0.2);
-      color: #F97316;
-      border-color: rgba(249, 115, 22, 0.45);
-      box-shadow: 0 0 12px rgba(249, 115, 22, 0.28);
+      background: rgba(249, 115, 22, 0.25);
+      color: #FF9433;
+      border-color: rgba(249, 115, 22, 0.55);
+      box-shadow: 0 0 12px rgba(249, 115, 22, 0.35);
     }
     .spice-bar-btn.active.extra-hot {
-      background: rgba(239, 68, 68, 0.24);
+      background: rgba(239, 68, 68, 0.28);
       color: #EF4444;
-      border-color: rgba(239, 68, 68, 0.55);
-      box-shadow: 0 0 14px rgba(239, 68, 68, 0.4);
+      border-color: rgba(239, 68, 68, 0.65);
+      box-shadow: 0 0 14px rgba(239, 68, 68, 0.45);
     }
 
     .spice-dot {
@@ -474,8 +482,8 @@
        ========================================================== */
     .orbit-ramekin {
       position: absolute;
-      width: 36px;
-      height: 36px;
+      width: 42px;
+      height: 42px;
       z-index: 18;
       transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease;
       transform: scale(0) translateZ(0);
@@ -489,21 +497,24 @@
       pointer-events: auto;
     }
 
-    /* 6 Dip slots contained strictly inside the 76px left column */
-    .dip-slot-0 { left: 2px; top: 6px; }
-    .dip-slot-1 { right: 2px; top: 20px; }
-    .dip-slot-2 { left: 2px; top: 54px; }
-    .dip-slot-3 { right: 2px; top: 68px; }
-    .dip-slot-4 { left: 2px; top: 102px; }
-    .dip-slot-5 { right: 2px; top: 116px; }
+    /* 8 Dip slots contained strictly inside the 82px left column */
+    .dip-slot-0 { left: 0px; top: 4px; }
+    .dip-slot-1 { right: 0px; top: 16px; }
+    .dip-slot-2 { left: 0px; top: 48px; }
+    .dip-slot-3 { right: 0px; top: 60px; }
+    .dip-slot-4 { left: 0px; top: 92px; }
+    .dip-slot-5 { right: 0px; top: 104px; }
+    .dip-slot-6 { left: 0px; top: 136px; }
+    .dip-slot-7 { right: 0px; top: 148px; }
 
     /* Dip quantity badge on single bowl */
     .dip-qty-badge {
       position: absolute;
       top: -4px;
       right: -4px;
-      background: var(--brand-orange);
-      color: #FFFFFF;
+      background: #3D1408;
+      color: #FFF8F0;
+      border: 1.5px solid #5C200E;
       font-size: 10px;
       font-weight: 900;
       border-radius: 9999px;
@@ -513,20 +524,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1.5px solid var(--bg-midnight);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
       z-index: 22;
       animation: popInBadge 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
-    /* Overflow pill if > 5 distinct dips */
+    /* Overflow pill if > 7 distinct dips */
     .dip-overflow-pill {
       position: absolute;
       inset: 0;
-      background: rgba(11, 18, 33, 0.94);
-      border: 1.5px solid var(--brand-orange);
+      background: rgba(61, 20, 8, 0.94);
+      border: 1.5px solid #FF7A00;
       border-radius: 50%;
-      color: var(--brand-orange);
+      color: #FF7A00;
       font-size: 11px;
       font-weight: 900;
       display: flex;
@@ -542,8 +552,8 @@
        ========================================================== */
     .orbit-side-plate {
       position: relative;
-      width: 58px;
-      height: 58px;
+      width: 95px;
+      min-height: 75px;
       z-index: 16;
       transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease;
       transform: scale(0) translateZ(0);
@@ -561,16 +571,17 @@
       pointer-events: auto;
     }
 
-    /* Flex-stacked vertically inside 76px right column */
-    .side-slot-0 { margin-top: 4px; }
+    /* Flex-stacked vertically inside 95px right column */
+    .side-slot-0 { margin-top: 2px; }
     .side-slot-1 { margin-top: 4px; }
 
     .side-qty-badge {
       position: absolute;
       top: -4px;
       right: -4px;
-      background: var(--brand-orange);
-      color: #FFFFFF;
+      background: #3D1408;
+      color: #FFF8F0;
+      border: 1.5px solid #5C200E;
       font-size: 10px;
       font-weight: 900;
       border-radius: 9999px;
@@ -580,7 +591,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1.5px solid var(--bg-midnight);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
       z-index: 22;
       animation: popInBadge 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -589,10 +599,10 @@
     .side-overflow-pill {
       position: absolute;
       inset: 0;
-      background: rgba(11, 18, 33, 0.94);
-      border: 1.5px solid var(--brand-orange);
+      background: rgba(61, 20, 8, 0.94);
+      border: 1.5px solid #FF7A00;
       border-radius: 50%;
-      color: var(--brand-orange);
+      color: #FF7A00;
       font-size: 12px;
       font-weight: 900;
       display: flex;
@@ -611,20 +621,20 @@
     .stage-sauce-badge {
       position: relative;
       margin: 0 auto;
-      background: rgba(11, 18, 33, 0.92);
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: rgba(61, 20, 8, 0.92);
+      border: 1px solid #5C200E;
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       padding: 4px 14px;
       border-radius: 9999px;
       font-size: 11px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: #FFF8F0;
       display: inline-flex;
       align-items: center;
       gap: 7px;
       z-index: 24;
-      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 4px 14px rgba(35, 18, 6, 0.4);
       white-space: nowrap;
     }
     .sauce-badge-dot {
@@ -653,11 +663,12 @@
       padding: 4px;
       width: 100%;
       position: relative;
-      background: rgba(19, 30, 51, 0.85);
+      background: #3D1408;
       border: 1px solid var(--border-subtle);
       border-radius: 9999px;
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 3px 10px rgba(61, 20, 8, 0.25);
     }
 
     .tabs-sliding-indicator {
@@ -666,7 +677,7 @@
       bottom: 4px;
       left: 0;
       right: auto;
-      background: #FFFFFF;
+      background: #5C200E;
       border-radius: 9999px;
       box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
       transition: left 0.26s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -685,7 +696,7 @@
       border-radius: 9999px;
       background: transparent;
       border: none;
-      color: var(--text-muted);
+      color: #D4C7BA;
       font-size: 11px;
       font-weight: 700;
       font-family: var(--font-cairo);
@@ -699,22 +710,22 @@
       transform: scale(0.95);
     }
     .tab-pill.active {
-      color: #14100E;
+      color: #FFF8F0;
       font-weight: 900;
       background: transparent;
       border-color: transparent;
       box-shadow: none;
     }
     .tab-pill.active svg {
-      stroke: #14100E;
+      stroke: #FFF8F0;
     }
 
     .tab-counter {
       width: 18px;
       height: 18px;
       border-radius: 50%;
-      background: var(--brand-orange);
-      color: white;
+      background: #5C200E;
+      color: #FFF8F0;
       font-size: 10px;
       font-weight: 800;
       display: flex;
@@ -740,22 +751,22 @@
       font-size: 11.5px;
       font-weight: 800;
       font-family: var(--font-cairo);
-      color: #FFFFFF;
-      background: rgba(249, 78, 30, 0.12);
-      border: 1px solid rgba(249, 78, 30, 0.3);
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      color: #FFF8F0;
+      background: #3D1408;
+      border: 1px solid #5C200E;
+      box-shadow: 0 2px 8px rgba(61, 20, 8, 0.25);
       transition: all 0.25s ease;
     }
 
     .dips-allowance-banner.quota-filled {
-      background: rgba(16, 185, 129, 0.12);
-      border-color: rgba(16, 185, 129, 0.35);
+      background: #2E382A;
+      border-color: #3B5234;
       color: #E2E8F0;
     }
 
     .dips-allowance-banner.special-offer {
-      background: linear-gradient(90deg, rgba(234, 88, 12, 0.25), rgba(245, 158, 11, 0.2));
-      border-color: rgba(245, 158, 11, 0.45);
+      background: linear-gradient(90deg, rgba(61, 20, 8, 0.95), rgba(74, 25, 11, 0.95));
+      border-color: #5C200E;
     }
 
     .allowance-content {
@@ -775,7 +786,7 @@
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      background: rgba(249, 78, 30, 0.2);
+      background: rgba(255, 122, 0, 0.2);
       color: var(--brand-orange);
     }
 
@@ -850,21 +861,21 @@
       width: 66px;
       height: 66px;
       border-radius: 50%;
-      background: var(--bg-surface);
-      border: 2px solid var(--border-subtle);
+      background: #3D1408;
+      border: 2px solid #5C200E;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 4px 10px rgba(61, 20, 8, 0.35);
       transition: border-color 0.15s ease, box-shadow 0.15s ease;
       overflow: visible;
       will-change: transform;
       -webkit-tap-highlight-color: transparent !important;
     }
     .item-card.selected .item-circle {
-      border-color: var(--brand-orange);
-      box-shadow: 0 0 0 2px rgba(255, 122, 0, 0.65), 0 4px 14px rgba(255, 122, 0, 0.25);
+      border-color: #FFF8F0;
+      box-shadow: 0 0 0 2px #5C200E, 0 4px 14px rgba(61, 20, 8, 0.4);
     }
 
     .item-badge-check {
@@ -875,8 +886,9 @@
       height: 20px;
       padding: 0 4px;
       border-radius: 9999px;
-      background: var(--brand-orange);
-      color: white;
+      background: #3D1408;
+      color: #FFF8F0;
+      border: 1.5px solid #5C200E;
       font-size: 11px;
       font-weight: 900;
       display: none;
@@ -897,7 +909,7 @@
       height: 20px;
       border-radius: 50%;
       background: #FFF8F0;
-      color: #14100E;
+      color: #3D1408;
       font-size: 13px;
       font-weight: 900;
       display: none;
@@ -917,8 +929,8 @@
 
     .item-name {
       font-size: 11px;
-      font-weight: 700;
-      color: var(--text-white);
+      font-weight: 800;
+      color: #3D1408;
       margin-top: 6px;
       line-height: 1.4;
       padding: 1px 0;
@@ -930,33 +942,34 @@
 
     .item-price {
       font-size: 11px;
-      font-weight: 800;
-      color: #FF9433;
+      font-weight: 900;
+      color: #4A190B;
       margin-top: 2px;
       line-height: 1.3;
     }
     .item-price.free {
       color: #10B981;
-      font-weight: 800;
+      font-weight: 900;
     }
 
     /* Wings Quantity Selector Bar */
     .quantity-pill-bar {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-subtle);
+      background: #3D1408;
+      border: 1px solid #5C200E;
       border-radius: 9999px;
       padding: 3px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 2px;
+      box-shadow: 0 2px 8px rgba(61, 20, 8, 0.25);
     }
 
     .qty-btn {
       flex: 1;
       border: none;
       background: transparent;
-      color: var(--text-muted);
+      color: #D4C7BA;
       font-size: 12px;
       font-weight: 700;
       font-family: var(--font-cairo);
@@ -970,18 +983,18 @@
       transform: scale(0.95);
     }
     .qty-btn.active {
-      background: #FFF8F0;
-      color: #14100E;
+      background: #5C200E;
+      color: #FFF8F0;
       font-weight: 900;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
     }
 
     /* Bottom CTA Button with Mobile Safe-Area Margin & Rich Gradient */
     .cta-button {
       width: 100%;
-      background: linear-gradient(135deg, #FF7A00 0%, #E56D00 100%);
+      background: #3D1408;
       color: #FFF8F0;
-      border: 1px solid rgba(255, 248, 240, 0.16);
+      border: 1.5px solid #5C200E;
       border-radius: 9999px;
       padding: 15px 22px;
       font-size: 15px;
@@ -991,13 +1004,18 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      box-shadow: 0 8px 24px rgba(249, 78, 30, 0.42), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(61, 20, 8, 0.35), inset 0 1px 1px rgba(255, 248, 240, 0.15);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       margin-bottom: max(4px, env(safe-area-inset-bottom, 0px));
     }
+    .cta-button:hover {
+      background: #2B0D05;
+      border-color: #4A190B;
+    }
     .cta-button:active {
       transform: scale(0.97);
-      box-shadow: 0 4px 14px rgba(249, 78, 30, 0.3);
+      background: #2B0D05;
+      box-shadow: 0 4px 14px rgba(61, 20, 8, 0.3);
     }
 
     /* ==========================================================
@@ -1018,23 +1036,23 @@
     }
 
     .ready-box-card {
-      background: #211A17;
-      border: 1px solid #3A2822;
+      background: #3D1408;
+      border: 1px solid #5C200E;
       border-radius: 22px;
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+      box-shadow: 0 6px 18px rgba(61, 20, 8, 0.35);
       position: relative;
       overflow: hidden;
       transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.22s ease;
       will-change: transform;
     }
     .ready-box-card:hover {
-      border-color: rgba(255, 122, 0, 0.45);
+      border-color: #FF7A00;
       transform: translateY(-3px) translateZ(0);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 0 20px rgba(255, 122, 0, 0.15);
+      box-shadow: 0 12px 28px rgba(61, 20, 8, 0.45);
     }
     .ready-box-card:active {
       transform: translateY(-1px) scale(0.99) translateZ(0);
@@ -1049,15 +1067,15 @@
       font-size: 12px;
       font-weight: 900;
       color: #FFF8F0;
-      background: #14100E;
+      background: #2B0D05;
       padding: 3px 10px;
       border-radius: 9999px;
-      border: 1px solid #3A2822;
+      border: 1px solid #5C200E;
     }
     .box-badge {
       font-size: 10px;
       font-weight: 800;
-      color: var(--brand-orange);
+      color: #FF9433;
       background: rgba(255, 122, 0, 0.15);
       padding: 3px 8px;
       border-radius: 9999px;
@@ -1072,12 +1090,12 @@
       width: 62px;
       height: 62px;
       border-radius: 18px;
-      background: #14100E;
+      background: #2B0D05;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      border: 1px solid #3A2822;
+      border: 1px solid #5C200E;
     }
     .box-text-wrap {
       flex: 1;
@@ -1121,12 +1139,12 @@
     .box-price {
       font-size: 17px;
       font-weight: 900;
-      color: var(--brand-orange);
+      color: #FF7A00;
     }
     .box-action-btn {
-      background: var(--brand-orange);
-      color: #FFFFFF;
-      border: none;
+      background: #5C200E;
+      color: #FFF8F0;
+      border: 1px solid #732912;
       padding: 8px 16px;
       border-radius: 9999px;
       font-size: 12px;
@@ -1137,17 +1155,17 @@
       align-items: center;
       gap: 6px;
       transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 12px rgba(249, 78, 30, 0.28);
+      box-shadow: 0 4px 12px rgba(61, 20, 8, 0.3);
       will-change: transform;
     }
     .box-action-btn:hover {
-      background: var(--brand-orange-hover);
+      background: #3D1408;
       transform: translateY(-1px) translateZ(0);
-      box-shadow: 0 6px 16px rgba(249, 78, 30, 0.4);
+      box-shadow: 0 6px 16px rgba(61, 20, 8, 0.45);
     }
     .box-action-btn:active {
       transform: scale(0.94) translateZ(0);
-      box-shadow: 0 2px 8px rgba(249, 78, 30, 0.25);
+      box-shadow: 0 2px 8px rgba(61, 20, 8, 0.25);
     }
 
     /* Ready Box Customizer Modal & Order Drawer */
@@ -1176,10 +1194,10 @@
     .ready-modal-panel, .drawer-panel {
       width: 100%;
       max-width: 480px;
-      background: #211A17;
+      background: #3D1408;
       border-top-left-radius: 28px;
       border-top-right-radius: 28px;
-      border: 1px solid #3A2822;
+      border: 1px solid #5C200E;
       border-bottom: none;
       padding: 16px 20px calc(24px + env(safe-area-inset-bottom, 0px));
       max-height: 90vh;
@@ -1216,7 +1234,7 @@
       }
       .ready-modal-panel, .drawer-panel {
         border-radius: 24px;
-        border: 1px solid #3A2822;
+        border: 1px solid #5C200E;
         max-width: 460px;
         max-height: 85vh;
         transform: translate3d(0, 16px, 0) scale(0.96);
@@ -1277,10 +1295,10 @@
     }
 
     .drawer-summary-card {
-      background: #2C221F;
+      background: #4A190B;
       border-radius: 18px;
       padding: 14px;
-      border: 1px solid #3A2822;
+      border: 1px solid #5C200E;
       margin-bottom: 14px;
     }
     .drawer-item-row {
@@ -1289,7 +1307,7 @@
       justify-content: space-between;
       font-size: 13px;
       padding: 6px 0;
-      border-bottom: 1px solid #3A2822;
+      border-bottom: 1px solid #5C200E;
     }
     .drawer-item-row:last-child {
       border-bottom: none;
@@ -1305,8 +1323,8 @@
 
     /* Customer Form */
     .customer-form-section {
-      background: #211A17;
-      border: 1px solid #3A2822;
+      background: #3D1408;
+      border: 1px solid #5C200E;
       border-radius: 18px;
       padding: 14px;
       margin-bottom: 16px;
@@ -1347,8 +1365,8 @@
 
     .form-input, .form-textarea {
       width: 100%;
-      background: #14100E;
-      border: 1.5px solid #3A2822;
+      background: #2B0D05;
+      border: 1.5px solid #5C200E;
       border-radius: 12px;
       padding: 10px 14px;
       font-size: 12px;
@@ -1390,9 +1408,9 @@
 
     .confirm-btn {
       width: 100%;
-      background: linear-gradient(135deg, #FF7A00 0%, #E56D00 100%);
+      background: #3D1408;
       color: #FFF8F0;
-      border: 1px solid rgba(255, 248, 240, 0.16);
+      border: 1.5px solid #5C200E;
       border-radius: 9999px;
       padding: 15px 22px;
       font-size: 15px;
@@ -1403,8 +1421,11 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 8px 24px rgba(255, 122, 0, 0.42), inset 0 1px 1px rgba(255, 248, 240, 0.3);
+      box-shadow: 0 8px 24px rgba(61, 20, 8, 0.42), inset 0 1px 1px rgba(255, 248, 240, 0.2);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .confirm-btn:hover {
+      background: #2B0D05;
     }
     .confirm-btn:active {
       transform: scale(0.97);
@@ -1450,8 +1471,8 @@
       margin-bottom: 6px;
     }
     .order-id-pill {
-      background: #2C221F;
-      border: 1px solid #3A2822;
+      background: #2B0D05;
+      border: 1px solid #5C200E;
       padding: 4px 14px;
       border-radius: 9999px;
       font-size: 12px;
@@ -1466,9 +1487,9 @@
     }
     .success-recap-card {
       width: 100%;
-      background: #211A17;
+      background: #3D1408;
       border-radius: 16px;
-      border: 1px solid #3A2822;
+      border: 1px solid #5C200E;
       padding: 14px;
       text-align: right;
       margin-bottom: 16px;
@@ -1478,8 +1499,8 @@
     }
     .new-order-btn {
       width: 100%;
-      background: var(--brand-orange, #FF7A00);
-      border: none;
+      background: #3D1408;
+      border: 1.5px solid #5C200E;
       color: #FFF8F0;
       border-radius: 9999px;
       padding: 13px 20px;
@@ -1491,16 +1512,13 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 16px rgba(255, 122, 0, 0.35);
+      box-shadow: 0 4px 16px rgba(61, 20, 8, 0.35);
       transition: all 0.2s ease;
     }
     .new-order-btn:hover {
-      background: #E56D00;
-      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.45);
+      background: #2B0D05;
+      box-shadow: 0 6px 20px rgba(61, 20, 8, 0.45);
       transform: translateY(-1px);
-    }
-    .new-order-btn:active {
-      transform: scale(0.97);
     }
     .new-order-btn:active {
       transform: scale(0.97);
@@ -1626,10 +1644,10 @@
       flex-shrink: 0;
     }
 
-    /* Middle Row: Strict 3-Column Grid (76px 1fr 76px) */
+    /* Middle Row: Strict 3-Column Grid (82px 1fr 95px) */
     .tray-middle-grid {
       display: grid;
-      grid-template-columns: 76px 1fr 76px;
+      grid-template-columns: 82px 1fr 95px;
       align-items: center;
       justify-items: center;
       width: 100%;
@@ -1639,9 +1657,9 @@
       direction: ltr; /* Keeps Left column = Dips, Center = Wings, Right = Sides */
     }
 
-    /* Left Column (76px): Dedicated to Side Dips */
+    /* Left Column (82px): Dedicated to Side Dips */
     .tray-col-dips {
-      width: 76px;
+      width: 82px;
       height: 100%;
       position: relative;
       direction: rtl;
@@ -1658,15 +1676,15 @@
       min-width: 0;
     }
 
-    /* Right Column (76px): Dedicated to Sides (Fries, Coleslaw) */
+    /* Right Column (95px): Dedicated to Sides (Fries, Coleslaw) */
     .tray-col-sides {
-      width: 76px;
+      width: 95px;
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 6px;
       position: relative;
       direction: rtl;
     }
@@ -2186,10 +2204,10 @@
               </div>
             </div>
 
-            <!-- Middle Row: Strict 3-Column Grid (76px 1fr 76px) -->
+            <!-- Middle Row: Strict 3-Column Grid (82px 1fr 95px) -->
             <div class="tray-middle-grid">
 
-              <!-- Left Column (76px): Dedicated Strictly to Side Dips -->
+              <!-- Left Column (82px): Dedicated Strictly to Side Dips (up to 8 slots) -->
               <div class="tray-col-dips" id="trayDipsCol">
                 <div class="orbit-ramekin dip-slot-0" id="orbitRamekin0"></div>
                 <div class="orbit-ramekin dip-slot-1" id="orbitRamekin1"></div>
@@ -2197,6 +2215,8 @@
                 <div class="orbit-ramekin dip-slot-3" id="orbitRamekin3"></div>
                 <div class="orbit-ramekin dip-slot-4" id="orbitRamekin4"></div>
                 <div class="orbit-ramekin dip-slot-5" id="orbitRamekin5"></div>
+                <div class="orbit-ramekin dip-slot-6" id="orbitRamekin6"></div>
+                <div class="orbit-ramekin dip-slot-7" id="orbitRamekin7"></div>
               </div>
 
               <!-- Center Column (1fr): Dedicated Strictly to Main Wings Box -->
@@ -2245,7 +2265,7 @@
                 </div>
               </div>
 
-              <!-- Right Column (76px): Dedicated Strictly to Sides (Fries, Coleslaw) -->
+              <!-- Right Column (95px): Dedicated Strictly to Sides (Fries, Coleslaw) -->
               <div class="tray-col-sides" id="traySidesCol">
                 <div class="orbit-side-plate side-slot-0" id="orbitSidePlate0"></div>
                 <div class="orbit-side-plate side-slot-1" id="orbitSidePlate1"></div>
@@ -3749,10 +3769,11 @@
      * DEDICATED LEFT DIPS ZONE (DIRECT PNG RENDERING WITH KEY STABILIZATION)
      * - Zero SVG fallback flash: renders <img> directly
      * - Key stabilization: when quantity changes, only badge updates; <img> remains mounted and rock-steady
+     * - Supports up to 8 slots with scaled 42px cups
      */
     function renderOrbitingDips() {
       const distinctDipIds = Object.keys(state.selectedDips).filter(id => state.selectedDips[id] > 0);
-      const maxSlots = 6;
+      const maxSlots = 8;
 
       for (let i = 0; i < maxSlots; i++) {
         const el = document.getElementById("orbitRamekin" + i);
@@ -3772,7 +3793,7 @@
           } else {
             el.dataset.itemId = dipId;
             el.innerHTML = `
-              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" width="36" height="36" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" width="42" height="42" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -3793,6 +3814,7 @@
      * DEDICATED RIGHT SIDES ZONE (DIRECT PNG RENDERING WITH KEY STABILIZATION)
      * - Zero SVG fallback flash: renders <img> directly
      * - Key stabilization: when quantity changes, only badge updates; <img> remains mounted and rock-steady
+     * - Balanced food proportions: Fries scaled ~1.6x (92px), Coleslaw scaled ~1.3x (75px)
      */
     function renderOrbitingSides() {
       const distinctSideIds = Object.keys(state.selectedSides).filter(id => state.selectedSides[id] > 0);
@@ -3809,6 +3831,13 @@
           const imgPath = resolveImagePath(sideObj.image || `/images/side-${sideObj.id}.png`);
 
           const wasHidden = !el.classList.contains("visible");
+          const isFries = sideId === 'fries' || sideId.includes('fries');
+          // Scale Fries up significantly (~1.6x, 92px) and Coleslaw (~1.3x, 75px)
+          const sideWidth = isFries ? 92 : 75;
+          const sideHeight = isFries ? 92 : 75;
+
+          el.style.width = `${sideWidth}px`;
+          el.style.height = `${sideHeight}px`;
 
           // Key Check: if slot already displays this exact item.id, ONLY update badge text without re-mounting <img>
           if (el.dataset.itemId === sideId) {
@@ -3816,7 +3845,7 @@
           } else {
             el.dataset.itemId = sideId;
             el.innerHTML = `
-              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" width="58" height="58" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" width="${sideWidth}" height="${sideHeight}" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -3829,6 +3858,8 @@
           el.classList.remove("visible", "tray-drop-bounce");
           el.dataset.itemId = "";
           el.innerHTML = "";
+          el.style.width = "";
+          el.style.height = "";
         }
       }
     }
@@ -4389,8 +4420,8 @@
           btn.style.cssText = `
             padding: 8px 10px; border-radius: 12px; font-size: 11px; font-weight: 800;
             font-family: var(--font-cairo); cursor: ${!isAvail ? 'not-allowed' : 'pointer'}; text-align: right;
-            border: 1.5px solid ${isSel ? 'var(--brand-orange)' : '#3A2822'};
-            background: ${isSel ? 'rgba(255, 122, 0, 0.2)' : '#2C221F'};
+            border: 1.5px solid ${isSel ? 'var(--brand-orange)' : '#5C200E'};
+            background: ${isSel ? 'rgba(255, 122, 0, 0.2)' : '#4A190B'};
             color: ${!isAvail ? '#6B7280' : 'var(--text-white)'}; opacity: ${!isAvail ? '0.45' : '1'}; transition: all 0.2s;
           `;
           btn.innerText = sauce.name + (!isAvail ? " (غير متوفر)" : "");
@@ -4416,8 +4447,8 @@
           btn.style.cssText = `
             flex: 1; padding: 8px 6px; border-radius: 12px; font-size: 11px; font-weight: 800;
             font-family: var(--font-cairo); cursor: pointer; text-align: center;
-            border: 1.5px solid ${isSel ? spice.color : '#3A2822'};
-            background: ${isSel ? `${spice.color}25` : '#2C221F'};
+            border: 1.5px solid ${isSel ? spice.color : '#5C200E'};
+            background: ${isSel ? `${spice.color}25` : '#4A190B'};
             color: var(--text-white); transition: all 0.2s;
           `;
           btn.innerText = spice.title;

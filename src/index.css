@@ -18,7 +18,8 @@
   }
 
   body {
-    background-color: #14100E;
+    background-color: #F97316;
+    background: linear-gradient(180deg, #FF7A00 0%, #EA580C 100%);
     color: #FFF8F0;
     font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
     user-select: none;
@@ -41,10 +42,10 @@
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #211A17;
+  background: #3D1408;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3A2822;
+  background: #5C200E;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {

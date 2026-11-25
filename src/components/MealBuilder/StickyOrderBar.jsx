@@ -6,13 +6,13 @@ export const StickyOrderBar = ({ totalPrice, onOpenOrder }) => {
   return (
     <aside 
       aria-label="شريط الطلب السريع"
-      className="fixed bottom-0 left-0 right-0 z-40 p-3 sm:p-4 bg-gradient-to-t from-black via-[#14100E]/95 to-transparent pointer-events-none"
+      className="fixed bottom-0 left-0 right-0 z-40 p-3 sm:p-4 bg-gradient-to-t from-black via-[#3D1408]/95 to-transparent pointer-events-none"
     >
       <div className="max-w-md mx-auto pointer-events-auto">
         <button
           type="button"
           onClick={onOpenOrder}
-          className="w-full bg-[#211A17] text-[#FFF8F0] rounded-2xl p-3 sm:p-3.5 shadow-2xl border border-[#3A2822] flex items-center justify-between gap-3 active:scale-[0.98] transition-all duration-200 hover:bg-[#2C221F] group"
+          className="w-full bg-[#3D1408] text-[#FFF8F0] rounded-2xl p-3 sm:p-3.5 shadow-2xl border border-[#5C200E] flex items-center justify-between gap-3 active:scale-[0.98] transition-all duration-200 hover:bg-[#2B0D05] group"
           aria-label="عرض ملخص الوجبة وإتمام الطلب"
         >
           {/* Price & Location info */}
@@ -22,7 +22,7 @@ export const StickyOrderBar = ({ totalPrice, onOpenOrder }) => {
             </div>
 
             <div className="text-right">
-              <div className="text-[10px] text-[#B8A99A] flex items-center gap-1 font-medium">
+              <div className="text-[10px] text-[#D4C7BA] flex items-center gap-1 font-medium">
                 <MapPin className="w-2.5 h-2.5 text-[#FF7A00]" />
                 <span>{RESTAURANT_INFO.city} 🇩🇿 • جاهز للطلب</span>
               </div>
@@ -33,7 +33,7 @@ export const StickyOrderBar = ({ totalPrice, onOpenOrder }) => {
           </div>
 
           {/* CTA Label */}
-          <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56D00] text-[#FFF8F0] font-black text-xs sm:text-sm shadow-glow group-hover:from-[#E56D00] group-hover:to-[#FF7A00] transition-all">
+          <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2B0D05] border border-[#5C200E] text-[#FFF8F0] font-black text-xs sm:text-sm shadow-md group-hover:bg-[#4A190B] transition-all">
             <span>أضف للطلب</span>
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           </div>

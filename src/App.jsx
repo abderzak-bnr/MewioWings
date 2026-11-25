@@ -83,23 +83,23 @@ export default function App() {
   }, [selectedQuantity, selectedSauce, selectedToppings, selectedSpiceLevel]);
 
   return (
-    <div className="min-h-screen bg-[#14100E] text-[#FFF8F0] flex flex-col font-cairo antialiased selection:bg-[#FF7A00] selection:text-[#FFF8F0]">
+    <div className="min-h-screen bg-[#F97316] bg-gradient-to-b from-[#FF7A00] to-[#EA580C] text-[#FFF8F0] flex flex-col font-cairo antialiased selection:bg-[#3D1408] selection:text-[#FFF8F0]">
       {/* Top Brand Micro Bar */}
-      <header className="bg-[#14100E] text-[#FFF8F0] border-b border-[#3A2822] sticky top-0 sm:static z-50">
+      <header className="bg-[#3D1408] text-[#FFF8F0] border-b border-[#5C200E] sticky top-0 sm:static z-50">
         <div className="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between text-xs">
           {/* Logo & City Tag */}
           <div className="flex items-center gap-2.5">
             <img
               src="/logo.webp"
               alt="WINGO!"
-              className="h-9 sm:h-10 w-auto object-contain drop-shadow-[0_0_8px_rgba(255,248,240,0.35)]"
+              className="h-9 sm:h-10 w-auto object-contain drop-shadow-[0_0_1px_#FFF8F0] drop-shadow-[0_0_6px_rgba(255,248,240,0.85)] drop-shadow-[0_2px_5px_rgba(61,20,8,0.35)]"
               onError={(e) => {
                 e.currentTarget.onerror = null;
                 e.currentTarget.src = '/public/logo.webp';
               }}
             />
             <div>
-              <p className="text-[10px] text-[#B8A99A] font-medium">
+              <p className="text-[10px] text-[#D4C7BA] font-bold">
                 {RESTAURANT_INFO.city} 🇩🇿 • {RESTAURANT_INFO.tagline}
               </p>
             </div>
@@ -107,13 +107,13 @@ export default function App() {
 
           {/* Status & Contact Shortcut */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 text-[#B8A99A] text-[11px]">
+            <div className="hidden sm:flex items-center gap-1.5 text-[#D4C7BA] text-[11px]">
               <Clock className="w-3.5 h-3.5 text-[#FF7A00]" />
               <span>{RESTAURANT_INFO.openingHours}</span>
             </div>
             <a
               href={`tel:${RESTAURANT_INFO.phone}`}
-              className="flex items-center gap-1 text-[11px] font-bold text-[#FFF8F0] hover:text-[#FF7A00] bg-[#211A17] px-2.5 py-1 rounded-xl border border-[#3A2822] transition-colors"
+              className="flex items-center gap-1 text-[11px] font-bold text-[#FFF8F0] hover:text-[#FF7A00] bg-[#2B0D05] px-2.5 py-1 rounded-xl border border-[#5C200E] transition-colors"
             >
               <Phone className="w-3 h-3 text-[#FF7A00]" />
               <span className="hidden xs:inline">{RESTAURANT_INFO.phone}</span>
@@ -125,7 +125,7 @@ export default function App() {
       {/* Main Container */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-4 py-3 sm:py-6 space-y-6 pb-28">
         {/* Intro Sub-header on Desktop */}
-        <div className="hidden sm:flex items-center justify-between bg-[#211A17] p-4 rounded-3xl border border-[#3A2822]">
+        <div className="hidden sm:flex items-center justify-between bg-[#3D1408] p-4 rounded-3xl border border-[#5C200E]">
           <div>
             <div className="inline-flex items-center gap-1 text-xs font-black text-[#FF7A00] bg-[#FF7A00]/15 px-2.5 py-0.5 rounded-full border border-[#FF7A00]/30 mb-1">
               <Sparkles className="w-3.5 h-3.5" />
@@ -139,7 +139,7 @@ export default function App() {
           <button
             type="button"
             onClick={handleReset}
-            className="flex items-center gap-1.5 text-xs text-[#B8A99A] hover:text-[#FFF8F0] bg-[#2C221F] hover:bg-[#3A2822] px-3.5 py-2 rounded-xl transition-all border border-[#3A2822]"
+            className="flex items-center gap-1.5 text-xs text-[#D4C7BA] hover:text-[#FFF8F0] bg-[#2B0D05] hover:bg-[#4A190B] px-3.5 py-2 rounded-xl transition-all border border-[#5C200E]"
             title="إعادة ضبط الاختيارات"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -202,16 +202,16 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="bg-[#14100E] text-[#FFF8F0] border-t border-[#3A2822] py-8 px-4 text-center text-xs text-[#B8A99A] space-y-3">
+      <footer className="bg-[#3D1408] text-[#FFF8F0] border-t border-[#5C200E] py-8 px-4 text-center text-xs text-[#D4C7BA] space-y-3">
         <div className="flex items-center justify-center gap-2 text-sm font-black font-tajawal text-[#FFF8F0]">
           <span>🍗 WINGO!</span>
-          <span className="text-[#3A2822]">•</span>
+          <span className="text-[#5C200E]">•</span>
           <span className="text-[#FF7A00]">{RESTAURANT_INFO.city}، {RESTAURANT_INFO.country} 🇩🇿</span>
         </div>
-        <p className="max-w-md mx-auto text-[#B8A99A] text-[11px] leading-relaxed">
+        <p className="max-w-md mx-auto text-[#D4C7BA] text-[11px] leading-relaxed">
           {RESTAURANT_INFO.address} • التوصيل متوفر في بلدية المدية والمناطق المجاورة.
         </p>
-        <p className="text-[10px] text-[#B8A99A]/70">
+        <p className="text-[10px] text-[#D4C7BA]/70">
           جميع الحقوق محفوظة © {new Date().getFullYear()} — صمم خصيصاً لعشاق الأجنحة في الجزائر.
         </p>
       </footer>

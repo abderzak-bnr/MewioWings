@@ -23,7 +23,7 @@ export const VisualMealBuilder = ({
   ];
 
   return (
-    <div className="sticky top-0 z-40 sm:static bg-[#14100E]/95 sm:bg-transparent backdrop-blur-md border-b border-[#3A2822] sm:border-0 pt-2 pb-3 sm:py-0 px-2 sm:px-0">
+    <div className="sticky top-0 z-40 sm:static bg-[#3D1408]/95 sm:bg-transparent backdrop-blur-md border-b border-[#5C200E] sm:border-0 pt-2 pb-3 sm:py-0 px-2 sm:px-0">
       <div className="max-w-md mx-auto">
         {/* Aspect Ratio Container (relative, aspect-[4/3], w-full max-w-[440px] mx-auto) */}
         <div
@@ -61,13 +61,13 @@ export const VisualMealBuilder = ({
           </div>
 
           {/* Floating Live Total Price Badge */}
-          <div className="absolute top-3 left-4 z-50 flex items-center gap-1.5 bg-[#FF7A00] text-[#FFF8F0] font-black text-xs sm:text-sm px-3 py-1.5 rounded-2xl shadow-lg border border-[#3A2822] backdrop-blur-sm font-tajawal animate-in fade-in zoom-in duration-200">
+          <div className="absolute top-3 left-4 z-50 flex items-center gap-1.5 bg-[#3D1408] text-[#FFF8F0] font-black text-xs sm:text-sm px-3 py-1.5 rounded-2xl shadow-lg border border-[#5C200E] backdrop-blur-sm font-tajawal animate-in fade-in zoom-in duration-200">
             <span className="text-[10px] text-[#FFF8F0]/80 font-medium hidden xs:inline">الإجمالي:</span>
             <span>{formatDZD(totalPrice)}</span>
           </div>
 
           {/* Restaurant Location Pin Badge (المدية، الجزائر) */}
-          <div className="absolute top-3 right-4 z-50 flex items-center gap-1 bg-[#211A17]/90 text-[#B8A99A] font-bold text-[10px] sm:text-xs px-2.5 py-1.5 rounded-2xl border border-[#3A2822] shadow-md backdrop-blur-sm">
+          <div className="absolute top-3 right-4 z-50 flex items-center gap-1 bg-[#3D1408]/90 text-[#D4C7BA] font-bold text-[10px] sm:text-xs px-2.5 py-1.5 rounded-2xl border border-[#5C200E] shadow-md backdrop-blur-sm">
             <MapPin className="w-3 h-3 text-[#FF7A00] shrink-0" />
             <span>{RESTAURANT_INFO.city} 🇩🇿</span>
           </div>
@@ -215,9 +215,9 @@ export const VisualMealBuilder = ({
             <span
               className={`text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm backdrop-blur-md border ${
                 selectedSauce.id === 'sauce_algeria'
-                  ? 'bg-amber-500 text-[#14100E] border-amber-300'
+                  ? 'bg-amber-500 text-[#3D1408] border-amber-300'
                   : selectedSauce.id === 'sauce_none'
-                  ? 'bg-[#211A17]/90 text-[#B8A99A] border-[#3A2822]'
+                  ? 'bg-[#3D1408]/90 text-[#D4C7BA] border-[#5C200E]'
                   : 'bg-[#FF7A00]/90 text-[#FFF8F0] border-[#FF7A00]/40'
               }`}
             >

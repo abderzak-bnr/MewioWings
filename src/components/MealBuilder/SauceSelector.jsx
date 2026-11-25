@@ -35,8 +35,8 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
                     ? 'border-amber-400 bg-amber-500/20 shadow-gold-glow ring-1 ring-amber-400/60 scale-[1.01]'
                     : 'border-[#FF7A00] bg-[#FF7A00]/20 shadow-glow ring-1 ring-[#FF7A00]/50 scale-[1.01]'
                   : isSignature
-                  ? 'border-amber-500/40 bg-[#211A17] hover:border-amber-500/70 hover:bg-[#2C221F]'
-                  : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'
+                  ? 'border-amber-500/40 bg-[#3D1408] hover:border-amber-500/70 hover:bg-[#4A190B]'
+                  : 'border-[#5C200E] bg-[#3D1408] hover:border-[#FF7A00]/50 hover:bg-[#4A190B]'
               }`}
             >
               <div className="flex-1 min-w-0">
@@ -60,11 +60,11 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
                   )}
                 </div>
 
-                <div className="text-[11px] text-[#B8A99A] font-medium mb-1 truncate">
+                <div className="text-[11px] text-[#D4C7BA] font-medium mb-1 truncate">
                   {sauce.nameEn}
                 </div>
 
-                <p className="text-[11px] text-[#B8A99A] leading-relaxed line-clamp-2">
+                <p className="text-[11px] text-[#D4C7BA] leading-relaxed line-clamp-2">
                   {sauce.description}
                 </p>
 
@@ -82,7 +82,7 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
                     ? isSignature
                       ? 'bg-amber-400 text-zinc-950 shadow-sm'
                       : 'bg-[#FF7A00] text-white shadow-sm'
-                    : 'border border-[#3A2822] text-transparent'
+                    : 'border border-[#5C200E] text-transparent'
                 }`}
               >
                 <Check className="w-3.5 h-3.5 stroke-[3]" />

@@ -31,11 +31,11 @@ export const ToppingsSelector = ({ selectedToppings, onToggleTopping }) => {
               className={`relative text-right p-3.5 rounded-2xl border-2 transition-transform duration-100 cursor-pointer flex items-center justify-between gap-3 active:scale-95 will-change-transform select-none ${
                 isSelected
                   ? 'border-emerald-500 bg-emerald-950/30 shadow-sm ring-1 ring-emerald-500/50 scale-[1.01]'
-                  : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'
+                  : 'border-[#5C200E] bg-[#3D1408] hover:border-[#FF7A00]/50 hover:bg-[#4A190B]'
               }`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <span className="text-2xl shrink-0 p-2 rounded-xl bg-[#2C221F] border border-[#3A2822]">
+                <span className="text-2xl shrink-0 p-2 rounded-xl bg-[#2B0D05] border border-[#5C200E]">
                   {topping.icon}
                 </span>
 
@@ -44,12 +44,12 @@ export const ToppingsSelector = ({ selectedToppings, onToggleTopping }) => {
                     <h4 className="text-sm font-black text-[#FFF8F0] font-tajawal truncate">
                       {topping.name}
                     </h4>
-                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#2C221F] text-[#B8A99A]">
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#2B0D05] text-[#D4C7BA]">
                       {topping.badge}
                     </span>
                   </div>
 
-                  <div className="text-[11px] text-[#B8A99A] font-medium">
+                  <div className="text-[11px] text-[#D4C7BA] font-medium">
                     {topping.nameEn}
                   </div>
 
@@ -64,7 +64,7 @@ export const ToppingsSelector = ({ selectedToppings, onToggleTopping }) => {
                 className={`w-6 h-6 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                   isSelected
                     ? 'bg-emerald-500 text-zinc-950 shadow-sm'
-                    : 'border border-[#3A2822] text-[#B8A99A] bg-[#2C221F]'
+                    : 'border border-[#5C200E] text-[#D4C7BA] bg-[#2B0D05]'
                 }`}
               >
                 {isSelected ? (
