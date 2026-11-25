@@ -123,6 +123,7 @@ export const SAUCES = [
     dotColor: "#EF4444",
     blendMode: "normal",
     opacity: 0.95,
+    imageScale: 0.88,
     description: "الصوص الأمريكي الكلاسيكي الأصلي بلون أحمر ناري ونكهة حامضة ولاذعة.",
     isSignature: false,
   },

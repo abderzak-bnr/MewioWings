@@ -115,7 +115,7 @@ export const VisualMealBuilder = ({
                       opacity: selectedSauce.opacity || 0.96,
                     }}
                     initial={false}
-                    animate={{ opacity: selectedSauce.opacity || 0.96, scale: 1 }}
+                    animate={{ opacity: selectedSauce.opacity || 0.96, scale: selectedSauce.imageScale || 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: 'easeOut' }}
                   />

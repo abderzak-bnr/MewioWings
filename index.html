@@ -331,6 +331,8 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transform-origin: center center;
     }
 
     .plate-svg {
@@ -368,15 +370,13 @@
     @keyframes productTrayEnter {
       0% {
         opacity: 0.9;
-        transform: scale(0.97);
       }
       100% {
         opacity: 1;
-        transform: scale(1);
       }
     }
     .product-tray-enter {
-      animation: productTrayEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+      animation: productTrayEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @keyframes titleGlazeEnter {
@@ -1692,34 +1692,10 @@
       transition: all 0.25s ease;
     }
 
-    /* Contact shadow for dip cups */
-    .dip-contact-shadow {
-      position: absolute;
-      width: 38px;
-      height: 10px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(35, 18, 6, 0.60) 0%, rgba(35, 18, 6, 0.20) 60%, transparent 75%);
-      filter: blur(2px);
-      bottom: -2px;
-      left: 50%;
-      transform: translateX(-50%);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    /* Contact shadow for side plates (fries, coleslaw) */
-    .side-contact-shadow {
-      position: absolute;
-      width: 62px;
-      height: 13px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(35, 18, 6, 0.60) 0%, rgba(35, 18, 6, 0.20) 60%, transparent 75%);
-      filter: blur(3px);
-      bottom: -3px;
-      left: 50%;
-      transform: translateX(-50%);
-      pointer-events: none;
-      z-index: 1;
+    /* Clean single natural shadow for side sauces and add-ons (zero double-halo effect) */
+    .stage-dip-img,
+    .stage-side-img {
+      filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)) !important;
     }
 
     
@@ -2676,6 +2652,7 @@
           color: "#D97706",
           stops: ["#FBBF24", "#D97706", "#78350F"],
           isPlain: true,
+          imageScale: 1.0,
           description: "أجنحة ذهبية مقلية مقرمشة بدون أي صوص للحفاظ على القرمشة القصوى",
         },
         {
@@ -2686,6 +2663,7 @@
           stops: ["#FB923C", "#EA580C", "#9A3412"],
           isSignature: true,
           badge: "SIGNATURE",
+          imageScale: 1.0,
           description: "صوص مميز بالعلامة، متوازن ومتبل بالبصل والبهارات الجزائرية",
         },
         {
@@ -2694,6 +2672,7 @@
           nameEn: "Smokey BBQ",
           color: "#451A03",
           stops: ["#78350F", "#451A03", "#1C0A02"],
+          imageScale: 1.0,
           description: "صوص باربكيو مدخن غني بالكراميل ولمحة حلاوة خفيفة",
         },
         {
@@ -2703,6 +2682,7 @@
           color: "#DC2626",
           stops: ["#EF4444", "#B91C1C", "#7F1D1D"],
           hasHeatGlow: true,
+          imageScale: 0.88,
           description: "الصوص الأمريكي الكلاسيكي الأصلي بلون أحمر ناري ولذعة لاذعة",
         },
       ],
@@ -2970,6 +2950,7 @@
             nameEn: "Crispy",
             color: "#D97706",
             stops: ["#FBBF24", "#D97706", "#78350F"],
+            imageScale: 1.0,
             description: "أجنحة ذهبية مقلية مقرمشة بدون أي صوص للحفاظ على القرمشة القصوى",
           },
           algeria: {
@@ -2978,12 +2959,14 @@
             stops: ["#FB923C", "#EA580C", "#9A3412"],
             isSignature: true,
             badge: "SIGNATURE",
+            imageScale: 1.0,
             description: "صوص مميز بالعلامة، متوازن ومتبل بالبصل والبهارات الجزائرية",
           },
           bbq: {
             nameEn: "Smokey BBQ",
             color: "#451A03",
             stops: ["#78350F", "#451A03", "#1C0A02"],
+            imageScale: 1.0,
             description: "صوص باربكيو مدخن غني بالكراميل ولمحة حلاوة خفيفة",
           },
           buffalo: {
@@ -2991,6 +2974,7 @@
             color: "#DC2626",
             stops: ["#EF4444", "#B91C1C", "#7F1D1D"],
             hasHeatGlow: true,
+            imageScale: 0.88,
             description: "الصوص الأمريكي الكلاسيكي الأصلي بلون أحمر ناري ولذعة لاذعة",
           },
         };
@@ -3004,6 +2988,7 @@
             nameEn: dbItem.name_ar,
             color: "#EA580C",
             stops: ["#FB923C", "#EA580C", "#9A3412"],
+            imageScale: 1.0,
             description: "صوص مميز تم إعداده خصيصاً لوجبات أجنحة WINGS",
           };
 
@@ -3020,6 +3005,7 @@
             badge: meta.badge || "",
             isPlain: sId === "crispy",
             image_url: dbItem.image_url || null,
+            imageScale: (meta && typeof meta.imageScale === "number") ? meta.imageScale : (sId === "buffalo" ? 0.88 : 1.0),
             is_available: dbItem.is_available !== false,
             sort_order: Number(dbItem.sort_order) || 0
           };
@@ -3582,6 +3568,7 @@
      */
     function renderWingsImage() {
       const img = document.getElementById("realWingImg");
+      const plateWrap = document.getElementById("mainPlateWrap");
       if (!img) return;
 
       const currentCount = state.wingsCount || 6;
@@ -3589,6 +3576,8 @@
       const currentScale = wingScales[currentCount] || 0.88;
       const currentSauceId = state.selectedSauceId || "crispy";
       const sauceObj = state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) : null;
+      const sauceScale = (sauceObj && typeof sauceObj.imageScale === "number") ? sauceObj.imageScale : (currentSauceId === "buffalo" ? 0.88 : 1.0);
+      const finalScale = Number((currentScale * sauceScale).toFixed(4));
 
       // Known sauces with custom box PNGs in codebase
       const knownTraySauces = ["crispy", "algeria", "bbq", "buffalo"];
@@ -3602,23 +3591,28 @@
         targetSrc = getWingImagePath("crispy", currentCount);
       }
 
+      // Apply size scale on wrapper and sauce-specific scale on inner image
+      if (plateWrap) {
+        plateWrap.style.transform = `scale(${currentScale})`;
+      }
+
       if (currentWingImgLoadedSrc !== targetSrc) {
         currentWingImgLoadedSrc = targetSrc;
         img.src = targetSrc;
 
         // Silky smooth transition (subtle scale 0.94 -> 1, slight y glide, and opacity fade over 0.25s)
-        img.style.transform = `scale(${currentScale})`;
+        img.style.transform = `scale(${sauceScale})`;
         img.classList.remove("product-tray-enter");
         void img.offsetWidth; // force reflow
         img.classList.add("product-tray-enter");
       } else {
-        img.style.transform = `scale(${currentScale})`;
+        img.style.transform = `scale(${sauceScale})`;
       }
 
       // Grounded contact shadow scale sync
       const shadow = document.getElementById("wingsContactShadow");
       if (shadow) {
-        shadow.style.transform = `translateX(-50%) scale(${currentScale})`;
+        shadow.style.transform = `translateX(-50%) scale(${finalScale})`;
       }
 
       // Sauce Color Ambient Glow pulse on the tray
@@ -3778,8 +3772,7 @@
           } else {
             el.dataset.itemId = dipId;
             el.innerHTML = `
-              <div class="dip-contact-shadow"></div>
-              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" width="36" height="36" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(35, 18, 6, 0.55)) drop-shadow(0 5px 6px rgba(35, 18, 6, 0.25)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" width="36" height="36" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -3823,8 +3816,7 @@
           } else {
             el.dataset.itemId = sideId;
             el.innerHTML = `
-              <div class="side-contact-shadow"></div>
-              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" width="58" height="58" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 2px 2px rgba(35, 18, 6, 0.55)) drop-shadow(0 5px 6px rgba(35, 18, 6, 0.25)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" width="58" height="58" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : ""}
             `;
           }
