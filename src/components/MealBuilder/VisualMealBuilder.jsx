@@ -82,19 +82,18 @@ export const VisualMealBuilder = ({
                 Dynamically swaps based on selected quantity (6, 12, 24)
                ======================================================== */}
             <div className="absolute inset-0 z-10 pointer-events-none">
-              <AnimatePresence mode="wait">
+              <AnimatePresence>
                 <motion.img
-                  key={selectedQuantity.id}
+                  key="base-wings-image"
                   src={selectedQuantity.image}
                   alt={selectedQuantity.title}
                   className="absolute inset-0 w-full h-full object-contain"
                   style={{
                     filter: 'drop-shadow(0 3px 3px rgba(35, 18, 6, 0.55)) drop-shadow(0 8px 12px rgba(35, 18, 6, 0.30))',
                   }}
-                  initial={{ opacity: 0, scale: 0.95 }}
+                  initial={false}
                   animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.22, ease: 'easeOut' }}
+                  transition={{ duration: 0.18, ease: 'easeOut' }}
                 />
               </AnimatePresence>
             </div>
@@ -115,10 +114,10 @@ export const VisualMealBuilder = ({
                       mixBlendMode: selectedSauce.blendMode || 'normal',
                       opacity: selectedSauce.opacity || 0.96,
                     }}
-                    initial={{ opacity: 0, scale: 0.96 }}
+                    initial={false}
                     animate={{ opacity: selectedSauce.opacity || 0.96, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.96 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
                   />
                 )}
               </AnimatePresence>
