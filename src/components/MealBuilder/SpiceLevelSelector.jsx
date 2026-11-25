@@ -30,7 +30,7 @@ export const SpiceLevelSelector = ({ selectedSpiceLevel, onSelectSpiceLevel }) =
               key={spice.id}
               type="button"
               onClick={() => onSelectSpiceLevel(spice)}
-              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between active:scale-[0.98] will-change-transform ${
+              className={`relative text-right p-3.5 rounded-2xl border-2 transition-transform duration-100 cursor-pointer flex flex-col justify-between active:scale-95 will-change-transform select-none ${
                 isSelected
                   ? isExtraHot
                     ? 'border-red-500 bg-red-950/40 shadow-glow ring-1 ring-red-500/60 scale-[1.01]'

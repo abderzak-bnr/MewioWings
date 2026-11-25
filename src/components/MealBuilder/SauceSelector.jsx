@@ -29,7 +29,7 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
               key={sauce.id}
               type="button"
               onClick={() => onSelectSauce(sauce)}
-              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-start justify-between gap-3 active:scale-[0.98] will-change-transform ${
+              className={`relative text-right p-3.5 rounded-2xl border-2 transition-transform duration-100 cursor-pointer flex items-start justify-between gap-3 active:scale-95 will-change-transform select-none ${
                 isSelected
                   ? isSignature
                     ? 'border-amber-400 bg-amber-500/20 shadow-gold-glow ring-1 ring-amber-400/60 scale-[1.01]'

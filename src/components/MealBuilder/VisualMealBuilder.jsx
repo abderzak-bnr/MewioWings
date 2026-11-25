@@ -73,7 +73,7 @@ export const VisualMealBuilder = ({
           </div>
 
           {/* Grounded Realistic Contact Shadow directly underneath food on kraft paper */}
-          <div className="absolute bottom-[16%] left-1/2 -translate-x-1/2 w-[52%] h-[16px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(30,20,15,0.75)_0%,rgba(30,20,15,0.3)_55%,transparent_75%)] blur-[4px] pointer-events-none z-[9]" />
+          <div className="absolute bottom-[16%] left-1/2 -translate-x-1/2 w-[52%] h-[16px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(35,18,6,0.65)_0%,rgba(35,18,6,0.25)_55%,transparent_75%)] blur-[3px] pointer-events-none z-[9]" />
 
           {/* Food/Meal Layer Container (Safely padded inside kraft paper boundaries so food never overlaps the raised rim) */}
           <div className="absolute inset-[10%_14%_12%_14%] z-10 pointer-events-none flex items-center justify-center">
@@ -87,7 +87,10 @@ export const VisualMealBuilder = ({
                   key={selectedQuantity.id}
                   src={selectedQuantity.image}
                   alt={selectedQuantity.title}
-                  className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl"
+                  className="absolute inset-0 w-full h-full object-contain"
+                  style={{
+                    filter: 'drop-shadow(0 3px 3px rgba(35, 18, 6, 0.55)) drop-shadow(0 8px 12px rgba(35, 18, 6, 0.30))',
+                  }}
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}

@@ -28,7 +28,7 @@ export const QuantitySelector = ({ selectedQuantity, onSelectQuantity }) => {
               key={qty.id}
               type="button"
               onClick={() => onSelectQuantity(qty)}
-              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between active:scale-[0.98] will-change-transform ${
+              className={`relative text-right p-3.5 rounded-2xl border-2 transition-transform duration-100 cursor-pointer flex flex-col justify-between active:scale-95 will-change-transform select-none ${
                 isSelected
                   ? 'border-[#FF7A00] bg-[#FF7A00]/15 shadow-glow ring-1 ring-[#FF7A00]/50 scale-[1.01]'
                   : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'

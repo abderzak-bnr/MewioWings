@@ -28,7 +28,7 @@ export const ToppingsSelector = ({ selectedToppings, onToggleTopping }) => {
               key={topping.id}
               type="button"
               onClick={() => onToggleTopping(topping.id)}
-              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 active:scale-[0.98] will-change-transform ${
+              className={`relative text-right p-3.5 rounded-2xl border-2 transition-transform duration-100 cursor-pointer flex items-center justify-between gap-3 active:scale-95 will-change-transform select-none ${
                 isSelected
                   ? 'border-emerald-500 bg-emerald-950/30 shadow-sm ring-1 ring-emerald-500/50 scale-[1.01]'
                   : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'

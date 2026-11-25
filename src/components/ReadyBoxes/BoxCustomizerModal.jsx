@@ -198,7 +198,7 @@ export const BoxCustomizerModal = ({ box, isOpen, onClose }) => {
                   <div
                     key={style.id}
                     onClick={() => setSelectedStyle(style)}
-                    className={`p-3 rounded-2xl border-2 transition-all cursor-pointer ${
+                    className={`p-3 rounded-2xl border-2 transition-transform duration-100 cursor-pointer active:scale-95 select-none ${
                       isSelected
                         ? 'border-[#FF7A00] bg-[#FF7A00]/15 shadow-sm'
                         : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'
@@ -250,7 +250,7 @@ export const BoxCustomizerModal = ({ box, isOpen, onClose }) => {
                     <div
                       key={sauce.id}
                       onClick={() => setSelectedCoatingSauce(sauce)}
-                      className={`p-2.5 rounded-xl border-2 transition-all cursor-pointer flex items-center justify-between ${
+                      className={`p-2.5 rounded-xl border-2 transition-transform duration-100 cursor-pointer active:scale-95 select-none flex items-center justify-between ${
                         isSelected
                           ? sauce.isSignature
                             ? 'border-amber-400 bg-amber-500/20 shadow-sm'
