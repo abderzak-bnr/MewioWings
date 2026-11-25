@@ -7,10 +7,10 @@ export const SpiceLevelSelector = ({ selectedSpiceLevel, onSelectSpiceLevel }) =
     <section className="space-y-3" aria-labelledby="section-spice">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-600 text-white text-xs font-black">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#FF7A00] text-white text-xs font-black">
             4
           </span>
-          <h3 id="section-spice" className="text-base sm:text-lg font-black text-white font-tajawal">
+          <h3 id="section-spice" className="text-base sm:text-lg font-black text-[#FFF8F0] font-tajawal">
             درجة الحرارة (Spice Level & VFX)
           </h3>
         </div>
@@ -30,14 +30,14 @@ export const SpiceLevelSelector = ({ selectedSpiceLevel, onSelectSpiceLevel }) =
               key={spice.id}
               type="button"
               onClick={() => onSelectSpiceLevel(spice)}
-              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex flex-col justify-between active:scale-[0.98] will-change-transform ${
                 isSelected
                   ? isExtraHot
                     ? 'border-red-500 bg-red-950/40 shadow-glow ring-1 ring-red-500/60 scale-[1.01]'
                     : isMedium
-                    ? 'border-orange-500 bg-orange-950/30 shadow-glow ring-1 ring-orange-500/50 scale-[1.01]'
-                    : 'border-zinc-500 bg-zinc-800/80 shadow-sm ring-1 ring-zinc-400/40 scale-[1.01]'
-                  : 'border-zinc-800 bg-zinc-900/90 hover:border-zinc-700 hover:bg-zinc-800/70'
+                    ? 'border-[#FF7A00] bg-[#FF7A00]/20 shadow-glow ring-1 ring-[#FF7A00]/50 scale-[1.01]'
+                    : 'border-zinc-500 bg-[#2C221F] shadow-sm ring-1 ring-zinc-400/40 scale-[1.01]'
+                  : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'
               }`}
             >
               {/* Header with icon and badge */}
@@ -48,8 +48,8 @@ export const SpiceLevelSelector = ({ selectedSpiceLevel, onSelectSpiceLevel }) =
                       isExtraHot
                         ? 'bg-red-500/20 text-red-500'
                         : isMedium
-                        ? 'bg-orange-500/20 text-orange-500'
-                        : 'bg-zinc-800 text-zinc-400'
+                        ? 'bg-[#FF7A00]/20 text-[#FF7A00]'
+                        : 'bg-[#2C221F] text-[#B8A99A]'
                     }`}
                   >
                     {isExtraHot ? (
@@ -65,8 +65,8 @@ export const SpiceLevelSelector = ({ selectedSpiceLevel, onSelectSpiceLevel }) =
                       isExtraHot
                         ? 'bg-red-600 text-white'
                         : isMedium
-                        ? 'bg-orange-600 text-white'
-                        : 'bg-zinc-800 text-zinc-300'
+                        ? 'bg-[#FF7A00] text-white'
+                        : 'bg-[#2C221F] text-[#B8A99A]'
                     }`}
                   >
                     {spice.badge}
@@ -79,9 +79,9 @@ export const SpiceLevelSelector = ({ selectedSpiceLevel, onSelectSpiceLevel }) =
                       ? isExtraHot
                         ? 'bg-red-600 text-white'
                         : isMedium
-                        ? 'bg-orange-600 text-white'
+                        ? 'bg-[#FF7A00] text-white'
                         : 'bg-zinc-400 text-zinc-950'
-                      : 'border border-zinc-700 text-transparent'
+                      : 'border border-[#3A2822] text-transparent'
                   }`}
                 >
                   <Check className="w-3.5 h-3.5 stroke-[3]" />
@@ -90,15 +90,15 @@ export const SpiceLevelSelector = ({ selectedSpiceLevel, onSelectSpiceLevel }) =
 
               {/* Title & Description */}
               <div>
-                <h4 className="text-sm font-black text-white font-tajawal">
+                <h4 className="text-sm font-black text-[#FFF8F0] font-tajawal">
                   {spice.title}
                 </h4>
-                <div className="text-[11px] text-zinc-400 font-medium">
+                <div className="text-[11px] text-[#B8A99A] font-medium">
                   {spice.titleEn}
                 </div>
               </div>
 
-              <p className="text-[11px] text-zinc-400 leading-relaxed mt-2 pt-2 border-t border-zinc-800">
+              <p className="text-[11px] text-[#B8A99A] leading-relaxed mt-2 pt-2 border-t border-[#3A2822]">
                 {spice.description}
               </p>
             </button>

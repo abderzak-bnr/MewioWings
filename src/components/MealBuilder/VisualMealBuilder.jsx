@@ -23,112 +23,129 @@ export const VisualMealBuilder = ({
   ];
 
   return (
-    <div className="sticky top-0 z-40 sm:static bg-zinc-950/95 sm:bg-transparent backdrop-blur-md border-b border-zinc-800/80 sm:border-0 pt-2 pb-3 sm:py-0 px-2 sm:px-0">
+    <div className="sticky top-0 z-40 sm:static bg-[#14100E]/95 sm:bg-transparent backdrop-blur-md border-b border-[#3A2822] sm:border-0 pt-2 pb-3 sm:py-0 px-2 sm:px-0">
       <div className="max-w-md mx-auto">
-        {/* Aspect Ratio Container (relative, aspect-square) */}
+        {/* Aspect Ratio Container (relative, aspect-[4/3], w-full max-w-[440px] mx-auto) */}
         <div
-          className={`relative aspect-square w-full max-h-[36vh] sm:max-h-none sm:max-w-[440px] md:max-w-[480px] mx-auto rounded-3xl overflow-hidden border transition-all duration-300 ${
+          className={`relative aspect-[4/3] w-full max-w-[440px] mx-auto overflow-visible transition-all duration-300 ${
             isExtraHotSpice
-              ? 'border-red-500/80 anim-spice-extra-hot bg-gradient-to-b from-zinc-900 via-red-950/20 to-zinc-950'
+              ? 'anim-spice-extra-hot'
               : isMediumSpice
-              ? 'border-orange-500/60 anim-spice-medium bg-gradient-to-b from-zinc-900 via-amber-950/15 to-zinc-950'
-              : 'border-zinc-800 bg-gradient-to-b from-zinc-900 via-zinc-950 to-zinc-900 shadow-2xl'
+              ? 'anim-spice-medium'
+              : ''
           }`}
         >
-          {/* Ambient Lighting & Radial Glow behind the plate */}
-          <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+          {/* Static Serving Tray Base Layer */}
+          <img
+            src="/tray.webp"
+            alt="Serving Tray"
+            className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl pointer-events-none select-none z-0"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/public/tray.webp';
+            }}
+          />
+
+          {/* Ambient Lighting & Radial Glow behind the food on kraft paper */}
+          <div className="absolute inset-0 pointer-events-none z-[1] overflow-hidden">
             {/* Center spotlight */}
             <div
               className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3/4 h-3/4 rounded-full blur-3xl transition-all duration-500 ${
                 isExtraHotSpice
-                  ? 'bg-red-600/35 scale-125'
+                  ? 'bg-red-600/30 scale-110'
                   : isMediumSpice
-                  ? 'bg-orange-500/25 scale-110'
-                  : 'bg-amber-600/15 scale-100'
+                  ? 'bg-[#FF7A00]/20 scale-100'
+                  : 'bg-amber-600/10 scale-90'
               }`}
             />
           </div>
 
           {/* Floating Live Total Price Badge */}
-          <div className="absolute top-3 left-3 z-50 flex items-center gap-1.5 bg-brand-600/95 text-white font-black text-xs sm:text-sm px-3 py-1.5 rounded-2xl shadow-lg border border-brand-400/40 backdrop-blur-sm font-tajawal animate-in fade-in zoom-in duration-200">
-            <span className="text-[10px] text-brand-200 font-medium hidden xs:inline">الإجمالي:</span>
+          <div className="absolute top-3 left-4 z-50 flex items-center gap-1.5 bg-[#FF7A00] text-[#FFF8F0] font-black text-xs sm:text-sm px-3 py-1.5 rounded-2xl shadow-lg border border-[#3A2822] backdrop-blur-sm font-tajawal animate-in fade-in zoom-in duration-200">
+            <span className="text-[10px] text-[#FFF8F0]/80 font-medium hidden xs:inline">الإجمالي:</span>
             <span>{formatDZD(totalPrice)}</span>
           </div>
 
           {/* Restaurant Location Pin Badge (المدية، الجزائر) */}
-          <div className="absolute top-3 right-3 z-50 flex items-center gap-1 bg-zinc-900/90 text-zinc-300 font-bold text-[10px] sm:text-xs px-2.5 py-1.5 rounded-2xl border border-zinc-700/80 shadow-md backdrop-blur-sm">
-            <MapPin className="w-3 h-3 text-brand-500 shrink-0" />
+          <div className="absolute top-3 right-4 z-50 flex items-center gap-1 bg-[#211A17]/90 text-[#B8A99A] font-bold text-[10px] sm:text-xs px-2.5 py-1.5 rounded-2xl border border-[#3A2822] shadow-md backdrop-blur-sm">
+            <MapPin className="w-3 h-3 text-[#FF7A00] shrink-0" />
             <span>{RESTAURANT_INFO.city} 🇩🇿</span>
           </div>
 
-          {/* ========================================================
-              LAYER 1 (z-10): Base Wings & Plate Layer
-              Dynamically swaps based on selected quantity (6, 12, 24)
-             ======================================================== */}
-          <div className="absolute inset-0 z-10 pointer-events-none">
-            <AnimatePresence mode="wait">
-              <motion.img
-                key={selectedQuantity.id}
-                src={selectedQuantity.image}
-                alt={selectedQuantity.title}
-                className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl"
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.22, ease: 'easeOut' }}
-              />
-            </AnimatePresence>
-          </div>
+          {/* Grounded Realistic Contact Shadow directly underneath food on kraft paper */}
+          <div className="absolute bottom-[16%] left-1/2 -translate-x-1/2 w-[52%] h-[16px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(30,20,15,0.75)_0%,rgba(30,20,15,0.3)_55%,transparent_75%)] blur-[4px] pointer-events-none z-[9]" />
 
-          {/* ========================================================
-              LAYER 2 (z-20): Sauce Glaze Layer
-              Transparent PNG overlay with subtle mix-blend-mode / opacity
-             ======================================================== */}
-          <div className="absolute inset-0 z-20 pointer-events-none">
-            <AnimatePresence>
-              {selectedSauce && selectedSauce.image && (
+          {/* Food/Meal Layer Container (Safely padded inside kraft paper boundaries so food never overlaps the raised rim) */}
+          <div className="absolute inset-[10%_14%_12%_14%] z-10 pointer-events-none flex items-center justify-center">
+            {/* ========================================================
+                LAYER 1 (z-10): Base Wings & Plate Layer
+                Dynamically swaps based on selected quantity (6, 12, 24)
+               ======================================================== */}
+            <div className="absolute inset-0 z-10 pointer-events-none">
+              <AnimatePresence mode="wait">
                 <motion.img
-                  key={selectedSauce.id}
-                  src={selectedSauce.image}
-                  alt={selectedSauce.name}
-                  className="absolute inset-0 w-full h-full object-contain"
-                  style={{
-                    mixBlendMode: selectedSauce.blendMode || 'normal',
-                    opacity: selectedSauce.opacity || 0.96,
-                  }}
-                  initial={{ opacity: 0, scale: 0.96 }}
-                  animate={{ opacity: selectedSauce.opacity || 0.96, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.96 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  key={selectedQuantity.id}
+                  src={selectedQuantity.image}
+                  alt={selectedQuantity.title}
+                  className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.22, ease: 'easeOut' }}
                 />
-              )}
-            </AnimatePresence>
-          </div>
+              </AnimatePresence>
+            </div>
 
-          {/* ========================================================
-              LAYER 3 (z-30): Toppings Layers (Multi-select Stackable)
-              Each topping is an independent transparent PNG layer
-             ======================================================== */}
-          <div className="absolute inset-0 z-30 pointer-events-none">
-            <AnimatePresence>
-              {TOPPINGS.map((topping) => {
-                const isSelected = selectedToppings.includes(topping.id);
-                if (!isSelected) return null;
-
-                return (
+            {/* ========================================================
+                LAYER 2 (z-20): Sauce Glaze Layer
+                Transparent PNG overlay with subtle mix-blend-mode / opacity
+               ======================================================== */}
+            <div className="absolute inset-0 z-20 pointer-events-none">
+              <AnimatePresence>
+                {selectedSauce && selectedSauce.image && (
                   <motion.img
-                    key={topping.id}
-                    src={topping.image}
-                    alt={topping.name}
+                    key={selectedSauce.id}
+                    src={selectedSauce.image}
+                    alt={selectedSauce.name}
                     className="absolute inset-0 w-full h-full object-contain"
-                    initial={{ opacity: 0, scale: 0.93, y: -8 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.93, y: -8 }}
-                    transition={{ duration: 0.22, ease: 'easeOut' }}
+                    style={{
+                      mixBlendMode: selectedSauce.blendMode || 'normal',
+                      opacity: selectedSauce.opacity || 0.96,
+                    }}
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: selectedSauce.opacity || 0.96, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.96 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
                   />
-                );
-              })}
-            </AnimatePresence>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* ========================================================
+                LAYER 3 (z-30): Toppings Layers (Multi-select Stackable)
+                Each topping is an independent transparent PNG layer
+               ======================================================== */}
+            <div className="absolute inset-0 z-30 pointer-events-none">
+              <AnimatePresence>
+                {TOPPINGS.map((topping) => {
+                  const isSelected = selectedToppings.includes(topping.id);
+                  if (!isSelected) return null;
+
+                  return (
+                    <motion.img
+                      key={topping.id}
+                      src={topping.image}
+                      alt={topping.name}
+                      className="absolute inset-0 w-full h-full object-contain"
+                      initial={{ opacity: 0, scale: 0.93, y: -8 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.93, y: -8 }}
+                      transition={{ duration: 0.22, ease: 'easeOut' }}
+                    />
+                  );
+                })}
+              </AnimatePresence>
+            </div>
           </div>
 
           {/* ========================================================
@@ -196,10 +213,10 @@ export const VisualMealBuilder = ({
             <span
               className={`text-[9px] font-black px-2 py-0.5 rounded-full shadow-sm backdrop-blur-md border ${
                 selectedSauce.id === 'sauce_algeria'
-                  ? 'bg-amber-500 text-zinc-950 border-amber-300'
+                  ? 'bg-amber-500 text-[#14100E] border-amber-300'
                   : selectedSauce.id === 'sauce_none'
-                  ? 'bg-zinc-800/90 text-zinc-300 border-zinc-700'
-                  : 'bg-orange-600/90 text-white border-orange-400/40'
+                  ? 'bg-[#211A17]/90 text-[#B8A99A] border-[#3A2822]'
+                  : 'bg-[#FF7A00]/90 text-[#FFF8F0] border-[#FF7A00]/40'
               }`}
             >
               {selectedSauce.name}

@@ -27,20 +27,20 @@ if (path.startsWith('/admin')) {
         <Suspense fallback={
           <div style={{
             minHeight: '100vh',
-            backgroundColor: '#0B1221',
+            backgroundColor: '#14100E',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             fontFamily: "'Cairo', sans-serif",
-            color: '#FFFFFF',
+            color: '#FFF8F0',
             direction: 'rtl'
           }}>
             <div style={{ textAlign: 'center' }}>
               <div style={{
                 width: '44px',
                 height: '44px',
-                border: '3px solid rgba(249,78,30,0.2)',
-                borderTopColor: '#F94E1E',
+                border: '3px solid rgba(255,122,0,0.2)',
+                borderTopColor: '#FF7A00',
                 borderRadius: '50%',
                 animation: 'spin 0.8s linear infinite',
                 margin: '0 auto 16px'

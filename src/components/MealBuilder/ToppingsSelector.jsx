@@ -7,10 +7,10 @@ export const ToppingsSelector = ({ selectedToppings, onToggleTopping }) => {
     <section className="space-y-3" aria-labelledby="section-toppings">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-600 text-white text-xs font-black">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#FF7A00] text-white text-xs font-black">
             3
           </span>
-          <h3 id="section-toppings" className="text-base sm:text-lg font-black text-white font-tajawal">
+          <h3 id="section-toppings" className="text-base sm:text-lg font-black text-[#FFF8F0] font-tajawal">
             إضافات التوبينغ (Toppings) — اختيار متعدد
           </h3>
         </div>
@@ -28,32 +28,32 @@ export const ToppingsSelector = ({ selectedToppings, onToggleTopping }) => {
               key={topping.id}
               type="button"
               onClick={() => onToggleTopping(topping.id)}
-              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 ${
+              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 active:scale-[0.98] will-change-transform ${
                 isSelected
                   ? 'border-emerald-500 bg-emerald-950/30 shadow-sm ring-1 ring-emerald-500/50 scale-[1.01]'
-                  : 'border-zinc-800 bg-zinc-900/90 hover:border-zinc-700 hover:bg-zinc-800/70'
+                  : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'
               }`}
             >
               <div className="flex items-center gap-3 min-w-0">
-                <span className="text-2xl shrink-0 p-2 rounded-xl bg-zinc-800 border border-zinc-700">
+                <span className="text-2xl shrink-0 p-2 rounded-xl bg-[#2C221F] border border-[#3A2822]">
                   {topping.icon}
                 </span>
 
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
-                    <h4 className="text-sm font-black text-white font-tajawal truncate">
+                    <h4 className="text-sm font-black text-[#FFF8F0] font-tajawal truncate">
                       {topping.name}
                     </h4>
-                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-zinc-800 text-zinc-300">
+                    <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#2C221F] text-[#B8A99A]">
                       {topping.badge}
                     </span>
                   </div>
 
-                  <div className="text-[11px] text-zinc-400 font-medium">
+                  <div className="text-[11px] text-[#B8A99A] font-medium">
                     {topping.nameEn}
                   </div>
 
-                  <div className="text-xs font-black text-brand-400 mt-1">
+                  <div className="text-xs font-black text-[#FF7A00] mt-1">
                     +{formatDZD(topping.price)}
                   </div>
                 </div>
@@ -64,7 +64,7 @@ export const ToppingsSelector = ({ selectedToppings, onToggleTopping }) => {
                 className={`w-6 h-6 rounded-xl flex items-center justify-center shrink-0 transition-all ${
                   isSelected
                     ? 'bg-emerald-500 text-zinc-950 shadow-sm'
-                    : 'border border-zinc-700 text-zinc-600 bg-zinc-800'
+                    : 'border border-[#3A2822] text-[#B8A99A] bg-[#2C221F]'
                 }`}
               >
                 {isSelected ? (

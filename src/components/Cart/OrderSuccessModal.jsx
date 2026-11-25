@@ -12,7 +12,7 @@ export const OrderSuccessModal = ({ orderDetails, isOpen, onClose, onResetOrder 
 
   // Format WhatsApp message text
   const generateWhatsAppMessage = () => {
-    let msg = `🍗 *طلب جديد من وينغز WINGS* 🍗\n`;
+    let msg = `🍗 *طلب جديد من WINGO!* 🍗\n`;
     msg += `رقم الطلب: #${orderId}\n`;
     msg += `الوقت: ${new Date(createdAt).toLocaleTimeString('ar-DZ')}\n`;
     msg += `----------------------------\n`;
@@ -43,7 +43,7 @@ export const OrderSuccessModal = ({ orderDetails, isOpen, onClose, onResetOrder 
     msg += `----------------------------\n`;
     msg += `💰 *المجموع النهائي: ${formatDZD(subtotal)}*\n`;
     msg += `📍 العنوان: للتسليم / الاستلام\n`;
-    msg += `شكراً لاختياركم وينغز WINGS! 🔥`;
+    msg += `شكراً لاختياركم WINGO! 🔥`;
 
     return msg;
   };
@@ -62,16 +62,16 @@ export const OrderSuccessModal = ({ orderDetails, isOpen, onClose, onResetOrder 
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200">
       <div 
-        className="bg-[#FAF9F6] w-full max-w-lg rounded-3xl shadow-2xl border border-zinc-200 overflow-hidden flex flex-col text-right max-h-[90vh] animate-in fade-in zoom-in duration-200"
+        className="bg-[#211A17] text-[#FFF8F0] w-full max-w-lg rounded-3xl shadow-2xl border border-[#3A2822] overflow-hidden flex flex-col text-right max-h-[90vh] animate-in fade-in zoom-in duration-200"
         role="dialog"
       >
         {/* Header with success badge */}
-        <div className="bg-zinc-950 text-white p-5 text-center relative">
+        <div className="bg-[#14100E] text-[#FFF8F0] p-5 text-center relative border-b border-[#3A2822]">
           <button
             onClick={onClose}
-            className="absolute top-4 left-4 w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center"
+            className="absolute top-4 left-4 w-8 h-8 rounded-full bg-[#2C221F] text-[#B8A99A] hover:text-[#FFF8F0] flex items-center justify-center border border-[#3A2822] transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -80,20 +80,20 @@ export const OrderSuccessModal = ({ orderDetails, isOpen, onClose, onResetOrder 
             <CheckCircle2 className="w-8 h-8 text-emerald-400 stroke-[2.5]" />
           </div>
 
-          <h3 className="text-xl font-black font-tajawal text-white">
+          <h3 className="text-xl font-black font-tajawal text-[#FFF8F0]">
             تم تسجيل طلبك بنجاح! 🎉
           </h3>
-          <p className="text-xs text-zinc-400 mt-1">
-            رقم الطلب: <span className="font-mono font-bold text-brand-400">#{orderId}</span>
+          <p className="text-xs text-[#B8A99A] mt-1">
+            رقم الطلب: <span className="font-mono font-bold text-[#FF7A00]">#{orderId}</span>
           </p>
         </div>
 
         {/* Order Details Body */}
         <div className="p-5 overflow-y-auto space-y-4">
-          <div className="bg-white p-4 rounded-2xl border border-zinc-200 space-y-3">
-            <div className="flex items-center justify-between text-xs text-zinc-500 pb-2 border-b border-zinc-100">
+          <div className="bg-[#14100E] p-4 rounded-2xl border border-[#3A2822] space-y-3">
+            <div className="flex items-center justify-between text-xs text-[#B8A99A] pb-2 border-b border-[#3A2822]">
               <span className="flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-brand-600" />
+                <Clock className="w-3.5 h-3.5 text-[#FF7A00]" />
                 وقت التحضير التقديري: {RESTAURANT_INFO.estimatedTime}
               </span>
               <span>{new Date(createdAt).toLocaleTimeString('ar-DZ')}</span>
@@ -103,39 +103,39 @@ export const OrderSuccessModal = ({ orderDetails, isOpen, onClose, onResetOrder 
             <div className="space-y-2.5">
               {items.map((item, index) => (
                 <div key={index} className="text-xs space-y-0.5">
-                  <div className="flex justify-between font-bold text-zinc-900">
+                  <div className="flex justify-between font-bold text-[#FFF8F0]">
                     <span>
-                      {item.title} <span className="text-brand-600 font-extrabold">(×{item.quantity})</span>
+                      {item.title} <span className="text-[#FF7A00] font-extrabold">(×{item.quantity})</span>
                     </span>
                     <span>{formatDZD(item.unitTotal * item.quantity)}</span>
                   </div>
 
                   {item.subtitle && (
-                    <div className="text-[11px] text-zinc-500">
+                    <div className="text-[11px] text-[#B8A99A]">
                       • {item.subtitle}
                     </div>
                   )}
 
                   {item.coatingSauce && (
-                    <div className="text-[11px] text-orange-700 font-semibold">
+                    <div className="text-[11px] text-[#FF7A00] font-semibold">
                       • صوص التغطية: {item.coatingSauce.name}
                     </div>
                   )}
 
                   {item.dips && item.dips.length > 0 && (
-                    <div className="text-[11px] text-zinc-500">
+                    <div className="text-[11px] text-[#B8A99A]">
                       • الصوصات: {item.dips.map((d) => `${d.nameAr} (${d.quantity})`).join(', ')}
                     </div>
                   )}
 
                   {item.sides && item.sides.length > 0 && (
-                    <div className="text-[11px] text-emerald-700 font-medium">
+                    <div className="text-[11px] text-emerald-400 font-medium">
                       • إضافات: {item.sides.map((s) => `${s.nameAr} (${s.quantity})`).join(', ')}
                     </div>
                   )}
 
                   {item.extraSides && item.extraSides.length > 0 && (
-                    <div className="text-[11px] text-emerald-700 font-medium">
+                    <div className="text-[11px] text-emerald-400 font-medium">
                       • إضافات: {item.extraSides.map((s) => `${s.nameAr} (${s.quantity})`).join(', ')}
                     </div>
                   )}
@@ -144,16 +144,16 @@ export const OrderSuccessModal = ({ orderDetails, isOpen, onClose, onResetOrder 
             </div>
 
             {kitchenNotes && (
-              <div className="pt-2 border-t border-zinc-100 text-xs">
-                <span className="font-bold text-zinc-700">ملاحظاتك للمطبخ: </span>
-                <span className="text-zinc-600 italic">{kitchenNotes}</span>
+              <div className="pt-2 border-t border-[#3A2822] text-xs">
+                <span className="font-bold text-[#FFF8F0]">ملاحظاتك للمطبخ: </span>
+                <span className="text-[#B8A99A] italic">{kitchenNotes}</span>
               </div>
             )}
 
             {/* Total */}
-            <div className="pt-3 border-t border-zinc-200 flex justify-between items-center text-sm font-black">
+            <div className="pt-3 border-t border-[#3A2822] flex justify-between items-center text-sm font-black text-[#FFF8F0]">
               <span>المجموع النهائي:</span>
-              <span className="text-base text-brand-600 font-tajawal">
+              <span className="text-base text-[#FF7A00] font-tajawal">
                 {formatDZD(subtotal)}
               </span>
             </div>
@@ -171,16 +171,16 @@ export const OrderSuccessModal = ({ orderDetails, isOpen, onClose, onResetOrder 
 
             <button
               onClick={handleCopyReceipt}
-              className="w-full flex items-center justify-center gap-2 bg-zinc-200 hover:bg-zinc-300 active:scale-95 text-zinc-800 font-bold py-3 px-4 rounded-2xl transition-all text-xs"
+              className="w-full flex items-center justify-center gap-2 bg-[#2C221F] hover:bg-[#3A2822] active:scale-95 text-[#FFF8F0] border border-[#3A2822] font-bold py-3 px-4 rounded-2xl transition-all text-xs"
             >
               {copied ? (
                 <>
-                  <Check className="w-4 h-4 text-emerald-600 stroke-[3]" />
-                  <span className="text-emerald-700 font-extrabold">تم نسخ تفاصيل الفاتورة!</span>
+                  <Check className="w-4 h-4 text-emerald-400 stroke-[3]" />
+                  <span className="text-emerald-400 font-extrabold">تم نسخ تفاصيل الفاتورة!</span>
                 </>
               ) : (
                 <>
-                  <Copy className="w-4 h-4 text-zinc-600" />
+                  <Copy className="w-4 h-4 text-[#B8A99A]" />
                   <span>نسخ الفاتورة كنص</span>
                 </>
               )}
@@ -189,13 +189,13 @@ export const OrderSuccessModal = ({ orderDetails, isOpen, onClose, onResetOrder 
         </div>
 
         {/* Footer */}
-        <div className="p-4 bg-zinc-100 border-t border-zinc-200 text-center">
+        <div className="p-4 bg-[#14100E] border-t border-[#3A2822] text-center">
           <button
             onClick={() => {
               onResetOrder();
               onClose();
             }}
-            className="text-xs font-bold text-zinc-600 hover:text-zinc-900 inline-flex items-center gap-1.5"
+            className="text-xs font-bold text-[#B8A99A] hover:text-[#FFF8F0] inline-flex items-center gap-1.5 transition-colors"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>طلب جديد</span>

@@ -7,14 +7,14 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
     <section className="space-y-3" aria-labelledby="section-sauce">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-brand-600 text-white text-xs font-black">
+          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-[#FF7A00] text-white text-xs font-black">
             2
           </span>
-          <h3 id="section-sauce" className="text-base sm:text-lg font-black text-white font-tajawal">
+          <h3 id="section-sauce" className="text-base sm:text-lg font-black text-[#FFF8F0] font-tajawal">
             اختر صوص التغطية (Sauce Glaze)
           </h3>
         </div>
-        <span className="text-[11px] font-bold text-orange-400 bg-orange-950/60 px-2 py-0.5 rounded-full border border-orange-800/60">
+        <span className="text-[11px] font-bold text-[#FF7A00] bg-[#FF7A00]/15 px-2 py-0.5 rounded-full border border-[#FF7A00]/30">
           تغطية كاملة ولامعة ✨
         </span>
       </div>
@@ -29,14 +29,14 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
               key={sauce.id}
               type="button"
               onClick={() => onSelectSauce(sauce)}
-              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-start justify-between gap-3 ${
+              className={`relative text-right p-3.5 rounded-2xl border-2 transition-all duration-200 cursor-pointer flex items-start justify-between gap-3 active:scale-[0.98] will-change-transform ${
                 isSelected
                   ? isSignature
-                    ? 'border-amber-400 bg-gradient-to-br from-amber-950/50 via-zinc-900 to-orange-950/40 shadow-gold-glow ring-1 ring-amber-400/60 scale-[1.01]'
-                    : 'border-brand-500 bg-brand-950/40 shadow-glow ring-1 ring-brand-500/50 scale-[1.01]'
+                    ? 'border-amber-400 bg-amber-500/20 shadow-gold-glow ring-1 ring-amber-400/60 scale-[1.01]'
+                    : 'border-[#FF7A00] bg-[#FF7A00]/20 shadow-glow ring-1 ring-[#FF7A00]/50 scale-[1.01]'
                   : isSignature
-                  ? 'border-amber-500/40 bg-zinc-900/90 hover:border-amber-500/70 hover:bg-zinc-800/70'
-                  : 'border-zinc-800 bg-zinc-900/90 hover:border-zinc-700 hover:bg-zinc-800/70'
+                  ? 'border-amber-500/40 bg-[#211A17] hover:border-amber-500/70 hover:bg-[#2C221F]'
+                  : 'border-[#3A2822] bg-[#211A17] hover:border-[#FF7A00]/50 hover:bg-[#2C221F]'
               }`}
             >
               <div className="flex-1 min-w-0">
@@ -48,7 +48,7 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
                     style={{ backgroundColor: sauce.dotColor }}
                   />
 
-                  <h4 className="text-sm font-black text-white font-tajawal truncate">
+                  <h4 className="text-sm font-black text-[#FFF8F0] font-tajawal truncate">
                     {sauce.name}
                   </h4>
 
@@ -60,16 +60,16 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
                   )}
                 </div>
 
-                <div className="text-[11px] text-zinc-400 font-medium mb-1 truncate">
+                <div className="text-[11px] text-[#B8A99A] font-medium mb-1 truncate">
                   {sauce.nameEn}
                 </div>
 
-                <p className="text-[11px] text-zinc-400 leading-relaxed line-clamp-2">
+                <p className="text-[11px] text-[#B8A99A] leading-relaxed line-clamp-2">
                   {sauce.description}
                 </p>
 
                 {sauce.price > 0 && (
-                  <div className="text-[11px] font-bold text-amber-400 mt-1.5">
+                  <div className="text-[11px] font-bold text-[#FF7A00] mt-1.5">
                     +{formatDZD(sauce.price)}
                   </div>
                 )}
@@ -81,8 +81,8 @@ export const SauceSelector = ({ selectedSauce, onSelectSauce }) => {
                   isSelected
                     ? isSignature
                       ? 'bg-amber-400 text-zinc-950 shadow-sm'
-                      : 'bg-brand-600 text-white shadow-sm'
-                    : 'border border-zinc-700 text-transparent'
+                      : 'bg-[#FF7A00] text-white shadow-sm'
+                    : 'border border-[#3A2822] text-transparent'
                 }`}
               >
                 <Check className="w-3.5 h-3.5 stroke-[3]" />

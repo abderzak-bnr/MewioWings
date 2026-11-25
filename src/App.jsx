@@ -83,39 +83,39 @@ export default function App() {
   }, [selectedQuantity, selectedSauce, selectedToppings, selectedSpiceLevel]);
 
   return (
-    <div className="min-h-screen bg-[#0f0f12] text-zinc-100 flex flex-col font-cairo antialiased selection:bg-brand-600 selection:text-white">
+    <div className="min-h-screen bg-[#14100E] text-[#FFF8F0] flex flex-col font-cairo antialiased selection:bg-[#FF7A00] selection:text-[#FFF8F0]">
       {/* Top Brand Micro Bar */}
-      <header className="bg-zinc-950 text-white border-b border-zinc-800/80 sticky top-0 sm:static z-50">
+      <header className="bg-[#14100E] text-[#FFF8F0] border-b border-[#3A2822] sticky top-0 sm:static z-50">
         <div className="max-w-4xl mx-auto px-4 py-2 flex items-center justify-between text-xs">
           {/* Logo & City Tag */}
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white flex items-center justify-center font-black shadow-glow">
-              <span className="text-lg">🍗</span>
-            </div>
+            <img
+              src="/logo.webp"
+              alt="WINGO!"
+              className="h-9 sm:h-10 w-auto object-contain drop-shadow-[0_0_8px_rgba(255,248,240,0.35)]"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/public/logo.webp';
+              }}
+            />
             <div>
-              <h1 className="text-sm font-black font-tajawal text-white tracking-tight flex items-center gap-1.5">
-                {RESTAURANT_INFO.name}
-                <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-brand-500/20 text-brand-400 border border-brand-500/30">
-                  {RESTAURANT_INFO.city} 🇩🇿
-                </span>
-              </h1>
-              <p className="text-[10px] text-zinc-400 font-medium">
-                {RESTAURANT_INFO.tagline}
+              <p className="text-[10px] text-[#B8A99A] font-medium">
+                {RESTAURANT_INFO.city} 🇩🇿 • {RESTAURANT_INFO.tagline}
               </p>
             </div>
           </div>
 
           {/* Status & Contact Shortcut */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-1.5 text-zinc-400 text-[11px]">
-              <Clock className="w-3.5 h-3.5 text-brand-500" />
+            <div className="hidden sm:flex items-center gap-1.5 text-[#B8A99A] text-[11px]">
+              <Clock className="w-3.5 h-3.5 text-[#FF7A00]" />
               <span>{RESTAURANT_INFO.openingHours}</span>
             </div>
             <a
               href={`tel:${RESTAURANT_INFO.phone}`}
-              className="flex items-center gap-1 text-[11px] font-bold text-zinc-300 hover:text-brand-400 bg-zinc-900 px-2.5 py-1 rounded-xl border border-zinc-800 transition-colors"
+              className="flex items-center gap-1 text-[11px] font-bold text-[#FFF8F0] hover:text-[#FF7A00] bg-[#211A17] px-2.5 py-1 rounded-xl border border-[#3A2822] transition-colors"
             >
-              <Phone className="w-3 h-3 text-brand-500" />
+              <Phone className="w-3 h-3 text-[#FF7A00]" />
               <span className="hidden xs:inline">{RESTAURANT_INFO.phone}</span>
             </a>
           </div>
@@ -125,13 +125,13 @@ export default function App() {
       {/* Main Container */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-3 sm:px-4 py-3 sm:py-6 space-y-6 pb-28">
         {/* Intro Sub-header on Desktop */}
-        <div className="hidden sm:flex items-center justify-between bg-zinc-900/60 p-4 rounded-3xl border border-zinc-800/80">
+        <div className="hidden sm:flex items-center justify-between bg-[#211A17] p-4 rounded-3xl border border-[#3A2822]">
           <div>
-            <div className="inline-flex items-center gap-1 text-xs font-black text-brand-400 bg-brand-950/60 px-2.5 py-0.5 rounded-full border border-brand-800/60 mb-1">
+            <div className="inline-flex items-center gap-1 text-xs font-black text-[#FF7A00] bg-[#FF7A00]/15 px-2.5 py-0.5 rounded-full border border-[#FF7A00]/30 mb-1">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>محرك تصميم الأجنحة المباشر بالطبقات (Layered PNG Engine)</span>
+              <span>محرك تصميم الأجنحة المباشر بالطبقات (WINGO!)</span>
             </div>
-            <h2 className="text-xl font-black font-tajawal text-white">
+            <h2 className="text-xl font-black font-tajawal text-[#FFF8F0]">
               خصّص كل تفصيلة في طبق أجنحتك وشاهده يتحول لحظياً!
             </h2>
           </div>
@@ -139,7 +139,7 @@ export default function App() {
           <button
             type="button"
             onClick={handleReset}
-            className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white bg-zinc-800/80 hover:bg-zinc-800 px-3.5 py-2 rounded-xl transition-all border border-zinc-700/60"
+            className="flex items-center gap-1.5 text-xs text-[#B8A99A] hover:text-[#FFF8F0] bg-[#2C221F] hover:bg-[#3A2822] px-3.5 py-2 rounded-xl transition-all border border-[#3A2822]"
             title="إعادة ضبط الاختيارات"
           >
             <RotateCcw className="w-3.5 h-3.5" />
@@ -202,16 +202,16 @@ export default function App() {
       />
 
       {/* Footer */}
-      <footer className="bg-zinc-950 text-white border-t border-zinc-900 py-8 px-4 text-center text-xs text-zinc-500 space-y-3">
-        <div className="flex items-center justify-center gap-2 text-sm font-black font-tajawal text-white">
-          <span>🍗 {RESTAURANT_INFO.name}</span>
-          <span className="text-zinc-600">•</span>
-          <span className="text-brand-400">{RESTAURANT_INFO.city}، {RESTAURANT_INFO.country} 🇩🇿</span>
+      <footer className="bg-[#14100E] text-[#FFF8F0] border-t border-[#3A2822] py-8 px-4 text-center text-xs text-[#B8A99A] space-y-3">
+        <div className="flex items-center justify-center gap-2 text-sm font-black font-tajawal text-[#FFF8F0]">
+          <span>🍗 WINGO!</span>
+          <span className="text-[#3A2822]">•</span>
+          <span className="text-[#FF7A00]">{RESTAURANT_INFO.city}، {RESTAURANT_INFO.country} 🇩🇿</span>
         </div>
-        <p className="max-w-md mx-auto text-zinc-400 text-[11px] leading-relaxed">
+        <p className="max-w-md mx-auto text-[#B8A99A] text-[11px] leading-relaxed">
           {RESTAURANT_INFO.address} • التوصيل متوفر في بلدية المدية والمناطق المجاورة.
         </p>
-        <p className="text-[10px] text-zinc-600">
+        <p className="text-[10px] text-[#B8A99A]/70">
           جميع الحقوق محفوظة © {new Date().getFullYear()} — صمم خصيصاً لعشاق الأجنحة في الجزائر.
         </p>
       </footer>

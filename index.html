@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#0B1221">
-  <title>WINGS — Build Your Wings | صمّم وجبتك (المدية)</title>
+  <meta name="theme-color" content="#14100E">
+  <title>WINGO! — Build Your Wings | صمّم وجبتك (المدية)</title>
   
   <!-- Google Font: Cairo -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +15,13 @@
     /* ==========================================================
        RESET & BASE THEME VARIABLES
        ========================================================== */
+    html {
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -22,18 +29,23 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    button, input, textarea, select {
+      font-family: var(--font-cairo);
+      direction: inherit;
+    }
+
     :root {
-      --bg-midnight: #0B1221;
-      --bg-surface: #131E33;
-      --bg-surface-elevated: #1B2945;
-      --brand-orange: #F94E1E;
-      --brand-orange-hover: #E03E10;
+      --bg-midnight: #14100E;
+      --bg-surface: #211A17;
+      --bg-surface-elevated: #2C221F;
+      --brand-orange: #FF7A00;
+      --brand-orange-hover: #E56D00;
       --brand-gold: #F59E0B;
       --brand-green: #10B981;
-      --text-white: #FFFFFF;
-      --text-muted: #94A3B8;
-      --text-secondary: #CBD5E1;
-      --border-subtle: rgba(255, 255, 255, 0.08);
+      --text-white: #FFF8F0;
+      --text-muted: #B8A99A;
+      --text-secondary: #D4C7BA;
+      --border-subtle: #3A2822;
       --font-cairo: 'Cairo', system-ui, -apple-system, sans-serif;
     }
 
@@ -53,7 +65,7 @@
     }
 
     body {
-      background-color: #050810;
+      background-color: #0E0B0A;
       color: var(--text-white);
       font-family: var(--font-cairo);
       direction: rtl;
@@ -76,7 +88,7 @@
       position: relative;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 0 1px #3A2822;
       overflow-x: hidden;
     }
 
@@ -100,7 +112,7 @@
       width: 38px;
       height: 38px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 248, 240, 0.06);
       border: 1px solid var(--border-subtle);
       color: var(--text-white);
       display: flex;
@@ -112,11 +124,29 @@
     }
     .icon-btn:active {
       transform: scale(0.92);
-      background: rgba(255, 255, 255, 0.12);
+      background: rgba(255, 248, 240, 0.12);
     }
 
     .brand-title-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
+    }
+    .header-brand-logo {
+      height: 40px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 0 8px rgba(255, 248, 240, 0.35));
+      transition: transform 0.2s ease;
+      display: inline-block;
+      vertical-align: middle;
+    }
+    @media (min-width: 640px) {
+      .header-brand-logo {
+        height: 48px;
+      }
     }
     .brand-title {
       font-size: 19px;
@@ -126,18 +156,19 @@
       line-height: 1.1;
     }
     .brand-subtitle {
-      font-size: 10px;
+      font-size: 10.5px;
       color: var(--brand-orange);
       font-weight: 700;
-      letter-spacing: 0.5px;
+      line-height: 1.3;
+      margin-top: 2px;
     }
 
     .cart-badge {
       position: absolute;
       top: -3px;
-      right: -3px;
+      left: -3px;
       background: var(--brand-orange);
-      color: white;
+      color: #FFF8F0;
       font-size: 10px;
       font-weight: 800;
       width: 17px;
@@ -146,7 +177,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 2px 6px rgba(249, 78, 30, 0.5);
+      box-shadow: 0 2px 6px rgba(255, 122, 0, 0.5);
     }
 
     /* ==========================================================
@@ -165,12 +196,13 @@
       font-size: 18px;
       font-weight: 800;
       color: var(--text-white);
-      line-height: 1.2;
+      line-height: 1.35;
     }
     .header-tagline {
       font-size: 11px;
       color: var(--text-muted);
       font-weight: 500;
+      line-height: 1.4;
     }
 
     .mode-toggle-container {
@@ -200,41 +232,43 @@
       white-space: nowrap;
     }
     .mode-toggle-btn.active {
-      color: #0B1221;
+      color: #14100E;
     }
 
     .mode-slider {
       position: absolute;
       top: 3px;
       bottom: 3px;
-      width: 50%;
-      background: #FFFFFF;
+      right: 3px;
+      width: calc(50% - 3px);
+      background: #FFF8F0;
       border-radius: 9999px;
       z-index: 1;
       transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      will-change: transform;
     }
     .mode-slider.ready-pos {
-      transform: translateX(-100%);
+      transform: translate3d(-100%, 0, 0);
     }
 
     /* ==========================================================
-       TOP-DOWN ORBITING STAGE (~40% height)
+       TOP-DOWN SERVING TRAY STAGE (aspect 4/3, max-w 440px)
        ========================================================== */
     .stage-container {
-      height: 40vh;
-      min-height: 295px;
-      max-height: 355px;
+      width: 100%;
+      max-width: 440px;
+      aspect-ratio: 4 / 3;
       position: relative;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      margin: 0 12px;
-      border-radius: 28px;
-      background: radial-gradient(circle at center, #15223A 0%, #0B1221 72%);
-      border: 1px solid rgba(255, 255, 255, 0.04);
-      box-shadow: inset 0 0 35px rgba(0, 0, 0, 0.6);
+      margin: 0 auto 6px;
+      padding: 0 8px;
+      box-sizing: border-box;
+      background: transparent;
+      border: none;
+      box-shadow: none;
       transition: all 0.3s ease;
     }
 
@@ -244,10 +278,10 @@
       width: 240px;
       height: 240px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(249, 78, 30, 0.15) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(255, 122, 0, 0.22) 0%, transparent 70%);
       transition: all 0.4s ease;
       pointer-events: none;
-      z-index: 1;
+      z-index: 2;
     }
     .plate-ambient-glow.glow-medium {
       background: radial-gradient(circle, rgba(249, 115, 22, 0.32) 0%, transparent 70%);
@@ -303,17 +337,21 @@
       height: 100%;
       max-width: 195px;
       max-height: 165px;
+      aspect-ratio: 195 / 165;
       object-fit: contain;
       z-index: 12;
       pointer-events: none;
       filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.6));
       opacity: 1;
+      transform: translateZ(0);
       transform-origin: center center;
       transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+      will-change: transform, opacity;
+      backface-visibility: hidden;
     }
     .real-wing-overlay.switching {
       opacity: 0.12;
-      transform: scale(0.96);
+      transform: scale(0.96) translateZ(0);
     }
 
     @keyframes productTrayEnter {
@@ -428,13 +466,14 @@
       width: 36px;
       height: 36px;
       z-index: 18;
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s ease;
-      transform: scale(0);
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease;
+      transform: scale(0) translateZ(0);
       opacity: 0;
       pointer-events: none;
+      will-change: transform, opacity;
     }
     .orbit-ramekin.visible {
-      transform: scale(1);
+      transform: scale(1) translateZ(0);
       opacity: 1;
       pointer-events: auto;
     }
@@ -495,17 +534,18 @@
       width: 58px;
       height: 58px;
       z-index: 16;
-      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.15s ease;
-      transform: scale(0);
+      transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.16s ease;
+      transform: scale(0) translateZ(0);
       opacity: 0;
       pointer-events: none;
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto;
+      will-change: transform, opacity;
     }
     .orbit-side-plate.visible {
-      transform: scale(1);
+      transform: scale(1) translateZ(0);
       opacity: 1;
       pointer-events: auto;
     }
@@ -613,12 +653,15 @@
       position: absolute;
       top: 4px;
       bottom: 4px;
+      left: 0;
+      right: auto;
       background: #FFFFFF;
       border-radius: 9999px;
       box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
-      transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transition: left 0.26s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.26s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 1;
       pointer-events: none;
+      will-change: left, width;
     }
 
     .tab-pill {
@@ -645,14 +688,14 @@
       transform: scale(0.95);
     }
     .tab-pill.active {
-      color: #0B1221;
+      color: #14100E;
       font-weight: 900;
       background: transparent;
       border-color: transparent;
       box-shadow: none;
     }
     .tab-pill.active svg {
-      stroke: #0B1221;
+      stroke: #14100E;
     }
 
     .tab-counter {
@@ -764,6 +807,9 @@
       overflow-x: auto;
       padding: 4px 2px 10px;
       scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      overscroll-behavior-x: contain;
     }
 
     /* Circular Item Card */
@@ -777,9 +823,10 @@
       text-align: center;
       scroll-snap-align: start;
       transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      will-change: transform;
     }
     .item-card:active {
-      transform: scale(0.95);
+      transform: scale(0.95) translateZ(0);
     }
 
     .item-circle {
@@ -795,6 +842,7 @@
       box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
       transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
       overflow: visible;
+      will-change: transform;
     }
     .item-card:active .item-circle {
       transform: scale(0.92);
@@ -834,8 +882,8 @@
       width: 20px;
       height: 20px;
       border-radius: 50%;
-      background: #FFFFFF;
-      color: #0B1221;
+      background: #FFF8F0;
+      color: #14100E;
       font-size: 13px;
       font-weight: 900;
       display: none;
@@ -858,7 +906,8 @@
       font-weight: 700;
       color: var(--text-white);
       margin-top: 6px;
-      line-height: 1.2;
+      line-height: 1.4;
+      padding: 1px 0;
       width: 100%;
       white-space: nowrap;
       overflow: hidden;
@@ -866,13 +915,15 @@
     }
 
     .item-price {
-      font-size: 10px;
-      font-weight: 700;
-      color: var(--brand-orange);
+      font-size: 11px;
+      font-weight: 800;
+      color: #FF9433;
       margin-top: 2px;
+      line-height: 1.3;
     }
     .item-price.free {
       color: #10B981;
+      font-weight: 800;
     }
 
     /* Wings Quantity Selector Bar */
@@ -905,8 +956,8 @@
       transform: scale(0.95);
     }
     .qty-btn.active {
-      background: #FFFFFF;
-      color: #0B1221;
+      background: #FFF8F0;
+      color: #14100E;
       font-weight: 900;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
     }
@@ -914,9 +965,9 @@
     /* Bottom CTA Button with Mobile Safe-Area Margin & Rich Gradient */
     .cta-button {
       width: 100%;
-      background: linear-gradient(135deg, #F94E1E 0%, #EA3C08 100%);
-      color: #FFFFFF;
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: linear-gradient(135deg, #FF7A00 0%, #E56D00 100%);
+      color: #FFF8F0;
+      border: 1px solid rgba(255, 248, 240, 0.16);
       border-radius: 9999px;
       padding: 15px 22px;
       font-size: 15px;
@@ -945,14 +996,16 @@
       overflow-y: auto;
       gap: 12px;
       flex-direction: column;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
     }
     .ready-boxes-view.active {
       display: flex;
     }
 
     .ready-box-card {
-      background: #131E33;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #211A17;
+      border: 1px solid #3A2822;
       border-radius: 22px;
       padding: 16px;
       display: flex;
@@ -961,11 +1014,16 @@
       box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
       position: relative;
       overflow: hidden;
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.22s ease;
+      will-change: transform;
     }
     .ready-box-card:hover {
-      border-color: rgba(249, 78, 30, 0.4);
-      transform: translateY(-2px);
+      border-color: rgba(255, 122, 0, 0.45);
+      transform: translateY(-3px) translateZ(0);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45), 0 0 20px rgba(255, 122, 0, 0.15);
+    }
+    .ready-box-card:active {
+      transform: translateY(-1px) scale(0.99) translateZ(0);
     }
 
     .box-card-top {
@@ -976,17 +1034,17 @@
     .box-code {
       font-size: 12px;
       font-weight: 900;
-      color: #FFFFFF;
-      background: #0B1221;
+      color: #FFF8F0;
+      background: #14100E;
       padding: 3px 10px;
       border-radius: 9999px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid #3A2822;
     }
     .box-badge {
       font-size: 10px;
       font-weight: 800;
       color: var(--brand-orange);
-      background: rgba(249, 78, 30, 0.15);
+      background: rgba(255, 122, 0, 0.15);
       padding: 3px 8px;
       border-radius: 9999px;
     }
@@ -1000,12 +1058,12 @@
       width: 62px;
       height: 62px;
       border-radius: 18px;
-      background: #0B1221;
+      background: #14100E;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      border: 1px solid #3A2822;
     }
     .box-text-wrap {
       flex: 1;
@@ -1013,13 +1071,14 @@
     .box-title {
       font-size: 16px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: #FFF8F0;
+      line-height: 1.35;
     }
     .box-desc {
-      font-size: 11px;
+      font-size: 11.5px;
       color: var(--text-muted);
       margin-top: 3px;
-      line-height: 1.35;
+      line-height: 1.45;
     }
 
     .box-pills-wrap {
@@ -1031,8 +1090,9 @@
     .box-content-pill {
       font-size: 10px;
       font-weight: 700;
-      color: #E2E8F0;
-      background: rgba(255, 255, 255, 0.06);
+      color: #F1F5F9;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       padding: 2px 8px;
       border-radius: 6px;
     }
@@ -1062,10 +1122,18 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.2s ease;
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 4px 12px rgba(249, 78, 30, 0.28);
+      will-change: transform;
     }
     .box-action-btn:hover {
       background: var(--brand-orange-hover);
+      transform: translateY(-1px) translateZ(0);
+      box-shadow: 0 6px 16px rgba(249, 78, 30, 0.4);
+    }
+    .box-action-btn:active {
+      transform: scale(0.94) translateZ(0);
+      box-shadow: 0 2px 8px rgba(249, 78, 30, 0.25);
     }
 
     /* Ready Box Customizer Modal & Order Drawer */
@@ -1081,38 +1149,45 @@
       align-items: flex-end;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      visibility: hidden;
+      will-change: opacity, visibility;
+      transition: opacity 0.28s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.28s;
     }
     .ready-modal-overlay.open, .drawer-overlay.open {
       opacity: 1;
+      visibility: visible;
       pointer-events: auto;
     }
 
     .ready-modal-panel, .drawer-panel {
       width: 100%;
       max-width: 480px;
-      background: #111928;
+      background: #211A17;
       border-top-left-radius: 28px;
       border-top-right-radius: 28px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      border: 1px solid #3A2822;
       border-bottom: none;
       padding: 16px 20px calc(24px + env(safe-area-inset-bottom, 0px));
       max-height: 90vh;
       overflow-y: auto;
-      transform: translateY(100%);
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior-y: contain;
+      transform: translate3d(0, 100%, 0);
       transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
       box-shadow: 0 -12px 48px rgba(0, 0, 0, 0.85);
+      will-change: transform;
+      backface-visibility: hidden;
     }
     .ready-modal-overlay.open .ready-modal-panel,
     .drawer-overlay.open .drawer-panel {
-      transform: translateY(0);
+      transform: translate3d(0, 0, 0);
     }
 
     .drawer-handle {
       width: 40px;
       height: 4.5px;
       border-radius: 9999px;
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 248, 240, 0.25);
       margin: 0 auto 14px;
       cursor: grab;
     }
@@ -1127,16 +1202,16 @@
       }
       .ready-modal-panel, .drawer-panel {
         border-radius: 24px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
+        border: 1px solid #3A2822;
         max-width: 460px;
         max-height: 85vh;
-        transform: scale(0.95) translateY(12px);
+        transform: translate3d(0, 16px, 0) scale(0.96);
         box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
         padding: 24px;
       }
       .ready-modal-overlay.open .ready-modal-panel,
       .drawer-overlay.open .drawer-panel {
-        transform: scale(1) translateY(0);
+        transform: translate3d(0, 0, 0) scale(1);
       }
     }
 
@@ -1149,13 +1224,13 @@
     .drawer-title {
       font-size: 18px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: #FFF8F0;
     }
 
     /* Delivery Banner */
     .delivery-banner {
-      background: rgba(249, 78, 30, 0.12);
-      border: 1px solid rgba(249, 78, 30, 0.3);
+      background: rgba(255, 122, 0, 0.12);
+      border: 1px solid rgba(255, 122, 0, 0.3);
       border-radius: 16px;
       padding: 10px 14px;
       display: flex;
@@ -1173,12 +1248,14 @@
     .delivery-banner-title {
       font-size: 12px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: #FFF8F0;
+      line-height: 1.35;
     }
     .delivery-banner-subtitle {
       font-size: 11px;
       color: var(--text-muted);
       margin-top: 2px;
+      line-height: 1.4;
     }
     .badge-price {
       color: var(--brand-orange);
@@ -1186,10 +1263,10 @@
     }
 
     .drawer-summary-card {
-      background: #162033;
+      background: #2C221F;
       border-radius: 18px;
       padding: 14px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid #3A2822;
       margin-bottom: 14px;
     }
     .drawer-item-row {
@@ -1198,7 +1275,7 @@
       justify-content: space-between;
       font-size: 13px;
       padding: 6px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid #3A2822;
     }
     .drawer-item-row:last-child {
       border-bottom: none;
@@ -1208,14 +1285,14 @@
     }
     .drawer-item-value {
       font-weight: 700;
-      color: #FFFFFF;
-      text-align: left;
+      color: #FFF8F0;
+      text-align: end;
     }
 
     /* Customer Form */
     .customer-form-section {
-      background: #141E32;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #211A17;
+      border: 1px solid #3A2822;
       border-radius: 18px;
       padding: 14px;
       margin-bottom: 16px;
@@ -1227,7 +1304,7 @@
       margin-bottom: 12px;
       font-size: 13px;
       font-weight: 800;
-      color: #FFFFFF;
+      color: #FFF8F0;
     }
     .form-group {
       margin-bottom: 12px;
@@ -1236,39 +1313,45 @@
       margin-bottom: 0;
     }
     .form-label {
-      font-size: 11px;
+      font-size: 11.5px;
       font-weight: 700;
-      color: #CBD5E1;
+      color: #D4C7BA;
       display: block;
       margin-bottom: 6px;
     }
     .req-star {
       color: #EF4444;
       font-weight: 900;
+      margin-inline-start: 2px;
     }
     .form-hint {
       font-size: 10px;
       color: var(--text-muted);
       font-weight: 500;
-      margin-right: 4px;
+      margin-inline-start: 6px;
     }
 
     .form-input, .form-textarea {
       width: 100%;
-      background: #0B1221;
-      border: 1.5px solid rgba(255, 255, 255, 0.12);
+      background: #14100E;
+      border: 1.5px solid #3A2822;
       border-radius: 12px;
       padding: 10px 14px;
       font-size: 12px;
-      color: #FFFFFF;
+      color: #FFF8F0;
       font-family: var(--font-cairo);
       outline: none;
       text-align: right;
       transition: all 0.2s ease;
     }
+    #customerPhoneInput {
+      direction: ltr;
+      text-align: right;
+      unicode-bidi: plaintext;
+    }
     .form-input:focus, .form-textarea:focus {
       border-color: var(--brand-orange);
-      box-shadow: 0 0 0 3px rgba(249, 78, 30, 0.2);
+      box-shadow: 0 0 0 3px rgba(255, 122, 0, 0.2);
     }
     .form-input.input-error, .form-textarea.input-error {
       border-color: #EF4444 !important;
@@ -1293,9 +1376,9 @@
 
     .confirm-btn {
       width: 100%;
-      background: linear-gradient(135deg, #F94E1E 0%, #EA3C08 100%);
-      color: #FFFFFF;
-      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: linear-gradient(135deg, #FF7A00 0%, #E56D00 100%);
+      color: #FFF8F0;
+      border: 1px solid rgba(255, 248, 240, 0.16);
       border-radius: 9999px;
       padding: 15px 22px;
       font-size: 15px;
@@ -1306,7 +1389,7 @@
       align-items: center;
       justify-content: center;
       gap: 10px;
-      box-shadow: 0 8px 24px rgba(249, 78, 30, 0.42), inset 0 1px 1px rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 24px rgba(255, 122, 0, 0.42), inset 0 1px 1px rgba(255, 248, 240, 0.3);
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .confirm-btn:active {
@@ -1349,12 +1432,12 @@
     .success-title {
       font-size: 20px;
       font-weight: 900;
-      color: #FFFFFF;
+      color: #FFF8F0;
       margin-bottom: 6px;
     }
     .order-id-pill {
-      background: #141E32;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: #2C221F;
+      border: 1px solid #3A2822;
       padding: 4px 14px;
       border-radius: 9999px;
       font-size: 12px;
@@ -1369,9 +1452,9 @@
     }
     .success-recap-card {
       width: 100%;
-      background: #141E32;
+      background: #211A17;
       border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid #3A2822;
       padding: 14px;
       text-align: right;
       margin-bottom: 16px;
@@ -1381,9 +1464,9 @@
     }
     .new-order-btn {
       width: 100%;
-      background: var(--brand-orange, #F94E1E);
+      background: var(--brand-orange, #FF7A00);
       border: none;
-      color: #FFFFFF;
+      color: #FFF8F0;
       border-radius: 9999px;
       padding: 13px 20px;
       font-size: 14px;
@@ -1394,16 +1477,19 @@
       align-items: center;
       justify-content: center;
       gap: 8px;
-      box-shadow: 0 4px 16px rgba(249, 78, 30, 0.35);
+      box-shadow: 0 4px 16px rgba(255, 122, 0, 0.35);
       transition: all 0.2s ease;
     }
     .new-order-btn:hover {
-      background: #FF6436;
-      box-shadow: 0 6px 20px rgba(249, 78, 30, 0.45);
+      background: #E56D00;
+      box-shadow: 0 6px 20px rgba(255, 122, 0, 0.45);
       transform: translateY(-1px);
     }
     .new-order-btn:active {
-      transform: translateY(0);
+      transform: scale(0.97);
+    }
+    .new-order-btn:active {
+      transform: scale(0.97);
     }
     .success-note-card {
       margin: 12px 0 16px;
@@ -1421,58 +1507,104 @@
       text-align: center;
     }
 
-    /* Sleek Dark Skeleton Shimmer for Image Loading on Slow Connections */
-    @keyframes darkSkeletonShimmer {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+    /* Sleek GPU-Accelerated Skeleton Shimmer (Zero Layout Reflow, 60fps) */
+    @keyframes gpuSkeletonShimmer {
+      0% {
+        transform: translate3d(-100%, 0, 0);
+      }
+      100% {
+        transform: translate3d(100%, 0, 0);
+      }
     }
-    .loading-skeleton {
-      background: linear-gradient(90deg, rgba(255,255,255,0.02) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.02) 75%) !important;
-      background-size: 200% 100% !important;
-      animation: darkSkeletonShimmer 1.5s infinite !important;
-      border-radius: 8px;
+    .loading-skeleton,
+    .skeleton-box {
+      position: relative;
+      overflow: hidden;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 12px;
+    }
+    .loading-skeleton::after,
+    .skeleton-box::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      transform: translate3d(-100%, 0, 0);
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.08) 50%,
+        transparent 100%
+      );
+      animation: gpuSkeletonShimmer 1.5s ease-in-out infinite;
+      will-change: transform;
+      pointer-events: none;
+    }
+
+    /* Buttery Smooth View Mode Switch Transition */
+    @keyframes viewFadeInSmooth {
+      0% {
+        opacity: 0.15;
+        transform: translate3d(0, 6px, 0);
+      }
+      100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+      }
+    }
+    .view-enter-active {
+      animation: viewFadeInSmooth 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: transform, opacity;
     }
   
     /* ==========================================================
-       CSS-CRAFTED DARK MATTE RESTAURANT SERVING TRAY
-       Top-down realistic restaurant tray with raised 3D rim and matte liner
+       SERVING TRAY STAGE (/public/tray.webp)
+       Top-down realistic restaurant tray with kraft paper lining
        ========================================================== */
     .serving-tray {
-      position: absolute;
-      inset: 8px 10px 42px 10px;
-      border-radius: 24px;
-      background: radial-gradient(ellipse at 50% 45%, #151F33 0%, #0E1626 65%, #0A101C 100%);
-      border: 1.5px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 
-        inset 0 2px 4px rgba(255, 255, 255, 0.1),
-        inset 0 -2px 6px rgba(0, 0, 0, 0.8),
-        0 10px 24px rgba(0, 0, 0, 0.55),
-        0 2px 6px rgba(0, 0, 0, 0.35);
-      overflow: hidden;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 4 / 3;
+      background: transparent;
+      border: none;
+      box-shadow: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      overflow: visible;
       transition: all 0.3s ease;
     }
 
-    /* Structured Non-Overlapping Grid Inside Tray */
+    .tray-base-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.75)) drop-shadow(0 8px 10px rgba(0, 0, 0, 0.5));
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+    }
+
+    /* Structured Non-Overlapping Grid Inside Tray (Centered on Kraft Paper) */
     .tray-grid-container {
       position: relative;
       width: 100%;
       height: 100%;
       display: flex;
       flex-direction: column;
-      padding: 6px 6px;
+      padding: 10px 24px 14px 24px;
       box-sizing: border-box;
       z-index: 10;
     }
 
     /* Top Row: Dedicated Header inside Tray for Active Sauce Badge */
     .tray-top-header {
-      height: 32px;
-      min-height: 32px;
-      margin-bottom: 4px;
+      height: 30px;
+      min-height: 30px;
+      margin-bottom: 2px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1525,30 +1657,22 @@
       direction: rtl;
     }
 
-    /* Subtle Matte Liner Inset framing the meal */
+    /* Subtle Matte Liner Inset (Hidden in favor of tray.webp natural kraft paper) */
     .tray-liner {
-      position: absolute;
-      inset: 8px 8px;
-      border-radius: 18px;
-      border: 1px dashed rgba(255, 255, 255, 0.05);
-      background: rgba(255, 255, 255, 0.015);
-      pointer-events: none;
-      z-index: 2;
+      display: none;
     }
 
-    /* Grounded Contact Shadow directly underneath wings box */
+    /* Grounded Contact Shadow directly underneath wings box on kraft paper */
     .wings-contact-shadow {
       position: absolute;
-      width: 175px;
-      height: 22px;
-      border-radius: 50%;
-      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.4) 55%, transparent 75%);
-      filter: blur(5px);
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
       width: 155px;
       height: 18px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse at center, rgba(30, 20, 15, 0.75) 0%, rgba(30, 20, 15, 0.3) 55%, transparent 75%);
+      filter: blur(4px);
+      bottom: 6px;
+      left: 50%;
+      transform: translateX(-50%);
       pointer-events: none;
       z-index: 9;
       transition: all 0.25s ease;
@@ -1851,18 +1975,19 @@
     .cart-stepper {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
+      direction: ltr;
       background: rgba(11, 18, 33, 0.85);
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 9999px;
-      padding: 2px 6px;
+      padding: 3px 6px;
     }
     .cart-stepper-btn {
       background: transparent;
       border: none;
       color: #FFFFFF;
-      width: 22px;
-      height: 22px;
+      width: 26px;
+      height: 26px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1887,7 +2012,10 @@
       border: none;
       color: #EF4444;
       cursor: pointer;
-      padding: 4px;
+      padding: 6px;
+      min-width: 32px;
+      min-height: 32px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1897,6 +2025,75 @@
     .cart-item-delete:active {
       transform: scale(0.9);
       opacity: 1;
+    }
+
+    /* ==========================================================
+       RESPONSIVE AUDIT: SMALL MOBILE (360px - 380px)
+       Prevents text overlapping, horizontal overflow, and cramped targets
+       ========================================================== */
+    @media (max-width: 380px) {
+      .controls-container {
+        padding: 6px 10px calc(12px + env(safe-area-inset-bottom, 0px));
+        gap: 8px;
+      }
+      .category-tabs-row {
+        gap: 2px;
+        padding: 3px;
+      }
+      .tab-pill {
+        padding: 6px 4px;
+        font-size: 10px;
+        gap: 3px;
+      }
+      .tab-pill svg {
+        width: 12px;
+        height: 12px;
+      }
+      .qty-btn {
+        font-size: 11px;
+        padding: 5px 0;
+      }
+      .spice-bar-btn {
+        padding: 4px 7px;
+        font-size: 10px;
+        gap: 4px;
+      }
+      .header-row {
+        padding: 6px 12px 6px;
+      }
+      .header-headline {
+        font-size: 16px;
+      }
+      .mode-toggle-btn {
+        padding: 5px 10px;
+        font-size: 11px;
+      }
+      .item-card {
+        width: 76px;
+      }
+      .item-circle {
+        width: 60px;
+        height: 60px;
+      }
+      .item-name {
+        font-size: 10px;
+      }
+    }
+
+    /* ==========================================================
+       RESPONSIVE AUDIT: TABLET & DESKTOP (>= 768px)
+       Premium viewport framing and high-contrast ambient display
+       ========================================================== */
+    @media (min-width: 768px) {
+      html:not(.is-admin-route) body {
+        padding: 24px 0;
+        background: radial-gradient(circle at center, #0B1324 0%, #03060C 100%);
+      }
+      html:not(.is-admin-route) .app-viewport {
+        border-radius: 28px;
+        min-height: calc(100vh - 48px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      }
     }
 
   </style>
@@ -1930,7 +2127,7 @@
       </button>
 
       <div class="brand-title-wrap">
-        <div class="brand-title">WINGS</div>
+        <img src="/logo.webp" alt="WINGO!" class="header-brand-logo" onerror="this.onerror=null; this.src='/public/logo.webp';" />
         <div class="brand-subtitle">المدية، الجزائر</div>
       </div>
 
@@ -1983,12 +2180,12 @@
          ======================================================== -->
     <div id="buildMealViewWrapper" style="display: flex; flex-direction: column; flex: 1;">
 
-      <!-- 3. TOP-DOWN STAGE: Sleek CSS Dark Matte Serving Tray -->
+      <!-- 3. TOP-DOWN STAGE: Serving Tray Stage with /public/tray.webp -->
       <section class="stage-container" aria-label="لوحة عرض الأجنحة التفاعلية">
-        <!-- CSS-Crafted Dark Matte Serving Tray -->
+        <!-- Serving Tray Stage Container (aspect 4/3, max-w-[440px]) -->
         <div class="serving-tray" id="servingTray">
-          <!-- Subtle Matte Tray Liner with Inset Dashed Border -->
-          <div class="tray-liner"></div>
+          <!-- Static Serving Tray Image Base Layer (/public/tray.webp) -->
+          <img src="/tray.webp" alt="Serving Tray" class="tray-base-img" onerror="this.onerror=null; this.src='/public/tray.webp';" />
 
           <!-- Ambient Lighting Glow Pulsing with Selected Sauce Color -->
           <div class="plate-ambient-glow" id="plateAmbientGlow"></div>
@@ -2025,6 +2222,9 @@
                 <div class="main-plate-wrap" id="mainPlateWrap">
                   <!-- Single Clean Real PNG Image (Snappy Instant Switching, Zero Layering/Lag) -->
                   <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
+                       width="195" height="165"
+                       fetchpriority="high"
+                       decoding="async"
                        onerror="handleWingImgError(this)" 
                        onload="handleWingImgLoad(this)" />
 
@@ -2382,6 +2582,7 @@
      * HELPER: CALCULATE DIPS BREAKDOWN & PRICING WITH FREE ALLOWANCE
      */
     function calculateDipsBreakdown(selectedDips, freeAllowance) {
+      const safeFreeAllowance = typeof freeAllowance === "number" ? Math.max(0, freeAllowance) : 0;
       let totalDipsCount = 0;
       let freeDipsUsed = 0;
       let paidDipsCount = 0;
@@ -2399,7 +2600,7 @@
         }
       });
 
-      let remainingFree = freeAllowance;
+      let remainingFree = safeFreeAllowance;
       dipItems.forEach(item => {
         const freeQty = Math.min(item.qty, remainingFree);
         const paidQty = item.qty - freeQty;
@@ -2618,6 +2819,9 @@
       renderAll();
       updateCartBadge();
       setTimeout(updateTabsSlidingIndicator, 50);
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(updateTabsSlidingIndicator);
+      }
       window.addEventListener("resize", updateTabsSlidingIndicator);
       if (window.supabase) {
         initSupabaseStorefront();
@@ -2818,6 +3022,7 @@
         MENU_CONFIG.dips = dips.map(dbItem => {
           let dId = dbItem.id;
           if (dId.startsWith("dip_")) dId = dId.replace("dip_", "");
+          dId = dId.replace(/_/g, "-");
           let imgPath = dbItem.image_url;
           if (!imgPath) {
             imgPath = `/images/dip-${dId}.png`;
@@ -3246,15 +3451,22 @@
         btnReady.classList.add("active");
         btnBuild.classList.remove("active");
         buildWrap.style.display = "none";
+        buildWrap.classList.remove("view-enter-active");
         readyWrap.classList.add("active");
+        readyWrap.classList.remove("view-enter-active");
+        void readyWrap.offsetWidth; // Force reflow for silky restart
+        readyWrap.classList.add("view-enter-active");
         headline.innerText = "البوكسات الجاهزة";
         tagline.innerText = "عروض كومبو متكاملة وموفرة";
       } else {
         slider.classList.remove("ready-pos");
         btnBuild.classList.add("active");
         btnReady.classList.remove("active");
+        readyWrap.classList.remove("active", "view-enter-active");
         buildWrap.style.display = "flex";
-        readyWrap.classList.remove("active");
+        buildWrap.classList.remove("view-enter-active");
+        void buildWrap.offsetWidth; // Force reflow for silky restart
+        buildWrap.classList.add("view-enter-active");
         headline.innerText = "صمّم وجبتك";
         tagline.innerText = "أجنحة دجاج مقرمشة طازجة";
       }
@@ -3413,9 +3625,10 @@
       const g = document.getElementById("wingsGroup");
       const glow = document.getElementById("plateAmbientGlow");
       const steam = document.getElementById("steamGroup");
+      if (!g || !glow || !steam) return;
 
-      const currentSauce = MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) || MENU_CONFIG.coatingSauces[0];
-      const isPlain = currentSauce.isPlain;
+      const currentSauce = (state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) : null) || MENU_CONFIG.coatingSauces[0] || { isPlain: true, stops: ["#FBBF24", "#D97706", "#78350F"] };
+      const isPlain = Boolean(currentSauce.isPlain);
 
       // Update SVG glaze gradient stops for fallback
       const stop0 = document.getElementById("sauceStop0");
@@ -3527,7 +3740,7 @@
             el.dataset.itemId = dipId;
             el.innerHTML = `
               <div class="dip-contact-shadow"></div>
-              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" width="36" height="36" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.55)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -3572,7 +3785,7 @@
             el.dataset.itemId = sideId;
             el.innerHTML = `
               <div class="side-contact-shadow"></div>
-              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" width="58" height="58" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -3649,8 +3862,10 @@
       const badgeDips = document.getElementById("badgeDipsCount");
       const badgeSides = document.getElementById("badgeSidesCount");
 
-      badgeSauce.innerText = "1";
-      badgeSauce.style.display = "flex";
+      if (badgeSauce) {
+        badgeSauce.innerText = "1";
+        badgeSauce.style.display = state.selectedSauceId ? "flex" : "none";
+      }
 
       const totalDipsCount = Object.values(state.selectedDips).reduce((a, b) => a + b, 0);
       if (totalDipsCount > 0) {
@@ -3798,8 +4013,11 @@
               </svg>
             </span>
             <img src="${previewImgSrc}" alt="${sauce.name}"
+                 width="44" height="44"
+                 loading="lazy"
+                 decoding="async"
                  onerror="this.onerror=null; this.src='${defaultWingFallback}';"
-                 style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
+                 style="width: 44px; height: 44px; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${sauce.name}</div>
           <div class="item-price free">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : (sauce.subtitle ? sauce.subtitle : (sauce.isSignature ? `<span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>مميز</span>` : "مشمول"))}</div>
@@ -3857,8 +4075,11 @@
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </span>
             <img src="${imgPath}" alt="${dip.name}"
+                 width="44" height="44"
+                 loading="lazy"
+                 decoding="async"
                  onerror="this.onerror=null; this.src='${defaultDipFallback}';"
-                 style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
+                 style="width: 44px; height: 44px; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${dip.name}</div>
           <div class="item-price ${isFree && isAvail ? 'free' : ''}">${priceLabel}</div>
@@ -3926,8 +4147,11 @@
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </span>
             <img src="${imgPath}" alt="${side.name}"
+                 width="46" height="46"
+                 loading="lazy"
+                 decoding="async"
                  onerror="this.onerror=null; this.src='${defaultSideFallback}';"
-                 style="width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
+                 style="width: 46px; height: 46px; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));" />
           </div>
           <div class="item-name">${side.name}</div>
           <div class="item-price">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : `+${side.price} دج`}</div>
@@ -3968,7 +4192,31 @@
      */
     function renderReadyBoxes() {
       const container = document.getElementById("readyBoxesViewWrapper");
+      if (!container) return;
       container.innerHTML = "";
+
+      if (!MENU_CONFIG.readyBoxes || MENU_CONFIG.readyBoxes.length === 0) {
+        for (let i = 0; i < 2; i++) {
+          const skel = document.createElement("div");
+          skel.className = "ready-box-card skeleton-box";
+          skel.style.minHeight = "160px";
+          skel.innerHTML = `
+            <div style="display:flex;justify-content:space-between;margin-bottom:12px;">
+              <div style="width:70px;height:20px;background:rgba(255,255,255,0.08);border-radius:6px;"></div>
+              <div style="width:50px;height:18px;background:rgba(255,255,255,0.08);border-radius:6px;"></div>
+            </div>
+            <div style="display:flex;gap:12px;align-items:center;">
+              <div style="width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,0.08);flex-shrink:0;"></div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:8px;">
+                <div style="width:60%;height:16px;background:rgba(255,255,255,0.08);border-radius:4px;"></div>
+                <div style="width:90%;height:12px;background:rgba(255,255,255,0.05);border-radius:4px;"></div>
+              </div>
+            </div>
+          `;
+          container.appendChild(skel);
+        }
+        return;
+      }
 
       MENU_CONFIG.readyBoxes.forEach(box => {
         const isAvail = box.is_available !== false;
@@ -3979,7 +4227,7 @@
         }
 
         const pillsHtml = box.itemsSummary.map(item => `
-          <span class="box-content-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-left:3px;"><polyline points="20 6 9 17 4 12"></polyline></svg>${item}</span>
+          <span class="box-content-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-inline-end:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>${item}</span>
         `).join("");
 
         card.innerHTML = `
@@ -4033,58 +4281,72 @@
       state.modalSelectedSauceId = firstAvailSauce ? firstAvailSauce.id : "crispy";
       state.modalSelectedSpiceLevel = 1;
 
-      document.getElementById("readyModalTitle").innerText = `تخصيص ${box.code} (${box.nameAr})`;
-      document.getElementById("readyModalSubtitle").innerText = `${box.description} — السعر: ${box.price} دج`;
-      document.getElementById("readyModalAddBtnText").innerText = `أضف للسلة (${box.price} دج)`;
+      renderReadyBoxModalContent();
+      document.getElementById("readyBoxModalOverlay").classList.add("open");
+    }
+
+    function renderReadyBoxModalContent() {
+      const box = state.activeModalBox;
+      if (!box) return;
+
+      const titleEl = document.getElementById("readyModalTitle");
+      const subEl = document.getElementById("readyModalSubtitle");
+      const addBtnText = document.getElementById("readyModalAddBtnText");
+
+      if (titleEl) titleEl.innerText = `تخصيص ${box.code} (${box.nameAr})`;
+      if (subEl) subEl.innerText = `${box.description} — السعر: ${box.price} دج`;
+      if (addBtnText) addBtnText.innerText = `أضف للسلة (${box.price} دج)`;
 
       const sauceWrap = document.getElementById("readySauceOptions");
-      sauceWrap.innerHTML = "";
-      MENU_CONFIG.coatingSauces.forEach(sauce => {
-        const isAvail = sauce.is_available !== false;
-        const isSel = state.modalSelectedSauceId === sauce.id && isAvail;
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.style.cssText = `
-          padding: 8px 10px; border-radius: 12px; font-size: 11px; font-weight: 800;
-          font-family: var(--font-cairo); cursor: ${!isAvail ? 'not-allowed' : 'pointer'}; text-align: right;
-          border: 1.5px solid ${isSel ? 'var(--brand-orange)' : 'rgba(255,255,255,0.1)'};
-          background: ${isSel ? 'rgba(249, 78, 30, 0.2)' : '#162033'};
-          color: ${!isAvail ? '#6B7280' : 'white'}; opacity: ${!isAvail ? '0.45' : '1'}; transition: all 0.2s;
-        `;
-        btn.innerText = sauce.name + (!isAvail ? " (غير متوفر)" : "");
-        if (!isAvail) {
-          btn.disabled = true;
-        } else {
-          btn.onclick = () => {
-            state.modalSelectedSauceId = sauce.id;
-            openReadyBoxModal(boxId);
-          };
-        }
-        sauceWrap.appendChild(btn);
-      });
+      if (sauceWrap) {
+        sauceWrap.innerHTML = "";
+        MENU_CONFIG.coatingSauces.forEach(sauce => {
+          const isAvail = sauce.is_available !== false;
+          const isSel = state.modalSelectedSauceId === sauce.id && isAvail;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.style.cssText = `
+            padding: 8px 10px; border-radius: 12px; font-size: 11px; font-weight: 800;
+            font-family: var(--font-cairo); cursor: ${!isAvail ? 'not-allowed' : 'pointer'}; text-align: right;
+            border: 1.5px solid ${isSel ? 'var(--brand-orange)' : '#3A2822'};
+            background: ${isSel ? 'rgba(255, 122, 0, 0.2)' : '#2C221F'};
+            color: ${!isAvail ? '#6B7280' : 'var(--text-white)'}; opacity: ${!isAvail ? '0.45' : '1'}; transition: all 0.2s;
+          `;
+          btn.innerText = sauce.name + (!isAvail ? " (غير متوفر)" : "");
+          if (!isAvail) {
+            btn.disabled = true;
+          } else {
+            btn.onclick = () => {
+              state.modalSelectedSauceId = sauce.id;
+              renderReadyBoxModalContent();
+            };
+          }
+          sauceWrap.appendChild(btn);
+        });
+      }
 
       const spiceWrap = document.getElementById("readySpiceOptions");
-      spiceWrap.innerHTML = "";
-      MENU_CONFIG.spiceLevels.forEach(spice => {
-        const isSel = state.modalSelectedSpiceLevel === spice.level;
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.style.cssText = `
-          flex: 1; padding: 8px 6px; border-radius: 12px; font-size: 11px; font-weight: 800;
-          font-family: var(--font-cairo); cursor: pointer; text-align: center;
-          border: 1.5px solid ${isSel ? spice.color : 'rgba(255,255,255,0.1)'};
-          background: ${isSel ? `${spice.color}25` : '#162033'};
-          color: white; transition: all 0.2s;
-        `;
-        btn.innerText = spice.title;
-        btn.onclick = () => {
-          state.modalSelectedSpiceLevel = spice.level;
-          openReadyBoxModal(boxId);
-        };
-        spiceWrap.appendChild(btn);
-      });
-
-      document.getElementById("readyBoxModalOverlay").classList.add("open");
+      if (spiceWrap) {
+        spiceWrap.innerHTML = "";
+        MENU_CONFIG.spiceLevels.forEach(spice => {
+          const isSel = state.modalSelectedSpiceLevel === spice.level;
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.style.cssText = `
+            flex: 1; padding: 8px 6px; border-radius: 12px; font-size: 11px; font-weight: 800;
+            font-family: var(--font-cairo); cursor: pointer; text-align: center;
+            border: 1.5px solid ${isSel ? spice.color : '#3A2822'};
+            background: ${isSel ? `${spice.color}25` : '#2C221F'};
+            color: var(--text-white); transition: all 0.2s;
+          `;
+          btn.innerText = spice.title;
+          btn.onclick = () => {
+            state.modalSelectedSpiceLevel = spice.level;
+            renderReadyBoxModalContent();
+          };
+          spiceWrap.appendChild(btn);
+        });
+      }
     }
 
     function closeReadyBoxModal() {
@@ -4500,6 +4762,16 @@
       }
     }
 
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
     /**
      * ORDER CONFIRMATION & STRICT ALGERIAN VALIDATION WITH ANTI-SPAM COOLDOWN
      */
@@ -4535,7 +4807,15 @@
       const notes = notesInput ? notesInput.value.trim() : "";
 
       // Strip all spaces, dashes, dots, and brackets
-      const cleanPhone = rawPhone.replace(/\s+/g, "").replace(/[\-\.\(\)]/g, "");
+      let cleanPhone = rawPhone.replace(/\s+/g, "").replace(/[\-\.\(\)]/g, "");
+      // Normalize international Algerian prefixes: +213, 00213, 213 -> 0
+      if (cleanPhone.startsWith("+213")) {
+        cleanPhone = "0" + cleanPhone.slice(4);
+      } else if (cleanPhone.startsWith("00213")) {
+        cleanPhone = "0" + cleanPhone.slice(5);
+      } else if (cleanPhone.startsWith("213") && cleanPhone.length === 12) {
+        cleanPhone = "0" + cleanPhone.slice(3);
+      }
       let hasError = false;
       let firstInvalidInput = null;
 
@@ -4582,7 +4862,7 @@
         submitBtn.style.opacity = "0.7";
         submitBtn.style.cursor = "not-allowed";
         submitBtn.innerHTML = `
-          <span style="display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;margin-left:8px;vertical-align:middle;"></span>
+          <span style="display:inline-block;width:15px;height:15px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;margin-inline-end:8px;vertical-align:middle;"></span>
           <span>جارٍ إرسال وتأكيد الطلب...</span>
         `;
       }
@@ -4668,25 +4948,25 @@
           const cleanChatId = String(chatId).trim();
 
           if (cleanToken && cleanChatId) {
-            let teleText = `🍗 *طلب جديد #${orderId}*\n`;
+            let teleText = `🍗 <b>طلب جديد #${orderId}</b>\n`;
             teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
-            teleText += `📞 *الهاتف:* \`${cleanPhone}\`\n`;
-            teleText += `📍 *العنوان:* ${rawAddress}\n`;
-            if (notes) teleText += `📝 *ملاحظات:* ${notes}\n`;
+            teleText += `📞 <b>الهاتف:</b> <code>${cleanPhone}</code>\n`;
+            teleText += `📍 <b>العنوان:</b> ${escapeHtml(rawAddress)}\n`;
+            if (notes) teleText += `📝 <b>ملاحظات:</b> ${escapeHtml(notes)}\n`;
             teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
-            teleText += `📦 *الوجبات (${orderedItems.length}):*\n`;
+            teleText += `📦 <b>الوجبات (${orderedItems.length}):</b>\n`;
             orderedItems.forEach((it, idx) => {
               const lTot = it.unitPrice * (it.qty || 1);
-              teleText += `• [${idx + 1}] *${it.title}* (×${it.qty || 1}) — ${lTot.toLocaleString("fr-DZ")} دج\n`;
+              teleText += `• [${idx + 1}] <b>${escapeHtml(it.title)}</b> (×${it.qty || 1}) — ${lTot.toLocaleString("fr-DZ")} دج\n`;
               if (it.type === "custom") {
-                teleText += `   - حرارة: ${it.spiceTitle}\n`;
+                teleText += `   - حرارة: ${escapeHtml(it.spiceTitle)}\n`;
                 if (it.selectedDips && Object.keys(it.selectedDips).length > 0) {
                   const freeAllowance = it.freeDipsAllowance || getFreeDipsAllowance(it.wingsCount);
                   const dipsInfo = calculateDipsBreakdown(it.selectedDips, freeAllowance);
                   const dipsTextList = dipsInfo.items.map(d => {
-                    if (d.paidQty === 0) return `${d.name} ×${d.qty} (مجاني)`;
-                    if (d.freeQty === 0) return `${d.name} ×${d.qty} (+${d.cost} دج)`;
-                    return `${d.name} ×${d.qty} (${d.freeQty} مجاني + ${d.paidQty} مدفوع)`;
+                    if (d.paidQty === 0) return `${escapeHtml(d.name)} ×${d.qty} (مجاني)`;
+                    if (d.freeQty === 0) return `${escapeHtml(d.name)} ×${d.qty} (+${d.cost} دج)`;
+                    return `${escapeHtml(d.name)} ×${d.qty} (${d.freeQty} مجاني + ${d.paidQty} مدفوع)`;
                   });
                   teleText += `   - الصوصات (${freeAllowance} مجانية): ${dipsTextList.join("، ")}\n`;
                 }
@@ -4695,22 +4975,22 @@
                     .filter(([_, q]) => q > 0)
                     .map(([id, q]) => {
                       const s = MENU_CONFIG.sides.find(x => x.id === id);
-                      return `${s ? s.name : id} ×${q}`;
+                      return `${escapeHtml(s ? s.name : id)} ×${q}`;
                     });
                   if (sidesTextList.length > 0) {
                     teleText += `   - الإضافات: ${sidesTextList.join("، ")}\n`;
                   }
                 }
               } else {
-                teleText += `   - صوص: ${it.sauceName} • حرارة: ${it.spiceTitle}\n`;
-                teleText += `   - يتضمن: ${it.includesSummary}\n`;
+                teleText += `   - صوص: ${escapeHtml(it.sauceName)} • حرارة: ${escapeHtml(it.spiceTitle)}\n`;
+                if (it.includesSummary) teleText += `   - يتضمن: ${escapeHtml(it.includesSummary)}\n`;
               }
             });
             teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
-            teleText += `💰 *المجموع الفرعي:* ${subtotal.toLocaleString("fr-DZ")} دج\n`;
-            teleText += `🛵 *التوصيل:* ${MENU_CONFIG.rules.deliveryFee} دج\n`;
-            teleText += `💵 *المجموع النهائي:* *${grandTotal.toLocaleString("fr-DZ")} دج*\n`;
-            teleText += `⏰ *الوقت:* ${new Date().toLocaleTimeString("ar-DZ")}\n`;
+            teleText += `💰 <b>المجموع الفرعي:</b> ${subtotal.toLocaleString("fr-DZ")} دج\n`;
+            teleText += `🛵 <b>التوصيل:</b> ${MENU_CONFIG.rules.deliveryFee} دج\n`;
+            teleText += `💵 <b>المجموع النهائي:</b> <b>${grandTotal.toLocaleString("fr-DZ")} دج</b>\n`;
+            teleText += `⏰ <b>الوقت:</b> ${new Date().toLocaleTimeString("ar-DZ")}\n`;
 
             const teleRes = await fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage`, {
               method: "POST",
@@ -4718,7 +4998,7 @@
               body: JSON.stringify({
                 chat_id: cleanChatId,
                 text: teleText,
-                parse_mode: "Markdown"
+                parse_mode: "HTML"
               })
             });
             const teleJson = await teleRes.json();
@@ -4772,6 +5052,9 @@
         } else {
           msg += `[${index + 1}] ${item.title} (${item.boxCode}) (×${item.qty || 1}) — ${lineTotal.toLocaleString("fr-DZ")} دج\n`;
           msg += `    - صوص: ${item.sauceName} • درجة الحرارة: ${item.spiceTitle}\n`;
+          if (item.includesSummary) {
+            msg += `    - يتضمن: ${item.includesSummary}\n`;
+          }
         }
       });
 
@@ -4825,7 +5108,7 @@
           <div class="success-order-num">رقم الطلب: #${orderId}</div>
 
           <p class="success-delivery-pill">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-left:4px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-inline-end:5px;">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>

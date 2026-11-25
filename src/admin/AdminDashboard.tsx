@@ -327,8 +327,8 @@ export default function AdminDashboard() {
         // صوصات الأجنحة (coating_sauce)
         { id: 'sauce_crispy', category: 'coating_sauce', name_ar: 'كريسبي (بدون صوص)', price: 0, image_url: '/images/wings-crispy-6.png', is_available: true, sort_order: 10 },
         { id: 'sauce_algeria', category: 'coating_sauce', name_ar: 'الصوص الجزائرية', price: 0, image_url: '/images/wings-algeria-6.png', is_available: true, sort_order: 11 },
-        { id: 'sauce_bbq', category: 'coating_sauce', name_ar: 'باربكيو', price: 0, image_url: '/images/wings-bbq-6.png', sort_order: 12 },
-        { id: 'sauce_buffalo', category: 'coating_sauce', name_ar: 'بافالو', price: 0, image_url: '/images/wings-buffalo-6.png', sort_order: 13 },
+        { id: 'sauce_bbq', category: 'coating_sauce', name_ar: 'باربكيو', price: 0, image_url: '/images/wings-bbq-6.png', is_available: true, sort_order: 12 },
+        { id: 'sauce_buffalo', category: 'coating_sauce', name_ar: 'بافالو', price: 0, image_url: '/images/wings-buffalo-6.png', is_available: true, sort_order: 13 },
 
         // الصوصات الجانبية (dip)
         { id: 'dip_buffalo', category: 'dip', name_ar: 'بافالو', price: 30, image_url: '/images/dip-buffalo.png', is_available: true, sort_order: 20 },
@@ -346,7 +346,7 @@ export default function AdminDashboard() {
         { id: 'box_solo', category: 'ready_box', name_ar: 'سولو بوكس (SOLO BOX)', price: 850, image_url: '/images/wings-crispy-6.png', is_available: true, sort_order: 40 },
         { id: 'box_double', category: 'ready_box', name_ar: 'دابل بوكس (DOUBLE BOX)', price: 1450, image_url: '/images/wings-bbq-12.png', is_available: true, sort_order: 41 },
         { id: 'box_friends', category: 'ready_box', name_ar: 'فريندز بوكس (FRIENDS BOX)', price: 2150, image_url: '/images/wings-buffalo-12.png', is_available: true, sort_order: 42 },
-        { id: 'box_party', category: 'ready_box', name_ar: 'بارتي بوكس (PARTY BOX)', price: 2750, image_url: '/images/wings-algeria-20.png', sort_order: 43 },
+        { id: 'box_party', category: 'ready_box', name_ar: 'بارتي بوكس (PARTY BOX)', price: 2750, image_url: '/images/wings-algeria-20.png', is_available: true, sort_order: 43 },
       ];
 
       const { error } = await supabase.from('menu_items').upsert(defaultItems, { onConflict: 'id' });
@@ -536,7 +536,7 @@ export default function AdminDashboard() {
         .from('store_settings')
         .select('*')
         .eq('id', 1)
-        .single();
+        .maybeSingle();
       if (!error && data) {
         setSettings(data);
       }
@@ -553,17 +553,19 @@ export default function AdminDashboard() {
     try {
       const { error } = await supabase
         .from('store_settings')
-        .update({
-          is_open: settings.is_open,
+        .upsert({
+          id: 1,
+          is_open: settings.is_open !== false,
           delivery_fee: Number(settings.delivery_fee) || 200,
           telegram_bot_token: settings.telegram_bot_token || '',
           telegram_chat_id: settings.telegram_chat_id || '',
-        })
-        .eq('id', 1);
+        });
 
       if (!error) {
         setSettingsSavedMsg('تم حفظ الإعدادات بنجاح!');
         setTimeout(() => setSettingsSavedMsg(''), 3000);
+      } else {
+        alert('خطأ في حفظ الإعدادات: ' + error.message);
       }
     } catch (err: any) {
       alert('خطأ في حفظ الإعدادات: ' + err.message);
@@ -622,9 +624,9 @@ export default function AdminDashboard() {
   // Loading Screen
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#0B1221', color: '#FFFFFF', fontFamily: "'Cairo', sans-serif" }}>
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#14100E', color: '#FFFFFF', fontFamily: "'Cairo', sans-serif" }}>
         <div style={{ textAlign: 'center' }}>
-          <RefreshCw className="animate-spin" size={32} style={{ color: '#F94E1E', margin: '0 auto 12px' }} />
+          <RefreshCw className="animate-spin" size={32} style={{ color: '#FF7A00', margin: '0 auto 12px' }} />
           <div>جارٍ تحميل لوحة الإدارة...</div>
         </div>
       </div>
@@ -634,14 +636,14 @@ export default function AdminDashboard() {
   // 1. LOGIN / SIGNUP SCREEN
   if (!session) {
     return (
-      <div dir="rtl" style={{ minHeight: '100vh', backgroundColor: '#0B1221', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', fontFamily: "'Cairo', sans-serif" }}>
-        <div style={{ width: '100%', maxWidth: '420px', backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', padding: '32px 24px', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
+      <div dir="rtl" style={{ minHeight: '100vh', backgroundColor: '#14100E', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px', fontFamily: "'Cairo', sans-serif" }}>
+        <div style={{ width: '100%', maxWidth: '420px', backgroundColor: '#211A17', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '24px', padding: '32px 24px', boxShadow: '0 20px 40px rgba(0,0,0,0.6)' }}>
           {/* Header */}
           <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '18px', backgroundColor: 'rgba(249,78,30,0.12)', border: '1px solid rgba(249,78,30,0.3)', marginBottom: '14px' }}>
-              <Package size={28} style={{ color: '#F94E1E' }} />
+            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '18px', backgroundColor: 'rgba(255,122,0,0.12)', border: '1px solid rgba(255,122,0,0.3)', marginBottom: '14px' }}>
+              <Package size={28} style={{ color: '#FF7A00' }} />
             </div>
-            <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#FFFFFF', marginBottom: '6px' }}>WINGS — لوحة الإدارة</h1>
+            <h1 style={{ fontSize: '22px', fontWeight: 900, color: '#FFFFFF', marginBottom: '6px' }}>WINGO! — لوحة الإدارة</h1>
             <p style={{ fontSize: '13px', color: '#8E9BAE' }}>سجّل الدخول لإدارة الطلبات والمنيو والإعدادات</p>
           </div>
 
@@ -668,7 +670,7 @@ export default function AdminDashboard() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@gmail.com"
-                style={{ width: '100%', height: '46px', padding: '0 14px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif", outline: 'none' }}
+                style={{ width: '100%', height: '46px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif", outline: 'none' }}
               />
             </div>
 
@@ -680,14 +682,14 @@ export default function AdminDashboard() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                style={{ width: '100%', height: '46px', padding: '0 14px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif", outline: 'none' }}
+                style={{ width: '100%', height: '46px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif", outline: 'none' }}
               />
             </div>
 
             <button
               type="submit"
               disabled={authLoading}
-              style={{ width: '100%', height: '48px', backgroundColor: '#F94E1E', border: 'none', borderRadius: '14px', color: '#FFFFFF', fontSize: '15px', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'background 0.2s', marginTop: '6px' }}
+              style={{ width: '100%', height: '48px', backgroundColor: '#FF7A00', border: 'none', borderRadius: '14px', color: '#FFFFFF', fontSize: '15px', fontWeight: 900, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'background 0.2s', marginTop: '6px' }}
             >
               {authLoading ? (
                 <RefreshCw className="animate-spin" size={18} />
@@ -714,7 +716,7 @@ export default function AdminDashboard() {
 
           {/* Return to Store Link */}
           <div style={{ marginTop: '22px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '16px', textAlign: 'center' }}>
-            <a href="/" style={{ color: '#F94E1E', fontSize: '13px', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+            <a href="/" style={{ color: '#FF7A00', fontSize: '13px', fontWeight: 700, textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
               <span>العودة لمتجر WINGS</span>
               <ExternalLink size={14} />
             </a>
@@ -726,12 +728,12 @@ export default function AdminDashboard() {
 
   // 2. DASHBOARD SHELL
   return (
-    <div dir="rtl" style={{ minHeight: '100vh', backgroundColor: '#0B1221', color: '#FFFFFF', fontFamily: "'Cairo', sans-serif", paddingBottom: '60px' }}>
+    <div dir="rtl" style={{ minHeight: '100vh', backgroundColor: '#14100E', color: '#FFFFFF', fontFamily: "'Cairo', sans-serif", paddingBottom: '60px' }}>
       
       {/* Top Navigation Bar */}
       <header style={{ position: 'sticky', top: 0, zIndex: 50, backgroundColor: 'rgba(11, 18, 33, 0.94)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(255,255,255,0.08)', padding: '12px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#F94E1E', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '18px', color: '#FFFFFF' }}>
+          <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FF7A00', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, fontSize: '18px', color: '#FFFFFF' }}>
             W
           </div>
           <div>
@@ -765,7 +767,7 @@ export default function AdminDashboard() {
       <div style={{ maxWidth: '960px', margin: '0 auto', padding: '16px' }}>
 
         {/* Tab Switcher */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', backgroundColor: '#131E33', padding: '5px', borderRadius: '16px', marginBottom: '20px', border: '1px solid rgba(255,255,255,0.06)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px', backgroundColor: '#211A17', padding: '5px', borderRadius: '16px', marginBottom: '20px', border: '1px solid rgba(255,255,255,0.06)' }}>
           <motion.button
             whileTap={{ scale: 0.96 }}
             onClick={() => setActiveTab('orders')}
@@ -773,7 +775,7 @@ export default function AdminDashboard() {
               padding: '10px 8px',
               borderRadius: '12px',
               border: 'none',
-              backgroundColor: activeTab === 'orders' ? '#F94E1E' : 'transparent',
+              backgroundColor: activeTab === 'orders' ? '#FF7A00' : 'transparent',
               color: activeTab === 'orders' ? '#FFFFFF' : '#8E9BAE',
               fontSize: '13px',
               fontWeight: 800,
@@ -789,7 +791,7 @@ export default function AdminDashboard() {
             <ShoppingBag size={16} />
             <span>الطلبات الحية</span>
             {pendingCount > 0 && (
-              <span style={{ backgroundColor: activeTab === 'orders' ? '#FFFFFF' : '#F94E1E', color: activeTab === 'orders' ? '#F94E1E' : '#FFFFFF', fontSize: '10px', fontWeight: 900, padding: '1px 6px', borderRadius: '9999px' }}>
+              <span style={{ backgroundColor: activeTab === 'orders' ? '#FFFFFF' : '#FF7A00', color: activeTab === 'orders' ? '#FF7A00' : '#FFFFFF', fontSize: '10px', fontWeight: 900, padding: '1px 6px', borderRadius: '9999px' }}>
                 {pendingCount}
               </span>
             )}
@@ -802,7 +804,7 @@ export default function AdminDashboard() {
               padding: '10px 8px',
               borderRadius: '12px',
               border: 'none',
-              backgroundColor: activeTab === 'menu' ? '#F94E1E' : 'transparent',
+              backgroundColor: activeTab === 'menu' ? '#FF7A00' : 'transparent',
               color: activeTab === 'menu' ? '#FFFFFF' : '#8E9BAE',
               fontSize: '13px',
               fontWeight: 800,
@@ -826,7 +828,7 @@ export default function AdminDashboard() {
               padding: '10px 8px',
               borderRadius: '12px',
               border: 'none',
-              backgroundColor: activeTab === 'settings' ? '#F94E1E' : 'transparent',
+              backgroundColor: activeTab === 'settings' ? '#FF7A00' : 'transparent',
               color: activeTab === 'settings' ? '#FFFFFF' : '#8E9BAE',
               fontSize: '13px',
               fontWeight: 800,
@@ -851,17 +853,17 @@ export default function AdminDashboard() {
           <div>
             {/* Top Stats Strip */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '18px' }}>
-              <div style={{ backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px', textAlign: 'center' }}>
+              <div style={{ backgroundColor: '#211A17', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px', textAlign: 'center' }}>
                 <div style={{ fontSize: '11px', color: '#8E9BAE', fontWeight: 700, marginBottom: '4px' }}>طلبات اليوم</div>
-                <div style={{ fontSize: '20px', fontWeight: 900, color: '#F94E1E' }}>{todayOrders.length}</div>
+                <div style={{ fontSize: '20px', fontWeight: 900, color: '#FF7A00' }}>{todayOrders.length}</div>
               </div>
 
-              <div style={{ backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px', textAlign: 'center' }}>
+              <div style={{ backgroundColor: '#211A17', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px', textAlign: 'center' }}>
                 <div style={{ fontSize: '11px', color: '#8E9BAE', fontWeight: 700, marginBottom: '4px' }}>مبيعات اليوم</div>
                 <div style={{ fontSize: '18px', fontWeight: 900, color: '#10B981' }}>{todayRevenue.toLocaleString('fr-DZ')} دج</div>
               </div>
 
-              <div style={{ backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px', textAlign: 'center' }}>
+              <div style={{ backgroundColor: '#211A17', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '14px', textAlign: 'center' }}>
                 <div style={{ fontSize: '11px', color: '#8E9BAE', fontWeight: 700, marginBottom: '4px' }}>قيد التحضير</div>
                 <div style={{ fontSize: '20px', fontWeight: 900, color: '#F59E0B' }}>{pendingCount}</div>
               </div>
@@ -889,8 +891,8 @@ export default function AdminDashboard() {
                     cursor: 'pointer',
                     whiteSpace: 'nowrap',
                     border: '1px solid',
-                    backgroundColor: statusFilter === f.id ? '#F94E1E' : 'rgba(255,255,255,0.05)',
-                    borderColor: statusFilter === f.id ? '#F94E1E' : 'rgba(255,255,255,0.1)',
+                    backgroundColor: statusFilter === f.id ? '#FF7A00' : 'rgba(255,255,255,0.05)',
+                    borderColor: statusFilter === f.id ? '#FF7A00' : 'rgba(255,255,255,0.1)',
                     color: statusFilter === f.id ? '#FFFFFF' : '#8E9BAE',
                   }}
                 >
@@ -901,12 +903,34 @@ export default function AdminDashboard() {
 
             {/* Orders List */}
             {ordersLoading ? (
-              <div style={{ textAlign: 'center', padding: '40px 0', color: '#8E9BAE' }}>
-                <RefreshCw className="animate-spin" size={24} style={{ margin: '0 auto 8px', color: '#F94E1E' }} />
-                <div>جارٍ تحميل الطلبات...</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                {[1, 2, 3].map((skeletonId) => (
+                  <div
+                    key={skeletonId}
+                    className="skeleton-box"
+                    style={{
+                      backgroundColor: '#211A17',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      borderRadius: '20px',
+                      padding: '18px 20px',
+                      minHeight: '140px',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                      <div style={{ width: '130px', height: '20px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '6px' }} />
+                      <div style={{ width: '80px', height: '24px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '9999px' }} />
+                    </div>
+                    <div style={{ width: '65%', height: '14px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', marginBottom: '10px' }} />
+                    <div style={{ width: '45%', height: '14px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '4px', marginBottom: '14px' }} />
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '10px', borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                      <div style={{ width: '90px', height: '18px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '6px' }} />
+                      <div style={{ width: '110px', height: '32px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '10px' }} />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : filteredOrders.length === 0 ? (
-              <div style={{ backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '40px 20px', textAlign: 'center' }}>
+              <div style={{ backgroundColor: '#211A17', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '40px 20px', textAlign: 'center' }}>
                 <ShoppingBag size={40} style={{ color: '#8E9BAE', margin: '0 auto 12px', opacity: 0.5 }} />
                 <div style={{ fontSize: '15px', fontWeight: 800, color: '#FFFFFF', marginBottom: '4px' }}>لا توجد طلبات في هذا القسم</div>
                 <div style={{ fontSize: '12px', color: '#8E9BAE' }}>ستظهر الطلبات الجديدة هنا فور تقديمها من قِبل الزبائن</div>
@@ -920,8 +944,8 @@ export default function AdminDashboard() {
 
                   // Status badge styling
                   let statusLabel = 'جديد';
-                  let statusBg = 'rgba(249,78,30,0.15)';
-                  let statusColor = '#F94E1E';
+                  let statusBg = 'rgba(255,122,0,0.15)';
+                  let statusColor = '#FF7A00';
                   if (order.status === 'preparing') {
                     statusLabel = 'قيد التحضير';
                     statusBg = 'rgba(245,158,11,0.15)';
@@ -949,7 +973,7 @@ export default function AdminDashboard() {
                     <div
                       key={order.id}
                       style={{
-                        backgroundColor: '#131E33',
+                        backgroundColor: '#211A17',
                         border: '1px solid rgba(255,255,255,0.08)',
                         borderRadius: '20px',
                         padding: '16px',
@@ -978,7 +1002,9 @@ export default function AdminDashboard() {
                         <div style={{ fontSize: '11px', fontWeight: 800, color: '#8E9BAE', marginBottom: '6px' }}>محتويات الوجبة:</div>
                         {itemsList.map((it: any, idx: number) => {
                           let dipsInfo = '';
-                          if (it.selectedDips) {
+                          if (it.dipsBreakdown && Array.isArray(it.dipsBreakdown.items) && it.dipsBreakdown.items.length > 0) {
+                            dipsInfo = 'صوصات جانبية: ' + it.dipsBreakdown.items.map((d: any) => `${d.name} (×${d.qty})`).join(' + ');
+                          } else if (it.selectedDips) {
                             const arr = Object.keys(it.selectedDips).filter((k) => it.selectedDips[k] > 0);
                             if (arr.length > 0) {
                               dipsInfo = 'صوصات: ' + arr.map((k) => `${k} (×${it.selectedDips[k]})`).join(', ');
@@ -988,7 +1014,7 @@ export default function AdminDashboard() {
                           if (it.selectedSides) {
                             const arr = Object.keys(it.selectedSides).filter((k) => it.selectedSides[k] > 0);
                             if (arr.length > 0) {
-                              sidesInfo = 'إضافات: ' + arr.map((k) => `${k} (×${it.selectedSides[k]})`).join(', ');
+                              sidesInfo = 'إضافات: ' + arr.map((k) => `${k === 'fries' ? 'بطاطا مقلية' : k === 'coleslaw' ? 'سلطة الكرنب' : k} (×${it.selectedSides[k]})`).join(', ');
                             }
                           }
 
@@ -996,9 +1022,10 @@ export default function AdminDashboard() {
                             <div key={idx} style={{ fontSize: '12px', marginBottom: '4px', paddingBottom: '4px', borderBottom: idx < itemsList.length - 1 ? '1px dashed rgba(255,255,255,0.06)' : 'none' }}>
                               <div style={{ display: 'flex', justifyContent: 'space-between', fontWeight: 800 }}>
                                 <span>{it.title || it.boxCode || 'وجبة'} ×{it.qty || 1}</span>
-                                <span style={{ color: '#F94E1E' }}>{((it.unitPrice || it.price || 0) * (it.qty || 1)).toLocaleString('fr-DZ')} دج</span>
+                                <span style={{ color: '#FF7A00' }}>{((it.unitPrice || it.price || 0) * (it.qty || 1)).toLocaleString('fr-DZ')} دج</span>
                               </div>
                               {it.sauceName && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>صوص: {it.sauceName} {it.spiceTitle ? `• ${it.spiceTitle}` : ''}</div>}
+                              {it.includesSummary && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>يتضمن: {it.includesSummary}</div>}
                               {dipsInfo && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>{dipsInfo}</div>}
                               {sidesInfo && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>{sidesInfo}</div>}
                             </div>
@@ -1014,7 +1041,7 @@ export default function AdminDashboard() {
                         </div>
                         <div>
                           <span style={{ color: '#8E9BAE' }}>المجموع: </span>
-                          <span style={{ fontWeight: 900, color: '#F94E1E' }}>{(order.total || 0).toLocaleString('fr-DZ')} دج</span>
+                          <span style={{ fontWeight: 900, color: '#FF7A00' }}>{(order.total || 0).toLocaleString('fr-DZ')} دج</span>
                         </div>
                         <div style={{ gridColumn: 'span 2' }}>
                           <span style={{ color: '#8E9BAE' }}>العنوان: </span>
@@ -1124,7 +1151,7 @@ export default function AdminDashboard() {
                   type="button"
                   whileTap={{ scale: 0.96 }}
                   onClick={() => handleOpenAddModal('wing_size')}
-                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', background: 'linear-gradient(135deg, #F94E1E 0%, #EA3C08 100%)', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif", boxShadow: '0 4px 14px rgba(249,78,30,0.35)' }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 14px', background: 'linear-gradient(135deg, #FF7A00 0%, #E56D00 100%)', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif", boxShadow: '0 4px 14px rgba(255,122,0,0.35)' }}
                 >
                   <Plus size={16} />
                   <span>صنف جديد</span>
@@ -1153,9 +1180,34 @@ export default function AdminDashboard() {
 
             {/* Items by Category */}
             {menuLoading ? (
-              <div style={{ textAlign: 'center', padding: '40px 0', color: '#8E9BAE' }}>
-                <RefreshCw className="animate-spin" size={24} style={{ margin: '0 auto 8px', color: '#F94E1E' }} />
-                <div>جارٍ تحميل المنيو...</div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                {[1, 2].map((catIndex) => (
+                  <div
+                    key={catIndex}
+                    className="skeleton-box"
+                    style={{
+                      backgroundColor: '#211A17',
+                      border: '1px solid rgba(255,255,255,0.06)',
+                      borderRadius: '20px',
+                      padding: '18px 20px',
+                    }}
+                  >
+                    <div style={{ width: '150px', height: '22px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '6px', marginBottom: '16px' }} />
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '12px' }}>
+                      {[1, 2, 3, 4].map((itemIndex) => (
+                        <div
+                          key={itemIndex}
+                          style={{
+                            height: '70px',
+                            backgroundColor: 'rgba(11,18,33,0.5)',
+                            border: '1px solid rgba(255,255,255,0.04)',
+                            borderRadius: '14px',
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -1168,7 +1220,7 @@ export default function AdminDashboard() {
                     <div
                       key={cat.key}
                       style={{
-                        backgroundColor: '#131E33',
+                        backgroundColor: '#211A17',
                         border: '1px solid rgba(255,255,255,0.06)',
                         borderRadius: '20px',
                         padding: '18px 20px',
@@ -1178,7 +1230,7 @@ export default function AdminDashboard() {
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <span style={{ fontSize: '15px', fontWeight: 900, color: '#FFFFFF' }}>{cat.label}</span>
-                          <span style={{ fontSize: '11px', fontWeight: 800, backgroundColor: 'rgba(249,78,30,0.18)', color: '#F94E1E', padding: '2px 8px', borderRadius: '9999px', border: '1px solid rgba(249,78,30,0.3)' }}>
+                          <span style={{ fontSize: '11px', fontWeight: 800, backgroundColor: 'rgba(255,122,0,0.18)', color: '#FF7A00', padding: '2px 8px', borderRadius: '9999px', border: '1px solid rgba(255,122,0,0.3)' }}>
                             {itemsInCat.length}
                           </span>
                         </div>
@@ -1202,14 +1254,14 @@ export default function AdminDashboard() {
                             transition: 'all 0.2s ease',
                           }}
                         >
-                          <Plus size={14} style={{ color: '#F94E1E' }} />
+                          <Plus size={14} style={{ color: '#FF7A00' }} />
                           <span>إضافة</span>
                         </button>
                       </div>
 
                       {/* Items List */}
                       {itemsInCat.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '16px', color: '#8E9BAE', fontSize: '12px', backgroundColor: '#0B1221', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.08)' }}>
+                        <div style={{ textAlign: 'center', padding: '16px', color: '#8E9BAE', fontSize: '12px', backgroundColor: '#14100E', borderRadius: '12px', border: '1px dashed rgba(255,255,255,0.08)' }}>
                           لا توجد أصناف في هذا القسم حالياً
                         </div>
                       ) : (
@@ -1218,7 +1270,7 @@ export default function AdminDashboard() {
                             <div
                               key={item.id}
                               style={{
-                                backgroundColor: '#0B1221',
+                                backgroundColor: '#14100E',
                                 border: '1px solid rgba(255,255,255,0.08)',
                                 borderRadius: '14px',
                                 padding: '12px 14px',
@@ -1236,11 +1288,11 @@ export default function AdminDashboard() {
                                   <img
                                     src={item.image_url}
                                     alt={item.name_ar}
-                                    style={{ width: '42px', height: '42px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#131E33', padding: '3px', flexShrink: 0 }}
+                                    style={{ width: '42px', height: '42px', objectFit: 'contain', borderRadius: '10px', backgroundColor: '#211A17', padding: '3px', flexShrink: 0 }}
                                     onError={(e: any) => { e.target.style.display = 'none'; }}
                                   />
                                 ) : (
-                                  <div style={{ width: '42px', height: '42px', borderRadius: '10px', backgroundColor: '#131E33', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#F94E1E', flexShrink: 0 }}>
+                                  <div style={{ width: '42px', height: '42px', borderRadius: '10px', backgroundColor: '#211A17', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#FF7A00', flexShrink: 0 }}>
                                     <Package size={18} />
                                   </div>
                                 )}
@@ -1249,7 +1301,7 @@ export default function AdminDashboard() {
                                   <div style={{ fontSize: '13px', fontWeight: 800, color: '#FFFFFF', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {item.name_ar}
                                   </div>
-                                  <div style={{ fontSize: '12px', fontWeight: 900, color: '#F94E1E', marginTop: '2px' }}>
+                                  <div style={{ fontSize: '12px', fontWeight: 900, color: '#FF7A00', marginTop: '2px' }}>
                                     {(item.price || 0).toLocaleString('fr-DZ')} دج
                                   </div>
                                 </div>
@@ -1357,7 +1409,7 @@ export default function AdminDashboard() {
                     exit={{ y: 24, scale: 0.95, opacity: 0 }}
                     transition={{ type: 'spring', damping: 25, stiffness: 350 }}
                     onClick={(e) => e.stopPropagation()}
-                    style={{ width: '100%', maxWidth: '460px', backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '24px', padding: '24px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,0.75)' }}
+                    style={{ width: '100%', maxWidth: '460px', backgroundColor: '#211A17', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '24px', padding: '24px', maxHeight: '90vh', overflowY: 'auto', boxShadow: '0 24px 60px rgba(0,0,0,0.75)' }}
                   >
                     <div style={{ width: '38px', height: '4px', borderRadius: '9999px', backgroundColor: 'rgba(255,255,255,0.2)', margin: '0 auto 16px' }} />
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
@@ -1382,7 +1434,7 @@ export default function AdminDashboard() {
                         value={itemFormName}
                         onChange={(e) => setItemFormName(e.target.value)}
                         placeholder="مثال: صوص رانش حار"
-                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
+                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
                       />
                     </div>
 
@@ -1391,7 +1443,7 @@ export default function AdminDashboard() {
                       <select
                         value={itemFormCategory}
                         onChange={(e) => setItemFormCategory(e.target.value)}
-                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
+                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
                       >
                         <option value="wing_size">أحجام الأجنحة (wing_size)</option>
                         <option value="coating_sauce">صوصات الأجنحة (coating_sauce)</option>
@@ -1409,7 +1461,7 @@ export default function AdminDashboard() {
                         value={itemFormPrice}
                         onChange={(e) => setItemFormPrice(Number(e.target.value))}
                         placeholder="250"
-                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
+                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
                       />
                     </div>
 
@@ -1430,7 +1482,7 @@ export default function AdminDashboard() {
                             minWidth: 0,
                             height: '42px',
                             padding: '0 12px',
-                            backgroundColor: '#0B1221',
+                            backgroundColor: '#14100E',
                             border: '1px solid rgba(255,255,255,0.12)',
                             borderRadius: '10px',
                             color: '#FFFFFF',
@@ -1454,8 +1506,8 @@ export default function AdminDashboard() {
                           style={{
                             height: '42px',
                             padding: '0 12px',
-                            backgroundColor: uploadingImage ? 'rgba(255,255,255,0.06)' : 'rgba(249,78,30,0.15)',
-                            border: '1px solid rgba(249,78,30,0.4)',
+                            backgroundColor: uploadingImage ? 'rgba(255,255,255,0.06)' : 'rgba(255,122,0,0.15)',
+                            border: '1px solid rgba(255,122,0,0.4)',
                             borderRadius: '10px',
                             color: uploadingImage ? '#8E9BAE' : '#FF6436',
                             fontSize: '12px',
@@ -1489,7 +1541,7 @@ export default function AdminDashboard() {
                         <div style={{
                           marginTop: '8px',
                           padding: '8px 12px',
-                          backgroundColor: '#0B1221',
+                          backgroundColor: '#14100E',
                           border: '1px solid rgba(255,255,255,0.08)',
                           borderRadius: '10px',
                           display: 'flex',
@@ -1547,7 +1599,7 @@ export default function AdminDashboard() {
                       <motion.button
                         type="submit"
                         whileTap={{ scale: 0.96 }}
-                        style={{ flex: 1, height: '46px', background: 'linear-gradient(135deg, #F94E1E 0%, #EA3C08 100%)', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif", boxShadow: '0 4px 14px rgba(249,78,30,0.35)' }}
+                        style={{ flex: 1, height: '46px', background: 'linear-gradient(135deg, #FF7A00 0%, #E56D00 100%)', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif", boxShadow: '0 4px 14px rgba(255,122,0,0.35)' }}
                       >
                         {editingItem ? 'حفظ التعديلات' : 'إضافة الصنف للمنيو'}
                       </motion.button>
@@ -1572,7 +1624,7 @@ export default function AdminDashboard() {
             TAB 3: SETTINGS
             ============================================================== */}
         {activeTab === 'settings' && (
-          <div style={{ backgroundColor: '#131E33', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '24px' }}>
+          <div style={{ backgroundColor: '#211A17', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '20px', padding: '24px' }}>
             <h2 style={{ fontSize: '18px', fontWeight: 900, color: '#FFFFFF', marginBottom: '16px' }}>إعدادات المتجر والإشعارات</h2>
 
             {settingsSavedMsg && (
@@ -1584,7 +1636,7 @@ export default function AdminDashboard() {
 
             <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
               {/* Store Status Toggle */}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', backgroundColor: '#0B1221', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px', backgroundColor: '#14100E', borderRadius: '14px', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <div>
                   <div style={{ fontSize: '14px', fontWeight: 800, color: '#FFFFFF' }}>حالة استقبال الطلبات بالمطعم</div>
                   <div style={{ fontSize: '12px', color: '#8E9BAE' }}>
@@ -1620,7 +1672,7 @@ export default function AdminDashboard() {
                   type="number"
                   value={settings.delivery_fee}
                   onChange={(e) => setSettings((s: any) => ({ ...s, delivery_fee: Number(e.target.value) }))}
-                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif" }}
+                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif" }}
                 />
               </div>
 
@@ -1634,7 +1686,7 @@ export default function AdminDashboard() {
                   value={settings.telegram_bot_token || ''}
                   onChange={(e) => setSettings((s: any) => ({ ...s, telegram_bot_token: e.target.value }))}
                   placeholder="123456789:ABCdefGHIjklMNOpqrSTUvwxYZ"
-                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontFamily: 'monospace' }}
+                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontFamily: 'monospace' }}
                 />
                 <div style={{ fontSize: '11px', color: '#8E9BAE', marginTop: '4px' }}>
                   يُنشأ من @BotFather على تيليجرام لاستقبال الطلبات فورياً على هاتفك
@@ -1651,7 +1703,7 @@ export default function AdminDashboard() {
                   value={settings.telegram_chat_id || ''}
                   onChange={(e) => setSettings((s: any) => ({ ...s, telegram_chat_id: e.target.value }))}
                   placeholder="987654321 أو -100123456789"
-                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#0B1221', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontFamily: 'monospace' }}
+                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontFamily: 'monospace' }}
                 />
               </div>
 
@@ -1665,7 +1717,7 @@ export default function AdminDashboard() {
               <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
                 <button
                   type="submit"
-                  style={{ flex: 1, height: '46px', backgroundColor: '#F94E1E', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
+                  style={{ flex: 1, height: '46px', backgroundColor: '#FF7A00', border: 'none', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontWeight: 900, cursor: 'pointer', fontFamily: "'Cairo', sans-serif" }}
                 >
                   حفظ الإعدادات
                 </button>

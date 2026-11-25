@@ -71,23 +71,23 @@ export const CartDrawer = () => {
 
   return (
     <>
-      <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-sm flex justify-start">
+      <div className="fixed inset-0 z-50 overflow-hidden bg-black/75 backdrop-blur-sm flex justify-start animate-in fade-in duration-200">
         <div 
-          className="relative w-full max-w-md bg-[#FAF9F6] h-full shadow-2xl flex flex-col text-right animate-in slide-in-from-right duration-250 border-r border-zinc-200"
+          className="relative w-full max-w-md bg-[#14100E] text-[#FFF8F0] h-full shadow-2xl flex flex-col text-right animate-in slide-in-from-right duration-250 border-r border-[#3A2822]"
           role="dialog"
           aria-modal="true"
         >
           {/* Header */}
-          <div className="bg-zinc-950 text-white p-4 flex items-center justify-between border-b border-zinc-800">
+          <div className="bg-[#211A17] text-[#FFF8F0] p-4 flex items-center justify-between border-b border-[#3A2822]">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-brand-600 text-white flex items-center justify-center font-bold">
+              <div className="w-8 h-8 rounded-xl bg-[#FF7A00] text-white flex items-center justify-center font-bold shadow-md">
                 <ShoppingBag className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-base font-black font-tajawal text-white">
+                <h3 className="text-base font-black font-tajawal text-[#FFF8F0]">
                   سلة الطلبات
                 </h3>
-                <span className="text-xs text-zinc-400">
+                <span className="text-xs text-[#B8A99A]">
                   {cartCount} {cartCount === 1 ? 'عنصر' : 'عناصر'} مخصصة
                 </span>
               </div>
@@ -97,7 +97,7 @@ export const CartDrawer = () => {
               {cartItems.length > 0 && (
                 <button
                   onClick={clearCart}
-                  className="text-xs text-zinc-400 hover:text-red-400 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-zinc-800 transition-all"
+                  className="text-xs text-[#B8A99A] hover:text-red-400 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-[#2C221F] transition-all"
                   title="تفريغ السلة"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -106,7 +106,7 @@ export const CartDrawer = () => {
               )}
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="w-8 h-8 rounded-full bg-zinc-800 text-zinc-400 hover:text-white flex items-center justify-center transition-all"
+                className="w-8 h-8 rounded-full bg-[#2C221F] text-[#B8A99A] hover:text-[#FFF8F0] flex items-center justify-center transition-all border border-[#3A2822]"
                 aria-label="إغلاق السلة"
               >
                 <X className="w-4 h-4" />
@@ -117,21 +117,21 @@ export const CartDrawer = () => {
           {/* Cart Items List */}
           <div className="flex-1 overflow-y-auto p-4 space-y-3">
             {cartItems.length === 0 ? (
-              <div className="h-full flex flex-col items-center justify-center text-center p-6 text-zinc-400 space-y-3">
-                <div className="w-16 h-16 rounded-3xl bg-zinc-100 flex items-center justify-center text-3xl">
+              <div className="h-full flex flex-col items-center justify-center text-center p-6 text-[#B8A99A] space-y-3">
+                <div className="w-16 h-16 rounded-3xl bg-[#211A17] border border-[#3A2822] flex items-center justify-center text-3xl">
                   🍗
                 </div>
                 <div>
-                  <h4 className="text-base font-black text-zinc-700">
+                  <h4 className="text-base font-black text-[#FFF8F0]">
                     سلتك فارغة حالياً
                   </h4>
-                  <p className="text-xs text-zinc-400 mt-1 max-w-xs">
+                  <p className="text-xs text-[#B8A99A] mt-1 max-w-xs">
                     اختر أجنحتك وصمم بوكسك الخاص أو اختر أحد البوكسات الجاهزة الشهية!
                   </p>
                 </div>
                 <button
                   onClick={() => setIsCartOpen(false)}
-                  className="mt-3 px-5 py-2.5 rounded-xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-700 transition-all shadow-sm"
+                  className="mt-3 px-5 py-2.5 rounded-xl bg-[#FF7A00] hover:bg-[#E56D00] text-white font-bold text-xs transition-all shadow-sm"
                 >
                   تصفح المنيو
                 </button>
@@ -143,24 +143,24 @@ export const CartDrawer = () => {
                 return (
                   <div
                     key={item.cartItemId}
-                    className="bg-white rounded-2xl border border-zinc-200/90 p-3.5 shadow-sm space-y-2.5 relative"
+                    className="bg-[#211A17] rounded-2xl border border-[#3A2822] p-3.5 shadow-sm space-y-2.5 relative"
                   >
                     {/* Item header */}
                     <div className="flex items-start justify-between gap-2">
                       <div className="flex-1">
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <h4 className="text-sm font-black text-zinc-900 font-tajawal">
+                          <h4 className="text-sm font-black text-[#FFF8F0] font-tajawal">
                             {item.title}
                           </h4>
                           {item.type === 'custom_box' && (
-                            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-brand-100 text-brand-800">
+                            <span className="text-[10px] font-bold px-1.5 py-0.2 rounded-full bg-[#FF7A00]/20 text-[#FF7A00] border border-[#FF7A00]/40">
                               مخصص
                             </span>
                           )}
                         </div>
 
                         {item.subtitle && (
-                          <div className="text-xs text-zinc-500 font-medium mt-0.5">
+                          <div className="text-xs text-[#B8A99A] font-medium mt-0.5">
                             {item.subtitle}
                           </div>
                         )}
@@ -168,7 +168,7 @@ export const CartDrawer = () => {
 
                       <button
                         onClick={() => removeFromCart(item.cartItemId)}
-                        className="text-zinc-400 hover:text-red-500 p-1 transition-all"
+                        className="text-[#B8A99A] hover:text-red-400 p-1 transition-all"
                         aria-label="حذف العنصر"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -176,11 +176,11 @@ export const CartDrawer = () => {
                     </div>
 
                     {/* Specifications & Selections breakdown */}
-                    <div className="text-[11px] space-y-1 bg-zinc-50/80 p-2.5 rounded-xl border border-zinc-100 text-zinc-600">
+                    <div className="text-[11px] space-y-1 bg-[#14100E] p-2.5 rounded-xl border border-[#3A2822] text-[#B8A99A]">
                       {/* Coating sauce if saucy */}
                       {item.coatingSauce && (
-                        <div className="flex items-center gap-1 font-semibold text-orange-700">
-                          <Flame className="w-3 h-3 text-orange-600" />
+                        <div className="flex items-center gap-1 font-semibold text-[#FF7A00]">
+                          <Flame className="w-3 h-3 text-[#FF7A00]" />
                           <span>صوص التغطية: {item.coatingSauce.name}</span>
                         </div>
                       )}
@@ -188,7 +188,7 @@ export const CartDrawer = () => {
                       {/* Dips */}
                       {item.dips && item.dips.length > 0 && (
                         <div>
-                          <span className="font-bold text-zinc-700">الصوصات: </span>
+                          <span className="font-bold text-[#FFF8F0]">الصوصات: </span>
                           <span>
                             {item.dips.map((d) => `${d.nameAr} (×${d.quantity})`).join('، ')}
                           </span>
@@ -198,7 +198,7 @@ export const CartDrawer = () => {
                       {/* Sides / Extras */}
                       {item.sides && item.sides.length > 0 && (
                         <div>
-                          <span className="font-bold text-zinc-700">الإضافات: </span>
+                          <span className="font-bold text-[#FFF8F0]">الإضافات: </span>
                           <span>
                             {item.sides.map((s) => `${s.nameAr} (×${s.quantity})`).join('، ')}
                           </span>
@@ -207,7 +207,7 @@ export const CartDrawer = () => {
 
                       {item.extraSides && item.extraSides.length > 0 && (
                         <div>
-                          <span className="font-bold text-zinc-700">الإضافات: </span>
+                          <span className="font-bold text-[#FFF8F0]">الإضافات: </span>
                           <span>
                             {item.extraSides.map((s) => `${s.nameAr} (×${s.quantity})`).join('، ')}
                           </span>
@@ -216,7 +216,7 @@ export const CartDrawer = () => {
 
                       {/* Ready box included items */}
                       {item.includedDetails && (
-                        <div className="text-zinc-500">
+                        <div className="text-[#B8A99A]">
                           ✓ {item.includedDetails}
                         </div>
                       )}
@@ -224,27 +224,27 @@ export const CartDrawer = () => {
 
                     {/* Quantity & Unit Total */}
                     <div className="flex items-center justify-between pt-1">
-                      <div className="flex items-center gap-2 bg-zinc-100 p-1 rounded-xl">
+                      <div className="flex items-center gap-2 bg-[#14100E] p-1 rounded-xl border border-[#3A2822]">
                         <button
                           onClick={() => updateQuantity(item.cartItemId, (item.quantity || 1) - 1)}
-                          className="w-6 h-6 rounded-lg bg-white text-zinc-800 flex items-center justify-center shadow-sm hover:bg-zinc-200"
+                          className="w-6 h-6 rounded-lg bg-[#2C221F] text-[#FFF8F0] hover:bg-[#3A2822] flex items-center justify-center transition-all"
                           aria-label="إنقاص الكمية"
                         >
                           <Minus className="w-3 h-3" />
                         </button>
-                        <span className="w-5 text-center text-xs font-black text-zinc-900">
+                        <span className="w-5 text-center text-xs font-black text-[#FFF8F0]">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => updateQuantity(item.cartItemId, (item.quantity || 1) + 1)}
-                          className="w-6 h-6 rounded-lg bg-brand-600 text-white flex items-center justify-center hover:bg-brand-700"
+                          className="w-6 h-6 rounded-lg bg-[#FF7A00] text-white flex items-center justify-center hover:bg-[#E56D00] transition-all"
                           aria-label="زيادة الكمية"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
 
-                      <div className="text-sm font-black text-brand-600 font-tajawal">
+                      <div className="text-sm font-black text-[#FF7A00] font-tajawal">
                         {formatDZD(itemTotal)}
                       </div>
                     </div>
@@ -255,9 +255,9 @@ export const CartDrawer = () => {
 
             {/* Kitchen Notes */}
             {cartItems.length > 0 && (
-              <div className="bg-white rounded-2xl border border-zinc-200/90 p-3.5 space-y-2">
-                <div className="flex items-center gap-1.5 text-xs font-black text-zinc-900">
-                  <FileText className="w-3.5 h-3.5 text-brand-600" />
+              <div className="bg-[#211A17] rounded-2xl border border-[#3A2822] p-3.5 space-y-2">
+                <div className="flex items-center gap-1.5 text-xs font-black text-[#FFF8F0]">
+                  <FileText className="w-3.5 h-3.5 text-[#FF7A00]" />
                   <span>ملاحظات خاصة للمطبخ:</span>
                 </div>
                 <textarea
@@ -265,7 +265,7 @@ export const CartDrawer = () => {
                   onChange={(e) => setKitchenNotes(e.target.value)}
                   placeholder="مثال: يرجى وضع الصوص في علبة منفصلة، بدون بصل، زيادة مناديل..."
                   rows={2}
-                  className="w-full text-xs p-2.5 rounded-xl border border-zinc-200 focus:outline-none focus:ring-2 focus:ring-brand-500 text-right bg-zinc-50"
+                  className="w-full text-xs p-2.5 rounded-xl border border-[#3A2822] focus:outline-none focus:ring-2 focus:ring-[#FF7A00] text-right bg-[#14100E] text-[#FFF8F0] placeholder:text-[#B8A99A]/50"
                 />
               </div>
             )}
@@ -273,19 +273,19 @@ export const CartDrawer = () => {
 
           {/* Sticky Bottom Summary in Cart */}
           {cartItems.length > 0 && (
-            <div className="p-4 bg-white border-t border-zinc-200 space-y-3 sticky bottom-0 z-10 shadow-lg">
-              <div className="space-y-1.5 text-xs text-zinc-600">
+            <div className="p-4 bg-[#211A17] border-t border-[#3A2822] space-y-3 sticky bottom-0 z-10 shadow-lg">
+              <div className="space-y-1.5 text-xs text-[#B8A99A]">
                 <div className="flex justify-between">
                   <span>المجموع الفرعي:</span>
-                  <span className="font-bold text-zinc-900">{formatDZD(subtotal)}</span>
+                  <span className="font-bold text-[#FFF8F0]">{formatDZD(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-zinc-500">
+                <div className="flex justify-between text-[#B8A99A]">
                   <span>التوصيل (تقديري):</span>
                   <span>حسب موقع الزبون 📍</span>
                 </div>
-                <div className="flex justify-between text-base font-black text-zinc-900 pt-2 border-t border-zinc-100 font-tajawal">
+                <div className="flex justify-between text-base font-black text-[#FFF8F0] pt-2 border-t border-[#3A2822] font-tajawal">
                   <span>الإجمالي:</span>
-                  <span className="text-brand-600 text-lg font-black font-tajawal">
+                  <span className="text-[#FF7A00] text-lg font-black font-tajawal">
                     {formatDZD(subtotal)}
                   </span>
                 </div>

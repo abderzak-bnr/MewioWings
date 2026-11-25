@@ -6,16 +6,24 @@
   html {
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
     direction: rtl;
   }
 
   body {
-    background-color: #0f0f12;
-    color: #f4f4f5;
+    background-color: #14100E;
+    color: #FFF8F0;
     font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
     user-select: none;
     -webkit-user-select: none;
     overflow-x: hidden;
+  }
+
+  button, input, textarea, select {
+    font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
+    direction: inherit;
   }
 }
 
@@ -25,14 +33,14 @@
   height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #18181b;
+  background: #211A17;
 }
 ::-webkit-scrollbar-thumb {
-  background: #3f3f46;
+  background: #3A2822;
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #ea580c;
+  background: #FF7A00;
 }
 
 /* Spice Level Animations */
@@ -121,3 +129,149 @@
 .pt-safe {
   padding-top: env(safe-area-inset-top, 1rem);
 }
+
+/* ==========================================================
+   60FPS GPU-ACCELERATED ANIMATIONS & TRANSITIONS
+   ========================================================== */
+@keyframes slideInFromRight {
+  from {
+    transform: translate3d(100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes slideInFromBottom {
+  from {
+    transform: translate3d(0, 100%, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeInSmooth {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUpSmooth {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateZ(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+  }
+}
+
+@keyframes gpuSkeletonShimmer {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+@keyframes gpuSkeletonShimmerRtl {
+  0% {
+    transform: translate3d(100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-100%, 0, 0);
+  }
+}
+
+.animate-in {
+  animation-duration: 260ms;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+
+.slide-in-from-right {
+  animation-name: slideInFromRight;
+}
+
+.slide-in-from-bottom {
+  animation-name: slideInFromBottom;
+}
+
+.fade-in {
+  animation-name: fadeInSmooth;
+}
+
+.zoom-in,
+.zoom-in-95 {
+  animation-name: scaleUpSmooth;
+}
+
+/* GPU Hardware Promotion Helper */
+.gpu-layer {
+  transform: translateZ(0);
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+
+/* Tactile Micro-Interactions */
+.btn-tactile {
+  transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.16s ease, background-color 0.16s ease;
+  will-change: transform;
+}
+.btn-tactile:active {
+  transform: scale(0.96) translateZ(0);
+}
+
+/* Smooth Product Card Transitions */
+.card-smooth {
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, border-color 0.2s ease;
+  will-change: transform;
+}
+.card-smooth:hover {
+  transform: translateY(-3px) translateZ(0);
+}
+.card-smooth:active {
+  transform: translateY(-1px) scale(0.99) translateZ(0);
+}
+
+/* High-Performance Skeleton Loaders */
+.skeleton-box {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+}
+.skeleton-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translate3d(-100%, 0, 0);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  animation: gpuSkeletonShimmer 1.5s ease-in-out infinite;
+  will-change: transform;
+  pointer-events: none;
+}
+
+html[dir="rtl"] .skeleton-box::after {
+  transform: translate3d(100%, 0, 0);
+  background: linear-gradient(
+    -90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    transparent 100%
+  );
+  animation: gpuSkeletonShimmerRtl 1.5s ease-in-out infinite;
+}
+

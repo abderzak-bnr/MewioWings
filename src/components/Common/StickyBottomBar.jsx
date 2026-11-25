@@ -16,30 +16,30 @@ export const StickyBottomBar = ({ activeTab, onOpenCart }) => {
       <div className="max-w-md mx-auto pointer-events-auto">
         <button
           onClick={() => setIsCartOpen(true)}
-          className="w-full bg-zinc-950 text-white rounded-2xl p-3 sm:p-3.5 shadow-2xl border border-zinc-800 flex items-center justify-between gap-3 active:scale-[0.98] transition-all duration-200 hover:bg-zinc-900 group"
+          className="w-full bg-[#211A17] text-[#FFF8F0] rounded-2xl p-3 sm:p-3.5 shadow-2xl border border-[#3A2822] flex items-center justify-between gap-3 active:scale-[0.98] transition-all duration-200 hover:bg-[#2C221F] group"
           aria-label="عرض تفاصيل السلة والطلب"
         >
           {/* Cart Icon & Count */}
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 text-white flex items-center justify-center shadow-md">
+            <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#FF7A00] to-[#E56D00] text-[#FFF8F0] flex items-center justify-center shadow-md">
               <ShoppingBag className="w-5 h-5" />
-              <span className="absolute -top-1.5 -right-1.5 bg-white text-zinc-950 font-black text-[11px] w-5 h-5 rounded-full flex items-center justify-center shadow">
+              <span className="absolute -top-1.5 -right-1.5 bg-[#FFF8F0] text-[#14100E] font-black text-[11px] w-5 h-5 rounded-full flex items-center justify-center shadow">
                 {cartCount}
               </span>
             </div>
 
             <div className="text-right">
-              <div className="text-[11px] text-zinc-400 font-medium">
+              <div className="text-[11px] text-[#B8A99A] font-medium">
                 {cartCount} {cartCount === 1 ? 'عنصر في السلة' : 'عناصر في السلة'}
               </div>
-              <div className="text-base font-black text-white font-tajawal">
+              <div className="text-base font-black text-[#FFF8F0] font-tajawal">
                 {formatDZD(subtotal)}
               </div>
             </div>
           </div>
 
           {/* CTA Button Label */}
-          <div className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-brand-600 to-brand-500 text-white font-black text-xs sm:text-sm shadow-md group-hover:from-brand-500 group-hover:to-brand-600 transition-all">
+          <div className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-r from-[#FF7A00] to-[#E56D00] text-[#FFF8F0] font-black text-xs sm:text-sm shadow-md group-hover:from-[#E56D00] group-hover:to-[#FF7A00] transition-all">
             <span>متابعة الطلب</span>
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           </div>
