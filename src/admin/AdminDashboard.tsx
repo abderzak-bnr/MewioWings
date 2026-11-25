@@ -141,7 +141,6 @@ export default function AdminDashboard() {
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState('');
   const [authSuccessMsg, setAuthSuccessMsg] = useState('');
-  const [isSignUp, setIsSignUp] = useState(false);
 
   // Orders State
   const [orders, setOrders] = useState<any[]>([]);
@@ -230,24 +229,11 @@ export default function AdminDashboard() {
     setAuthLoading(true);
 
     try {
-      if (isSignUp) {
-        const { error, data } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
-        if (data.session) {
-          setSession(data.session);
-        } else {
-          setAuthSuccessMsg('تم إنشاء الحساب بنجاح! إذا طُلب تأكيد البريد، يرجى تفعيله ثم تسجيل الدخول.');
-        }
-      } else {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
     } catch (err: any) {
       setAuthError(err.message || 'حدث خطأ في عملية تسجيل الدخول');
     } finally {
@@ -694,25 +680,10 @@ export default function AdminDashboard() {
               {authLoading ? (
                 <RefreshCw className="animate-spin" size={18} />
               ) : (
-                <span>{isSignUp ? 'إنشاء حساب مدير' : 'تسجيل الدخول'}</span>
+                <span>تسجيل الدخول</span>
               )}
             </button>
           </form>
-
-          {/* Toggle between Login and Signup */}
-          <div style={{ marginTop: '18px', textAlign: 'center' }}>
-            <button
-              type="button"
-              onClick={() => {
-                setIsSignUp(!isSignUp);
-                setAuthError('');
-                setAuthSuccessMsg('');
-              }}
-              style={{ background: 'transparent', border: 'none', color: '#8E9BAE', fontSize: '12px', cursor: 'pointer', textDecoration: 'underline' }}
-            >
-              {isSignUp ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب مدير جديد'}
-            </button>
-          </div>
 
           {/* Return to Store Link */}
           <div style={{ marginTop: '22px', borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '16px', textAlign: 'center' }}>

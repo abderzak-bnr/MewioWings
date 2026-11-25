@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="theme-color" content="#FF7A00">
   <title>WINGO! — Build Your Wings | صمّم وجبتك (المدية)</title>
   
@@ -2564,6 +2564,19 @@
        ========================================================== -->
   <script>
     /**
+     * Strict HTML Escaping Helper (Safe DOM Rendering against XSS)
+     */
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    /**
      * TIERED FREE SIDE DIPS ALLOWANCE BY WING SIZE
      * 3 قطع (3 pcs): 1 صوص جانبية مجانية
      * 6 قطع (6 pcs): 2 صوصات جانبية مجانية
@@ -2881,10 +2894,10 @@
       if (!window.supabase) return;
 
       try {
-        // 1. Fetch store_settings (ID 1)
+        // 1. Fetch store_settings (ID 1) - ONLY public non-sensitive display fields (never bot tokens/secrets)
         const { data: settings, error: sErr } = await window.supabase
           .from("store_settings")
-          .select("*")
+          .select("id, is_open, delivery_fee")
           .eq("id", 1)
           .maybeSingle();
 
@@ -3800,7 +3813,7 @@
           } else {
             el.dataset.itemId = dipId;
             el.innerHTML = `
-              <img src="${imgPath}" alt="${dipObj.name}" class="stage-dip-img" width="42" height="42" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${escapeHtml(dipObj.name)}" class="stage-dip-img" width="42" height="42" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/dip-buffalo.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="dip-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -3852,7 +3865,7 @@
           } else {
             el.dataset.itemId = sideId;
             el.innerHTML = `
-              <img src="${imgPath}" alt="${sideObj.name}" class="stage-side-img" width="${sideWidth}" height="${sideHeight}" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
+              <img src="${imgPath}" alt="${escapeHtml(sideObj.name)}" class="stage-side-img" width="${sideWidth}" height="${sideHeight}" decoding="async" onerror="this.onerror=null; this.src=resolveImagePath('/images/side-fries.png');" style="width: 100%; height: 100%; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 3px 4px rgba(35, 18, 6, 0.45)); position: relative; z-index: 2;" />
               ${qty > 1 ? `<span class="side-qty-badge">×${qty}</span>` : ""}
             `;
           }
@@ -4080,14 +4093,14 @@
                 <polyline points="20 6 9 17 4 12"></polyline>
               </svg>
             </span>
-            <img src="${previewImgSrc}" alt="${sauce.name}"
+            <img src="${previewImgSrc}" alt="${escapeHtml(sauce.name)}"
                  width="44" height="44"
                  decoding="async"
                  onerror="this.onerror=null; this.src='${defaultWingFallback}';"
                  style="width: 44px; height: 44px; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(35, 18, 6, 0.35));" />
           </div>
-          <div class="item-name">${sauce.name}</div>
-          <div class="item-price free">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : (sauce.subtitle ? sauce.subtitle : (sauce.isSignature ? `<span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>مميز</span>` : "مشمول"))}</div>
+          <div class="item-name">${escapeHtml(sauce.name)}</div>
+          <div class="item-price free">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : (sauce.subtitle ? escapeHtml(sauce.subtitle) : (sauce.isSignature ? `<span style="display:inline-flex;align-items:center;gap:3px;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>مميز</span>` : "مشمول"))}</div>
         `;
 
         if (!isAvail) {
@@ -4170,16 +4183,16 @@
         card.innerHTML = `
           <div class="item-circle">
             <span class="item-badge-check">${qty > 1 ? `×${qty}` : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'}</span>
-            <span class="item-btn-minus" onclick="handleDecrementDip(event, '${dip.id}')">
+            <span class="item-btn-minus" onclick="handleDecrementDip(event, '${escapeHtml(dip.id)}')">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </span>
-            <img src="${imgPath}" alt="${dip.name}"
+            <img src="${imgPath}" alt="${escapeHtml(dip.name)}"
                  width="44" height="44"
                  decoding="async"
                  onerror="this.onerror=null; this.src='${defaultDipFallback}';"
                  style="width: 44px; height: 44px; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(35, 18, 6, 0.35));" />
           </div>
-          <div class="item-name">${dip.name}</div>
+          <div class="item-name">${escapeHtml(dip.name)}</div>
           <div class="item-price ${isFree && isAvail ? 'free' : ''}">${priceLabel}</div>
         `;
 
@@ -4263,16 +4276,16 @@
         card.innerHTML = `
           <div class="item-circle">
             <span class="item-badge-check">${qty > 1 ? `×${qty}` : '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>'}</span>
-            <span class="item-btn-minus" onclick="handleDecrementSide(event, '${side.id}')">
+            <span class="item-btn-minus" onclick="handleDecrementSide(event, '${escapeHtml(side.id)}')">
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </span>
-            <img src="${imgPath}" alt="${side.name}"
+            <img src="${imgPath}" alt="${escapeHtml(side.name)}"
                  width="46" height="46"
                  decoding="async"
                  onerror="this.onerror=null; this.src='${defaultSideFallback}';"
                  style="width: 46px; height: 46px; aspect-ratio: 1 / 1; object-fit: contain; filter: drop-shadow(0 2px 3px rgba(35, 18, 6, 0.35));" />
           </div>
-          <div class="item-name">${side.name}</div>
+          <div class="item-name">${escapeHtml(side.name)}</div>
           <div class="item-price">${!isAvail ? '<span style="color:#EF4444;font-size:10px;">غير متوفر</span>' : `+${side.price} دج`}</div>
         `;
 
@@ -4346,13 +4359,13 @@
         }
 
         const pillsHtml = box.itemsSummary.map(item => `
-          <span class="box-content-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-inline-end:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>${item}</span>
+          <span class="box-content-pill"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-1px;margin-inline-end:4px;"><polyline points="20 6 9 17 4 12"></polyline></svg>${escapeHtml(item)}</span>
         `).join("");
 
         card.innerHTML = `
           <div class="box-card-top">
-            <span class="box-code">${box.code}</span>
-            <span class="box-badge" ${!isAvail ? 'style="background: #EF4444; color: white;"' : ''}>${!isAvail ? 'غير متوفر' : box.badge}</span>
+            <span class="box-code">${escapeHtml(box.code)}</span>
+            <span class="box-badge" ${!isAvail ? 'style="background: #EF4444; color: white;"' : ''}>${!isAvail ? 'غير متوفر' : escapeHtml(box.badge)}</span>
           </div>
 
           <div class="box-details-row">
@@ -4366,15 +4379,15 @@
             </div>
 
             <div class="box-text-wrap">
-              <div class="box-title">${box.nameAr}</div>
-              <div class="box-desc">${box.description}</div>
+              <div class="box-title">${escapeHtml(box.nameAr)}</div>
+              <div class="box-desc">${escapeHtml(box.description)}</div>
               <div class="box-pills-wrap">${pillsHtml}</div>
             </div>
           </div>
 
           <div class="box-footer-row">
             <div class="box-price">${box.price.toLocaleString("fr-DZ")} دج</div>
-            <button class="box-action-btn" ${!isAvail ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : `onclick="openReadyBoxModal('${box.id}')"`}>
+            <button class="box-action-btn" ${!isAvail ? 'disabled style="opacity:0.4;cursor:not-allowed;"' : `onclick="openReadyBoxModal('${escapeHtml(box.id)}')"`}>
               <span>${!isAvail ? 'غير متوفر حالياً' : 'تخصيص وطلب'}</span>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
             </button>
@@ -4736,16 +4749,16 @@
 
           detailsHtml = `
             <div class="cart-item-details">
-              <div>صوص الأجنحة: <strong>${item.sauceName}</strong> • <span style="color:${item.spiceColor};">${item.spiceTitle}</span></div>
-              ${dipsArr.length > 0 ? `<div>الصوصات (${freeAllowance} مجانية): <strong>${dipsArr.join(" + ")}</strong></div>` : ''}
-              ${sidesArr.length > 0 ? `<div>الإضافات: <strong>${sidesArr.join(" + ")}</strong></div>` : ''}
+              <div>صوص الأجنحة: <strong>${escapeHtml(item.sauceName)}</strong> • <span style="color:${escapeHtml(item.spiceColor)};">${escapeHtml(item.spiceTitle)}</span></div>
+              ${dipsArr.length > 0 ? `<div>الصوصات (${freeAllowance} مجانية): <strong>${dipsArr.map(escapeHtml).join(" + ")}</strong></div>` : ''}
+              ${sidesArr.length > 0 ? `<div>الإضافات: <strong>${sidesArr.map(escapeHtml).join(" + ")}</strong></div>` : ''}
             </div>
           `;
         } else {
           detailsHtml = `
             <div class="cart-item-details">
-              <div>${item.boxCode} • صوص <strong>${item.sauceName}</strong> • <span style="color:${item.spiceColor};">${item.spiceTitle}</span></div>
-              <div>يتضمن: ${item.includesSummary}</div>
+              <div>${escapeHtml(item.boxCode)} • صوص <strong>${escapeHtml(item.sauceName)}</strong> • <span style="color:${escapeHtml(item.spiceColor)};">${escapeHtml(item.spiceTitle)}</span></div>
+              <div>يتضمن: ${escapeHtml(item.includesSummary)}</div>
             </div>
           `;
         }
@@ -4753,17 +4766,17 @@
         itemsHtml += `
           <div class="cart-item-card">
             <div class="cart-item-top">
-              <div class="cart-item-title">${item.title}</div>
+              <div class="cart-item-title">${escapeHtml(item.title)}</div>
               <div class="cart-item-price">${lineTotal.toLocaleString("fr-DZ")} دج</div>
             </div>
             ${detailsHtml}
             <div class="cart-item-controls">
               <div class="cart-stepper">
-                <button type="button" class="cart-stepper-btn" onclick="handleUpdateCartItemQty('${item.cartItemId}', -1)">−</button>
+                <button type="button" class="cart-stepper-btn" onclick="handleUpdateCartItemQty('${escapeHtml(item.cartItemId)}', -1)">−</button>
                 <span class="cart-qty-value">${item.qty || 1}</span>
-                <button type="button" class="cart-stepper-btn" onclick="handleUpdateCartItemQty('${item.cartItemId}', 1)">+</button>
+                <button type="button" class="cart-stepper-btn" onclick="handleUpdateCartItemQty('${escapeHtml(item.cartItemId)}', 1)">+</button>
               </div>
-              <button type="button" class="cart-item-delete" onclick="handleRemoveCartItem('${item.cartItemId}')" title="حذف الوجبة">
+              <button type="button" class="cart-item-delete" onclick="handleRemoveCartItem('${escapeHtml(item.cartItemId)}')" title="حذف الوجبة">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <polyline points="3 6 5 6 21 6"></polyline>
                   <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -5040,7 +5053,9 @@
 
       console.log("Order saved to Supabase successfully!");
 
-      // 2. Trigger Telegram Alert if credentials are configured (fetch fresh from store_settings if missing)
+      // 2. Trigger Telegram Alert if credentials are configured
+      // TODO: move to Edge Function - Client-side Telegram dispatch exposes bot tokens in network requests.
+      // Move this logic to a Supabase Database Webhook or Edge Function triggered on orders.INSERT in Step 2.
       try {
         let botToken = state.storeSettings?.telegram_bot_token;
         let chatId = state.storeSettings?.telegram_chat_id;
@@ -5207,7 +5222,7 @@
         orderedItems.forEach(it => {
           itemsRecapHtml += `
             <div class="drawer-item-row" style="font-size: 12px;">
-              <span class="drawer-item-label">${it.title} (×${it.qty || 1}):</span>
+              <span class="drawer-item-label">${escapeHtml(it.title)} (×${it.qty || 1}):</span>
               <span class="drawer-item-value">${(it.unitPrice * (it.qty || 1)).toLocaleString("fr-DZ")} دج</span>
             </div>
           `;
@@ -5224,7 +5239,7 @@
           </div>
 
           <h2 class="success-title">تم تسجيل طلبك بنجاح!</h2>
-          <div class="success-order-num">رقم الطلب: #${orderId}</div>
+          <div class="success-order-num">رقم الطلب: #${escapeHtml(orderId)}</div>
 
           <p class="success-delivery-pill">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-inline-end:5px;">
