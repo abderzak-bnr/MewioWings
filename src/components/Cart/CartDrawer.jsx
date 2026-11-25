@@ -97,10 +97,10 @@ export const CartDrawer = () => {
               {cartItems.length > 0 && (
                 <button
                   onClick={clearCart}
-                  className="text-xs text-[#B8A99A] hover:text-red-400 flex items-center gap-1 px-2 py-1 rounded-lg hover:bg-[#2C221F] transition-all"
+                  className="text-xs text-[#F87171] hover:text-red-300 flex items-center gap-1 px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all"
                   title="تفريغ السلة"
                 >
-                  <Trash2 className="w-3.5 h-3.5" />
+                  <Trash2 className="w-3.5 h-3.5 text-[#F87171]" />
                   <span>تفريغ</span>
                 </button>
               )}
@@ -143,7 +143,7 @@ export const CartDrawer = () => {
                 return (
                   <div
                     key={item.cartItemId}
-                    className="bg-[#211A17] rounded-2xl border border-[#3A2822] p-3.5 shadow-sm space-y-2.5 relative"
+                    className="bg-[#2B0D05] rounded-2xl border border-[#FFF8F0]/15 p-3.5 shadow-sm space-y-2.5 relative"
                   >
                     {/* Item header */}
                     <div className="flex items-start justify-between gap-2">
@@ -160,7 +160,7 @@ export const CartDrawer = () => {
                         </div>
 
                         {item.subtitle && (
-                          <div className="text-xs text-[#B8A99A] font-medium mt-0.5">
+                          <div className="text-xs text-[#E2D3C4] font-medium mt-0.5">
                             {item.subtitle}
                           </div>
                         )}
@@ -168,15 +168,15 @@ export const CartDrawer = () => {
 
                       <button
                         onClick={() => removeFromCart(item.cartItemId)}
-                        className="text-[#B8A99A] hover:text-red-400 p-1 transition-all"
+                        className="text-[#F87171] hover:text-red-300 p-1.5 rounded-lg bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all"
                         aria-label="حذف العنصر"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2 className="w-4 h-4 text-[#F87171]" />
                       </button>
                     </div>
 
                     {/* Specifications & Selections breakdown */}
-                    <div className="text-[11px] space-y-1 bg-[#14100E] p-2.5 rounded-xl border border-[#3A2822] text-[#B8A99A]">
+                    <div className="text-[11px] space-y-1 bg-[#1D0903] p-2.5 rounded-xl border border-[#FFF8F0]/10 text-[#E2D3C4]">
                       {/* Coating sauce if saucy */}
                       {item.coatingSauce && (
                         <div className="flex items-center gap-1 font-semibold text-[#FF7A00]">
@@ -216,7 +216,7 @@ export const CartDrawer = () => {
 
                       {/* Ready box included items */}
                       {item.includedDetails && (
-                        <div className="text-[#B8A99A]">
+                        <div className="text-[#E2D3C4]">
                           ✓ {item.includedDetails}
                         </div>
                       )}
@@ -224,10 +224,10 @@ export const CartDrawer = () => {
 
                     {/* Quantity & Unit Total */}
                     <div className="flex items-center justify-between pt-1">
-                      <div className="flex items-center gap-2 bg-[#14100E] p-1 rounded-xl border border-[#3A2822]">
+                      <div className="flex items-center gap-2 bg-[#1D0903] p-1 rounded-xl border border-[#FFF8F0]/20">
                         <button
                           onClick={() => updateQuantity(item.cartItemId, (item.quantity || 1) - 1)}
-                          className="w-6 h-6 rounded-lg bg-[#2C221F] text-[#FFF8F0] hover:bg-[#3A2822] flex items-center justify-center transition-all"
+                          className="w-6 h-6 rounded-lg bg-[#4A190B] text-[#FFF8F0] hover:bg-[#5C200E] border border-[#FFF8F0]/20 flex items-center justify-center transition-all"
                           aria-label="إنقاص الكمية"
                         >
                           <Minus className="w-3 h-3" />
@@ -237,7 +237,7 @@ export const CartDrawer = () => {
                         </span>
                         <button
                           onClick={() => updateQuantity(item.cartItemId, (item.quantity || 1) + 1)}
-                          className="w-6 h-6 rounded-lg bg-[#FF7A00] text-white flex items-center justify-center hover:bg-[#E56D00] transition-all"
+                          className="w-6 h-6 rounded-lg bg-[#4A190B] text-[#FFF8F0] hover:bg-[#5C200E] border border-[#FFF8F0]/20 flex items-center justify-center transition-all"
                           aria-label="زيادة الكمية"
                         >
                           <Plus className="w-3 h-3" />
@@ -255,9 +255,9 @@ export const CartDrawer = () => {
 
             {/* Kitchen Notes */}
             {cartItems.length > 0 && (
-              <div className="bg-[#211A17] rounded-2xl border border-[#3A2822] p-3.5 space-y-2">
+              <div className="bg-[#2B0D05] rounded-2xl border border-[#FFF8F0]/15 p-3.5 space-y-2">
                 <div className="flex items-center gap-1.5 text-xs font-black text-[#FFF8F0]">
-                  <FileText className="w-3.5 h-3.5 text-[#FF7A00]" />
+                  <FileText className="w-3.5 h-3.5 text-[#F97316]" />
                   <span>ملاحظات خاصة للمطبخ:</span>
                 </div>
                 <textarea
@@ -265,7 +265,8 @@ export const CartDrawer = () => {
                   onChange={(e) => setKitchenNotes(e.target.value)}
                   placeholder="مثال: يرجى وضع الصوص في علبة منفصلة، بدون بصل، زيادة مناديل..."
                   rows={2}
-                  className="w-full text-xs p-2.5 rounded-xl border border-[#3A2822] focus:outline-none focus:ring-2 focus:ring-[#FF7A00] text-right bg-[#14100E] text-[#FFF8F0] placeholder:text-[#B8A99A]/50"
+                  style={{ fontSize: '16px' }}
+                  className="w-full text-base p-2.5 rounded-xl border border-[#FFF8F0]/18 focus:outline-none focus:ring-2 focus:ring-[#F97316] text-right bg-[#1D0903] text-[#FFF8F0] placeholder:text-[#FFF8F0]/45"
                 />
               </div>
             )}
@@ -273,19 +274,19 @@ export const CartDrawer = () => {
 
           {/* Sticky Bottom Summary in Cart */}
           {cartItems.length > 0 && (
-            <div className="p-4 bg-[#211A17] border-t border-[#3A2822] space-y-3 sticky bottom-0 z-10 shadow-lg">
-              <div className="space-y-1.5 text-xs text-[#B8A99A]">
+            <div className="p-4 bg-[#2B0D05] border-t border-[#FFF8F0]/15 space-y-3 sticky bottom-0 z-10 shadow-lg">
+              <div className="space-y-1.5 text-xs text-[#E2D3C4]">
                 <div className="flex justify-between">
                   <span>المجموع الفرعي:</span>
                   <span className="font-bold text-[#FFF8F0]">{formatDZD(subtotal)}</span>
                 </div>
-                <div className="flex justify-between text-[#B8A99A]">
-                  <span>التوصيل (تقديري):</span>
-                  <span>حسب موقع الزبون 📍</span>
+                <div className="flex justify-between text-[#E2D3C4]">
+                  <span>التوصيل (المدية):</span>
+                  <span className="text-[#F97316] font-bold">200 دج 📍</span>
                 </div>
-                <div className="flex justify-between text-base font-black text-[#FFF8F0] pt-2 border-t border-[#3A2822] font-tajawal">
+                <div className="flex justify-between text-base font-black text-[#FFF8F0] pt-2 border-t border-[#FFF8F0]/15 font-tajawal">
                   <span>الإجمالي:</span>
-                  <span className="text-[#FF7A00] text-lg font-black font-tajawal">
+                  <span className="text-[#F97316] text-lg font-black font-tajawal">
                     {formatDZD(subtotal)}
                   </span>
                 </div>
@@ -293,10 +294,10 @@ export const CartDrawer = () => {
 
               <button
                 onClick={handleConfirmOrder}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-500 hover:to-brand-600 active:scale-95 text-white font-black py-3.5 px-4 rounded-2xl shadow-md transition-all text-sm"
+                className="w-full flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA580C] active:scale-95 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg border border-white/20 transition-all text-sm"
               >
                 <span>تأكيد الطلب الآن</span>
-                <ArrowLeft className="w-4 h-4" />
+                <ArrowLeft className="w-4 h-4 text-white" />
               </button>
             </div>
           )}

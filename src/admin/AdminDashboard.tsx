@@ -689,7 +689,7 @@ export default function AdminDashboard() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@gmail.com"
-                style={{ width: '100%', height: '46px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif", outline: 'none' }}
+                style={{ width: '100%', height: '46px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '16px', fontFamily: "'Cairo', sans-serif", outline: 'none' }}
               />
             </div>
 
@@ -701,7 +701,7 @@ export default function AdminDashboard() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                style={{ width: '100%', height: '46px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif", outline: 'none' }}
+                style={{ width: '100%', height: '46px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '16px', fontFamily: "'Cairo', sans-serif", outline: 'none' }}
               />
             </div>
 
@@ -1438,7 +1438,7 @@ export default function AdminDashboard() {
                         value={itemFormName}
                         onChange={(e) => setItemFormName(e.target.value)}
                         placeholder="مثال: صوص رانش حار"
-                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
+                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '16px', fontFamily: "'Cairo', sans-serif" }}
                       />
                     </div>
 
@@ -1447,7 +1447,7 @@ export default function AdminDashboard() {
                       <select
                         value={itemFormCategory}
                         onChange={(e) => setItemFormCategory(e.target.value)}
-                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
+                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '16px', fontFamily: "'Cairo', sans-serif" }}
                       >
                         <option value="wing_size">أحجام الأجنحة (wing_size)</option>
                         <option value="coating_sauce">صوصات الأجنحة (coating_sauce)</option>
@@ -1465,7 +1465,7 @@ export default function AdminDashboard() {
                         value={itemFormPrice}
                         onChange={(e) => setItemFormPrice(Number(e.target.value))}
                         placeholder="250"
-                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '13px', fontFamily: "'Cairo', sans-serif" }}
+                        style={{ width: '100%', height: '42px', padding: '0 12px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '10px', color: '#FFFFFF', fontSize: '16px', fontFamily: "'Cairo', sans-serif" }}
                       />
                     </div>
 
@@ -1490,7 +1490,7 @@ export default function AdminDashboard() {
                             border: '1px solid rgba(255,255,255,0.12)',
                             borderRadius: '10px',
                             color: '#FFFFFF',
-                            fontSize: '13px',
+                            fontSize: '16px',
                             fontFamily: "'Cairo', sans-serif"
                           }}
                         />
@@ -1679,7 +1679,7 @@ export default function AdminDashboard() {
                   type="number"
                   value={settings.delivery_fee}
                   onChange={(e) => setSettings((s: any) => ({ ...s, delivery_fee: Number(e.target.value) }))}
-                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '14px', fontFamily: "'Cairo', sans-serif" }}
+                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '16px', fontFamily: "'Cairo', sans-serif" }}
                 />
               </div>
 
@@ -1693,7 +1693,7 @@ export default function AdminDashboard() {
                   value={settings.telegram_bot_token || ''}
                   onChange={(e) => setSettings((s: any) => ({ ...s, telegram_bot_token: e.target.value }))}
                   placeholder="123456789:ABCdefGHIjklMNOpqrSTUvwxYZ"
-                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontFamily: 'monospace' }}
+                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '16px', fontFamily: 'monospace' }}
                 />
                 <div style={{ fontSize: '11px', color: '#8E9BAE', marginTop: '4px' }}>
                   يُنشأ من @BotFather على تيليجرام لاستقبال الطلبات فورياً على هاتفك
@@ -1710,7 +1710,7 @@ export default function AdminDashboard() {
                   value={settings.telegram_chat_id || ''}
                   onChange={(e) => setSettings((s: any) => ({ ...s, telegram_chat_id: e.target.value }))}
                   placeholder="987654321 أو -100123456789"
-                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '13px', fontFamily: 'monospace' }}
+                  style={{ width: '100%', height: '44px', padding: '0 14px', backgroundColor: '#14100E', border: '1px solid rgba(255,255,255,0.12)', borderRadius: '12px', color: '#FFFFFF', fontSize: '16px', fontFamily: 'monospace' }}
                 />
               </div>
 

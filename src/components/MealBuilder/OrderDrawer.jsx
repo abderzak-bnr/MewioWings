@@ -204,54 +204,58 @@ export const OrderDrawer = ({
               </div>
 
               {/* Delivery Info in Médéa */}
-              <div className="bg-[#4A190B] rounded-2xl border border-[#5C200E] p-4 space-y-3">
+              <div className="bg-[#2B0D05] rounded-2xl border border-[#FFF8F0]/15 p-4 space-y-3">
                 <div className="flex items-center gap-1.5 text-xs font-black text-[#FFF8F0]">
-                  <MapPin className="w-3.5 h-3.5 text-[#FF7A00]" />
+                  <MapPin className="w-3.5 h-3.5 text-[#F97316]" />
                   <span>معلومات التوصيل أو الاستلام في المدية:</span>
                 </div>
 
                 <div className="space-y-2 text-xs">
                   <div>
-                    <label className="text-[#D4C7BA] block mb-1">الاسم الكريم:</label>
+                    <label className="text-[#E2D3C4] block mb-1">الاسم الكريم:</label>
                     <input
                       type="text"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
                       placeholder="مثال: يونس بن علي"
-                      className="w-full text-xs p-2.5 rounded-xl border border-[#5C200E] bg-[#2B0D05] text-[#FFF8F0] placeholder:text-[#D4C7BA]/50 focus:outline-none focus:border-[#FF7A00] text-right"
+                      style={{ fontSize: '16px' }}
+                      className="w-full text-base p-2.5 rounded-xl border border-[#FFF8F0]/18 bg-[#1D0903] text-[#FFF8F0] placeholder:text-[#FFF8F0]/45 focus:outline-none focus:border-[#F97316] text-right"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[#D4C7BA] block mb-1">رقم الهاتف:</label>
+                    <label className="text-[#E2D3C4] block mb-1">رقم الهاتف:</label>
                     <input
                       type="tel"
                       value={customerPhone}
                       onChange={(e) => setCustomerPhone(e.target.value)}
                       placeholder="مثال: 0555 12 34 56"
-                      className="w-full text-xs p-2.5 rounded-xl border border-[#5C200E] bg-[#2B0D05] text-[#FFF8F0] placeholder:text-[#D4C7BA]/50 focus:outline-none focus:border-[#FF7A00] text-right"
+                      style={{ fontSize: '16px' }}
+                      className="w-full text-base p-2.5 rounded-xl border border-[#FFF8F0]/18 bg-[#1D0903] text-[#FFF8F0] placeholder:text-[#FFF8F0]/45 focus:outline-none focus:border-[#F97316] text-right"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[#D4C7BA] block mb-1">العنوان / الحي في المدية:</label>
+                    <label className="text-[#E2D3C4] block mb-1">العنوان / الحي في المدية:</label>
                     <input
                       type="text"
                       value={customerAddress}
                       onChange={(e) => setCustomerAddress(e.target.value)}
                       placeholder="مثال: حي المصلى، قرب مسجد النور"
-                      className="w-full text-xs p-2.5 rounded-xl border border-[#5C200E] bg-[#2B0D05] text-[#FFF8F0] placeholder:text-[#D4C7BA]/50 focus:outline-none focus:border-[#FF7A00] text-right"
+                      style={{ fontSize: '16px' }}
+                      className="w-full text-base p-2.5 rounded-xl border border-[#FFF8F0]/18 bg-[#1D0903] text-[#FFF8F0] placeholder:text-[#FFF8F0]/45 focus:outline-none focus:border-[#F97316] text-right"
                     />
                   </div>
 
                   <div>
-                    <label className="text-[#D4C7BA] block mb-1">ملاحظات للمطبخ (اختياري):</label>
+                    <label className="text-[#E2D3C4] block mb-1">ملاحظات للمطبخ (اختياري):</label>
                     <textarea
                       value={kitchenNotes}
                       onChange={(e) => setKitchenNotes(e.target.value)}
                       placeholder="مثال: صوص إضافي في علبة صغيرة، بدون بهارات حارة جداً..."
                       rows={2}
-                      className="w-full text-xs p-2.5 rounded-xl border border-[#5C200E] bg-[#2B0D05] text-[#FFF8F0] placeholder:text-[#D4C7BA]/50 focus:outline-none focus:border-[#FF7A00] text-right"
+                      style={{ fontSize: '16px' }}
+                      className="w-full text-base p-2.5 rounded-xl border border-[#FFF8F0]/18 bg-[#1D0903] text-[#FFF8F0] placeholder:text-[#FFF8F0]/45 focus:outline-none focus:border-[#F97316] text-right"
                     />
                   </div>
                 </div>
@@ -328,10 +332,10 @@ export const OrderDrawer = ({
 
         {/* Drawer Sticky Bottom CTA */}
         {!orderConfirmed && (
-          <div className="p-4 bg-[#4A190B] border-t border-[#5C200E] space-y-3">
+          <div className="p-4 bg-[#2B0D05] border-t border-[#FFF8F0]/15 space-y-3">
             <div className="flex justify-between items-center text-sm font-black text-[#FFF8F0] font-tajawal">
               <span>الإجمالي النهائي:</span>
-              <span className="text-xl text-[#FF7A00]">
+              <span className="text-xl text-[#F97316]">
                 {formatDZD(totalPrice)}
               </span>
             </div>
@@ -339,10 +343,10 @@ export const OrderDrawer = ({
             <button
               type="button"
               onClick={handleConfirmOrder}
-              className="w-full flex items-center justify-center gap-2 bg-[#2B0D05] hover:bg-[#3D1408] border border-[#5C200E] active:scale-95 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition-all text-sm"
+              className="w-full flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA580C] border border-white/20 active:scale-95 text-white font-black py-3.5 px-4 rounded-2xl shadow-lg transition-all text-sm"
             >
               <span>تأكيد الطلب الآن</span>
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 text-white" />
             </button>
           </div>
         )}
