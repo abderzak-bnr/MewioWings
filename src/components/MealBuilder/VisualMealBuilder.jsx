@@ -39,7 +39,7 @@ export const VisualMealBuilder = ({
           <img
             src="/tray.webp"
             alt="Serving Tray"
-            className="absolute inset-0 w-full h-full object-contain drop-shadow-2xl pointer-events-none select-none z-0"
+            className="absolute inset-0 w-full h-full object-contain drop-shadow-none shadow-none pointer-events-none select-none z-0"
             onError={(e) => {
               e.currentTarget.onerror = null;
               e.currentTarget.src = '/public/tray.webp';
@@ -73,10 +73,10 @@ export const VisualMealBuilder = ({
           </div>
 
           {/* Grounded Realistic Contact Shadow directly underneath food on kraft paper */}
-          <div className="absolute bottom-[16%] left-1/2 -translate-x-1/2 w-[52%] h-[16px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(35,18,6,0.65)_0%,rgba(35,18,6,0.25)_55%,transparent_75%)] blur-[3px] pointer-events-none z-[9]" />
+          <div className="absolute bottom-[16%] left-1/2 -translate-x-1/2 -translate-y-2 translate-x-2 w-[52%] h-[16px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(35,18,6,0.65)_0%,rgba(35,18,6,0.25)_55%,transparent_75%)] blur-[3px] pointer-events-none z-[9]" />
 
           {/* Food/Meal Layer Container (Safely padded inside kraft paper boundaries so food never overlaps the raised rim) */}
-          <div className="absolute inset-[10%_14%_12%_14%] z-10 pointer-events-none flex items-center justify-center">
+          <div className="absolute inset-[10%_14%_12%_14%] z-10 pointer-events-none flex items-center justify-center -translate-y-2 translate-x-2">
             {/* ========================================================
                 LAYER 1 (z-10): Base Wings & Plate Layer
                 Dynamically swaps based on selected quantity (6, 12, 24)
@@ -115,7 +115,10 @@ export const VisualMealBuilder = ({
                       opacity: selectedSauce.opacity || 0.96,
                     }}
                     initial={false}
-                    animate={{ opacity: selectedSauce.opacity || 0.96, scale: selectedSauce.imageScale || 1 }}
+                    animate={{
+                      opacity: selectedSauce.opacity || 0.96,
+                      scale: ((selectedSauce.id === 'sauce_buffalo' || selectedSauce.id === 'buffalo') && selectedQuantity?.count === 3) ? 0.88 : (selectedSauce.imageScale || 1),
+                    }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15, ease: 'easeOut' }}
                   />

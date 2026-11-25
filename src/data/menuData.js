@@ -157,7 +157,7 @@ export const COATING_SAUCES = [
     heatLevel: 3,
     isSignature: false,
     colorHex: "#DC2626",
-    imageScale: 0.88,
+    imageScale: 1.0,
     inStock: true,
   },
   {

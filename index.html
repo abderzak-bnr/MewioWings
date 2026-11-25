@@ -331,9 +331,9 @@
 
     .main-plate-wrap {
       width: 100%;
-      max-width: 195px;
-      max-height: 165px;
-      height: 165px;
+      max-width: 215px;
+      max-height: 180px;
+      height: 180px;
       position: relative;
       display: flex;
       align-items: center;
@@ -356,8 +356,8 @@
     .real-wing-overlay {
       width: 100%;
       height: 100%;
-      max-width: 195px;
-      max-height: 165px;
+      max-width: 215px;
+      max-height: 180px;
       aspect-ratio: 195 / 165;
       object-fit: contain;
       z-index: 12;
@@ -497,15 +497,15 @@
       pointer-events: auto;
     }
 
-    /* 8 Dip slots contained strictly inside the 82px left column */
-    .dip-slot-0 { left: 0px; top: 4px; }
-    .dip-slot-1 { right: 0px; top: 16px; }
-    .dip-slot-2 { left: 0px; top: 48px; }
-    .dip-slot-3 { right: 0px; top: 60px; }
-    .dip-slot-4 { left: 0px; top: 92px; }
-    .dip-slot-5 { right: 0px; top: 104px; }
-    .dip-slot-6 { left: 0px; top: 136px; }
-    .dip-slot-7 { right: 0px; top: 148px; }
+    /* 8 Dip slots contained comfortably inside kraft paper area */
+    .dip-slot-0 { left: 4px; top: 6px; }
+    .dip-slot-1 { right: 2px; top: 18px; }
+    .dip-slot-2 { left: 4px; top: 48px; }
+    .dip-slot-3 { right: 2px; top: 60px; }
+    .dip-slot-4 { left: 4px; top: 90px; }
+    .dip-slot-5 { right: 2px; top: 102px; }
+    .dip-slot-6 { left: 4px; top: 132px; }
+    .dip-slot-7 { right: 2px; top: 144px; }
 
     /* Dip quantity badge on single bowl */
     .dip-qty-badge {
@@ -1614,7 +1614,8 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
-      filter: drop-shadow(0 20px 25px rgba(0, 0, 0, 0.75)) drop-shadow(0 8px 10px rgba(0, 0, 0, 0.5));
+      filter: none;
+      box-shadow: none;
       pointer-events: none;
       user-select: none;
       z-index: 1;
@@ -1657,15 +1658,16 @@
       direction: ltr; /* Keeps Left column = Dips, Center = Wings, Right = Sides */
     }
 
-    /* Left Column (82px): Dedicated to Side Dips */
+    /* Left Column (82px): Dedicated to Side Dips (Shifted inward to right & slightly downward away from rim) */
     .tray-col-dips {
       width: 82px;
       height: 100%;
       position: relative;
       direction: rtl;
+      transform: translate(12px, 8px);
     }
 
-    /* Center Column (1fr): Dedicated to Main Wings Box */
+    /* Center Column (1fr): Dedicated to Main Wings Box (Centered & Slightly Lifted Up + Right) */
     .tray-col-wings {
       width: 100%;
       height: 100%;
@@ -1674,6 +1676,7 @@
       justify-content: center;
       position: relative;
       min-width: 0;
+      transform: translate(8px, -10px);
     }
 
     /* Right Column (95px): Dedicated to Sides (Fries, Coleslaw) */
@@ -1697,7 +1700,7 @@
     /* Grounded Contact Shadow directly underneath wings box on kraft paper */
     .wings-contact-shadow {
       position: absolute;
-      width: 155px;
+      width: 170px;
       height: 18px;
       border-radius: 50%;
       background: radial-gradient(ellipse at center, rgba(35, 18, 6, 0.65) 0%, rgba(35, 18, 6, 0.25) 55%, transparent 75%);
@@ -2227,7 +2230,7 @@
                 <div class="main-plate-wrap" id="mainPlateWrap">
                   <!-- Single Clean Real PNG Image (Snappy Instant Switching, Zero Layering/Lag) -->
                   <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
-                       width="195" height="165"
+                       width="215" height="180"
                        fetchpriority="high"
                        decoding="async"
                        onerror="handleWingImgError(this)" 
@@ -2702,7 +2705,7 @@
           color: "#DC2626",
           stops: ["#EF4444", "#B91C1C", "#7F1D1D"],
           hasHeatGlow: true,
-          imageScale: 0.88,
+          imageScale: 1.0,
           description: "الصوص الأمريكي الكلاسيكي الأصلي بلون أحمر ناري ولذعة لاذعة",
         },
       ],
@@ -2994,7 +2997,7 @@
             color: "#DC2626",
             stops: ["#EF4444", "#B91C1C", "#7F1D1D"],
             hasHeatGlow: true,
-            imageScale: 0.88,
+            imageScale: 1.0,
             description: "الصوص الأمريكي الكلاسيكي الأصلي بلون أحمر ناري ولذعة لاذعة",
           },
         };
@@ -3025,7 +3028,7 @@
             badge: meta.badge || "",
             isPlain: sId === "crispy",
             image_url: dbItem.image_url || null,
-            imageScale: (meta && typeof meta.imageScale === "number") ? meta.imageScale : (sId === "buffalo" ? 0.88 : 1.0),
+            imageScale: (meta && typeof meta.imageScale === "number") ? meta.imageScale : 1.0,
             is_available: dbItem.is_available !== false,
             sort_order: Number(dbItem.sort_order) || 0
           };
@@ -3591,12 +3594,16 @@
       const plateWrap = document.getElementById("mainPlateWrap");
       if (!img) return;
 
-      const currentCount = state.wingsCount || 6;
-      const wingScales = { 3: 0.82, 6: 0.88, 9: 0.92, 12: 0.96, 20: 1.0 };
-      const currentScale = wingScales[currentCount] || 0.88;
+      const currentCount = Number(state.wingsCount) || 6;
+      // Proportionally enlarged wing boxes (3-piece increased by ~25%, 6-20 increased by 8-10%)
+      const wingScales = { 3: 1.03, 6: 0.96, 9: 1.01, 12: 1.05, 20: 1.10 };
+      const currentScale = wingScales[currentCount] || 0.96;
       const currentSauceId = state.selectedSauceId || "crispy";
       const sauceObj = state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId) : null;
-      const sauceScale = (sauceObj && typeof sauceObj.imageScale === "number") ? sauceObj.imageScale : (currentSauceId === "buffalo" ? 0.88 : 1.0);
+      // Buffalo scale reduction (0.88) applied ONLY for 3 pieces; 6, 9, 12, 20 remain 1.0
+      const isBuffalo = (currentSauceId === "buffalo" || (sauceObj && sauceObj.id === "buffalo"));
+      const isThreePiece = (currentCount === 3);
+      const sauceScale = (isBuffalo && isThreePiece) ? 0.88 : ((sauceObj && typeof sauceObj.imageScale === "number") ? sauceObj.imageScale : 1.0);
       const finalScale = Number((currentScale * sauceScale).toFixed(4));
 
       // Known sauces with custom box PNGs in codebase
