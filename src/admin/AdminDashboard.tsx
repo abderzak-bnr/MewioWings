@@ -170,6 +170,7 @@ export default function AdminDashboard() {
   const [settingsLoading, setSettingsLoading] = useState(false);
   const [settingsSavedMsg, setSettingsSavedMsg] = useState('');
   const [telegramTestMsg, setTelegramTestMsg] = useState('');
+  const [statusToggling, setStatusToggling] = useState(false);
 
   // Check auth session on mount
   useEffect(() => {
@@ -530,6 +531,38 @@ export default function AdminDashboard() {
       console.error('Error fetching settings:', err);
     } finally {
       setSettingsLoading(false);
+    }
+  };
+
+  const handleToggleStoreStatus = async () => {
+    if (statusToggling) return;
+    setStatusToggling(true);
+    const prevStatus = settings.is_open !== false;
+    const nextStatus = !prevStatus;
+
+    // Optimistically update local state
+    setSettings((s: any) => ({ ...s, is_open: nextStatus }));
+
+    try {
+      const { data, error } = await supabase
+        .from('store_settings')
+        .update({ is_open: nextStatus })
+        .eq('id', 1)
+        .select();
+
+      if (error || !data || data.length === 0) {
+        // Revert toggle and show Arabic alert
+        setSettings((s: any) => ({ ...s, is_open: prevStatus }));
+        alert('فشل حفظ الحالة: تحقق من صلاحيات الحساب');
+      } else {
+        setSettingsSavedMsg(nextStatus ? 'تم فتح المطعم' : 'تم إغلاق المطعم');
+        setTimeout(() => setSettingsSavedMsg(''), 3000);
+      }
+    } catch (err: any) {
+      setSettings((s: any) => ({ ...s, is_open: prevStatus }));
+      alert('فشل حفظ الحالة: تحقق من صلاحيات الحساب');
+    } finally {
+      setStatusToggling(false);
     }
   };
 
@@ -1617,7 +1650,8 @@ export default function AdminDashboard() {
 
                 <button
                   type="button"
-                  onClick={() => setSettings((s: any) => ({ ...s, is_open: !s.is_open }))}
+                  disabled={statusToggling}
+                  onClick={handleToggleStoreStatus}
                   style={{
                     padding: '8px 16px',
                     borderRadius: '9999px',
@@ -1626,11 +1660,13 @@ export default function AdminDashboard() {
                     color: '#FFFFFF',
                     fontSize: '12px',
                     fontWeight: 900,
-                    cursor: 'pointer',
+                    cursor: statusToggling ? 'not-allowed' : 'pointer',
+                    opacity: statusToggling ? 0.7 : 1,
                     fontFamily: "'Cairo', sans-serif",
+                    transition: 'all 0.2s ease',
                   }}
                 >
-                  {settings.is_open ? 'مفتوح' : 'مغلق'}
+                  {statusToggling ? 'جارٍ الحفظ...' : (settings.is_open ? 'مفتوح' : 'مغلق')}
                 </button>
               </div>
 

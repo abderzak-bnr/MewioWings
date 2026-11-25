@@ -5015,137 +5015,45 @@
         }
       }
 
-      const orderId = Math.floor(100000 + Math.random() * 900000);
       const orderedItems = [...state.cartItems];
 
-      // 1. Insert into Supabase 'orders' table (exact schema, NO .select() chained!)
-      const orderPayload = {
-        customer_phone: cleanPhone,
-        customer_address: rawAddress,
-        notes: notes || "",
-        items: orderedItems,
-        subtotal: subtotal,
-        delivery_fee: MENU_CONFIG.rules.deliveryFee,
-        total: grandTotal,
-        status: "new",
-      };
+      // 1. Send Order to Secure Serverless Endpoint (/api/create-order)
+      let result;
+      try {
+        const response = await fetch("/api/create-order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customer_phone: cleanPhone,
+            customer_address: rawAddress,
+            notes: notes || "",
+            items: orderedItems,
+          }),
+        });
 
-      if (!window.supabase) {
-        console.error("Supabase client is not initialized");
-        showToast("تعذر الاتصال بالخادم لتسجيل الطلب. يرجى إعادة المحاولة.", "error");
+        result = await response.json();
+
+        if (!response.ok || !result.success) {
+          const errMsg = result && result.error ? result.error : "تعذر تأكيد طلبك حالياً، يرجى إعادة المحاولة";
+          showToast(errMsg, "error");
+          restoreSubmitBtn();
+          return;
+        }
+      } catch (netErr) {
+        console.error("Order submission network error:", netErr);
+        showToast("فشل الاتصال بالخادم لتسجيل طلبك. يرجى التحقق من اتصالك بالإنترنت والمحاولة مجدداً.", "error");
         restoreSubmitBtn();
         return;
       }
 
-      // Anonymous order insert (without .select() or .single() to prevent 403 RLS violation)
-      const { error: insertErr } = await window.supabase.from("orders").insert([orderPayload]);
-
-      if (insertErr) {
-        console.error("Supabase order insert error:", insertErr);
-        showToast(`حدث خطأ أثناء تسجيل طلبك: ${insertErr.message || "يرجى المحاولة مجدداً"}`, "error");
-        restoreSubmitBtn();
-        return;
-      }
-
-      // Order Insert Succeeded: Record cooldown timestamp
+      // Order Succeeded: Record cooldown timestamp
       localStorage.setItem("mewio_last_order_timestamp", Date.now().toString());
       state.isSubmittingOrder = false;
 
-      console.log("Order saved to Supabase successfully!");
-
-      // 2. Trigger Telegram Alert if credentials are configured
-      // TODO: move to Edge Function - Client-side Telegram dispatch exposes bot tokens in network requests.
-      // Move this logic to a Supabase Database Webhook or Edge Function triggered on orders.INSERT in Step 2.
-      try {
-        let botToken = state.storeSettings?.telegram_bot_token;
-        let chatId = state.storeSettings?.telegram_chat_id;
-
-        if (!botToken || !chatId) {
-          const { data: freshSettings, error: freshErr } = await window.supabase
-            .from("store_settings")
-            .select("telegram_bot_token, telegram_chat_id")
-            .eq("id", 1)
-            .maybeSingle();
-
-          if (!freshErr && freshSettings) {
-            botToken = freshSettings.telegram_bot_token;
-            chatId = freshSettings.telegram_chat_id;
-            if (state.storeSettings) {
-              state.storeSettings.telegram_bot_token = botToken;
-              state.storeSettings.telegram_chat_id = chatId;
-            }
-          }
-        }
-
-        if (botToken && chatId) {
-          const cleanToken = String(botToken).trim();
-          const cleanChatId = String(chatId).trim();
-
-          if (cleanToken && cleanChatId) {
-            let teleText = `🍗 <b>طلب جديد #${orderId}</b>\n`;
-            teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
-            teleText += `📞 <b>الهاتف:</b> <code>${cleanPhone}</code>\n`;
-            teleText += `📍 <b>العنوان:</b> ${escapeHtml(rawAddress)}\n`;
-            if (notes) teleText += `📝 <b>ملاحظات:</b> ${escapeHtml(notes)}\n`;
-            teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
-            teleText += `📦 <b>الوجبات (${orderedItems.length}):</b>\n`;
-            orderedItems.forEach((it, idx) => {
-              const lTot = it.unitPrice * (it.qty || 1);
-              teleText += `• [${idx + 1}] <b>${escapeHtml(it.title)}</b> (×${it.qty || 1}) — ${lTot.toLocaleString("fr-DZ")} دج\n`;
-              if (it.type === "custom") {
-                teleText += `   - حرارة: ${escapeHtml(it.spiceTitle)}\n`;
-                if (it.selectedDips && Object.keys(it.selectedDips).length > 0) {
-                  const freeAllowance = it.freeDipsAllowance || getFreeDipsAllowance(it.wingsCount);
-                  const dipsInfo = calculateDipsBreakdown(it.selectedDips, freeAllowance);
-                  const dipsTextList = dipsInfo.items.map(d => {
-                    if (d.paidQty === 0) return `${escapeHtml(d.name)} ×${d.qty} (مجاني)`;
-                    if (d.freeQty === 0) return `${escapeHtml(d.name)} ×${d.qty} (+${d.cost} دج)`;
-                    return `${escapeHtml(d.name)} ×${d.qty} (${d.freeQty} مجاني + ${d.paidQty} مدفوع)`;
-                  });
-                  teleText += `   - الصوصات (${freeAllowance} مجانية): ${dipsTextList.join("، ")}\n`;
-                }
-                if (it.selectedSides && Object.keys(it.selectedSides).length > 0) {
-                  const sidesTextList = Object.entries(it.selectedSides)
-                    .filter(([_, q]) => q > 0)
-                    .map(([id, q]) => {
-                      const s = MENU_CONFIG.sides.find(x => x.id === id);
-                      return `${escapeHtml(s ? s.name : id)} ×${q}`;
-                    });
-                  if (sidesTextList.length > 0) {
-                    teleText += `   - الإضافات: ${sidesTextList.join("، ")}\n`;
-                  }
-                }
-              } else {
-                teleText += `   - صوص: ${escapeHtml(it.sauceName)} • حرارة: ${escapeHtml(it.spiceTitle)}\n`;
-                if (it.includesSummary) teleText += `   - يتضمن: ${escapeHtml(it.includesSummary)}\n`;
-              }
-            });
-            teleText += `━━━━━━━━━━━━━━━━━━━━\n`;
-            teleText += `💰 <b>المجموع الفرعي:</b> ${subtotal.toLocaleString("fr-DZ")} دج\n`;
-            teleText += `🛵 <b>التوصيل:</b> ${MENU_CONFIG.rules.deliveryFee} دج\n`;
-            teleText += `💵 <b>المجموع النهائي:</b> <b>${grandTotal.toLocaleString("fr-DZ")} دج</b>\n`;
-            teleText += `⏰ <b>الوقت:</b> ${new Date().toLocaleTimeString("ar-DZ")}\n`;
-
-            const teleRes = await fetch(`https://api.telegram.org/bot${cleanToken}/sendMessage`, {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                chat_id: cleanChatId,
-                text: teleText,
-                parse_mode: "HTML"
-              })
-            });
-            const teleJson = await teleRes.json();
-            if (!teleJson.ok) {
-              console.error("Telegram API response error:", teleJson);
-            } else {
-              console.log("Telegram order notification sent successfully!");
-            }
-          }
-        }
-      } catch (tErr) {
-        console.error("Telegram notification error:", tErr);
-      }
+      const orderId = result.orderId || Math.floor(100000 + Math.random() * 900000);
+      const verifiedTotal = typeof result.total === "number" ? result.total : grandTotal;
 
       // 3. Build WhatsApp Message (Clean, professional, zero emojis)
       let msg = `*طلب جديد من مطعم WINGS (المدية)*\n`;
@@ -5195,7 +5103,7 @@
       msg += `------------------------------------\n`;
       msg += `• المجموع الفرعي: ${subtotal.toLocaleString("fr-DZ")} دج\n`;
       msg += `• رسوم التوصيل (المدية): ${MENU_CONFIG.rules.deliveryFee} دج\n`;
-      msg += `• المجموع النهائي للدفع: *${grandTotal.toLocaleString("fr-DZ")} دج*\n`;
+      msg += `• المجموع النهائي للدفع: *${verifiedTotal.toLocaleString("fr-DZ")} دج*\n`;
       msg += `------------------------------------\n`;
       msg += `شكراً لاختياركم مطعم WINGS!`;
 
@@ -5206,7 +5114,7 @@
       saveCartToStorage();
       updateCartBadge();
 
-      renderOrderSuccessScreen(orderId, cleanPhone, rawAddress, notes, grandTotal, whatsappUrl, orderedItems);
+      renderOrderSuccessScreen(orderId, cleanPhone, rawAddress, notes, verifiedTotal, whatsappUrl, orderedItems);
     }
 
     function renderOrderSuccessScreen(orderId, phone, address, notes, total, whatsappUrl, orderedItems) {
