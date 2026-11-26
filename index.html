@@ -349,7 +349,7 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+      transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
       transform-origin: center center;
     }
 
@@ -362,49 +362,41 @@
       pointer-events: none;
     }
 
-    /* Transparent PNG Wings Box: Dual-Layer Ultra-Smooth 60fps Native Crossfade */
+    /* Transparent PNG Wings Box: Single-Image Clean Pop-In Animation (Zero Ghosting / Double-Exposure) */
     .real-wing-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
       max-width: 215px;
       max-height: 180px;
       aspect-ratio: 195 / 165;
       object-fit: contain;
+      z-index: 12;
       pointer-events: none;
       filter: drop-shadow(0 3px 3px rgba(35, 18, 6, 0.55)) drop-shadow(0 8px 12px rgba(35, 18, 6, 0.30));
       opacity: 1;
-      transform: translateZ(0);
+      transform: scale(1) translateY(0);
       transform-origin: center center;
-      will-change: opacity, transform;
+      will-change: transform, opacity;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
-    }
-    .wing-layer-back {
-      z-index: 11;
-      opacity: 1;
-    }
-    .wing-layer-front {
-      z-index: 12;
-      opacity: 1;
     }
     .real-wing-overlay.switching {
       opacity: 0.12;
       transform: scale(0.96) translateZ(0);
     }
 
-    @keyframes productTrayEnter {
+    @keyframes wingPopIn {
       0% {
-        opacity: 0.9;
+        opacity: 0.35;
+        transform: scale(0.92) translateY(6px);
       }
       100% {
         opacity: 1;
+        transform: scale(1) translateY(0);
       }
     }
-    .product-tray-enter {
-      animation: productTrayEnter 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    .wing-pop-in {
+      animation: wingPopIn 220ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
     }
 
     @keyframes titleGlazeEnter {
@@ -2331,13 +2323,8 @@
                 <div class="wings-contact-shadow" id="wingsContactShadow"></div>
 
                 <div class="main-plate-wrap" id="mainPlateWrap">
-                  <!-- Dual-Layer Real PNG Images for 60fps Native Crossfade (Zero Pop / Zero Blank Flash) -->
-                  <img id="realWingImgBack" class="real-wing-overlay wing-layer-back" src="/images/wings-crispy-6.png" alt="Wings Under" 
-                       width="215" height="180"
-                       fetchpriority="high"
-                       decoding="async"
-                       onerror="handleWingImgError(this)" />
-                  <img id="realWingImg" class="real-wing-overlay wing-layer-front" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
+                  <!-- Single Clean Real PNG Image (Snappy Pop-In Animation, Zero Ghosting) -->
+                  <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
                        width="215" height="180"
                        fetchpriority="high"
                        decoding="async"
@@ -2941,7 +2928,6 @@
     };
 
     let currentWingImgLoadedSrc = "";
-    let wingTransitionId = 0;
 
     /**
      * INITIALIZATION, CART RESTORATION & COMPLETE PNG ASSET PRELOADING
@@ -3701,16 +3687,14 @@
     }
 
     /**
-     * DUAL-LAYER REAL WINGS PNG RENDERER WITH 60FPS CROSSFADE & SCALE TRANSITION
-     * Uses dual layers (#realWingImgFront and #realWingImgBack) inside #mainPlateWrap.
-     * Keeps previous image visible underneath while incoming image fades in (opacity: 0 -> 1)
-     * and smoothly springs (scale: 0.95 -> 1) using cubic-bezier(0.22, 1, 0.36, 1) over 280ms.
+     * DYNAMIC REAL WINGS PNG RENDERER WITH SNAPPY SINGLE-IMAGE POP-IN ANIMATION
+     * Single <img> rendering to completely eliminate ghosting / overlapping double-exposure.
+     * Transitions with a 220ms spring pop-in (scale: 0.92, translateY: 6px, opacity: 0.35 -> 1)
      */
     function renderWingsImage() {
-      const imgFront = document.getElementById("realWingImg");
-      const imgBack = document.getElementById("realWingImgBack");
+      const img = document.getElementById("realWingImg");
       const plateWrap = document.getElementById("mainPlateWrap");
-      if (!imgFront) return;
+      if (!img) return;
 
       const currentCount = Number(state.wingsCount) || 6;
       // Proportionally enlarged wing boxes (3-piece increased by ~25%, 6-20 increased by 8-10%)
@@ -3738,7 +3722,7 @@
 
       // Apply size scale on wrapper and sync contact shadow
       if (plateWrap) {
-        plateWrap.style.transform = `scale(${currentScale})`;
+        plateWrap.style.transform = `scale(${finalScale})`;
       }
 
       const shadow = document.getElementById("wingsContactShadow");
@@ -3759,85 +3743,15 @@
         glow.style.background = `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`;
       }
 
-      // Dual-Layer Crossfade & Scale Handling
-      if (!currentWingImgLoadedSrc) {
-        // First initial render: show immediately without delay
+      // Single-Image Instant Swap + Snappy Pop-In Animation
+      if (currentWingImgLoadedSrc !== targetSrc) {
         currentWingImgLoadedSrc = targetSrc;
-        imgFront.src = targetSrc;
-        imgFront.style.transition = "none";
-        imgFront.style.opacity = "1";
-        imgFront.style.transform = `scale(${sauceScale}) translateZ(0)`;
-        if (imgBack) {
-          imgBack.src = targetSrc;
-          imgBack.style.transition = "none";
-          imgBack.style.opacity = "1";
-          imgBack.style.transform = `scale(${sauceScale}) translateZ(0)`;
-        }
-        return;
-      }
+        img.src = targetSrc;
 
-      if (currentWingImgLoadedSrc === targetSrc) {
-        // Image source unchanged, update transforms cleanly
-        imgFront.style.transform = `scale(${sauceScale}) translateZ(0)`;
-        if (imgBack) {
-          imgBack.style.transform = `scale(${sauceScale}) translateZ(0)`;
-        }
-        return;
-      }
-
-      // Image source changed: Perform dual-layer smooth crossfade + subtle scale
-      const thisTransitionId = ++wingTransitionId;
-
-      // Ensure the back layer holds the previous image and stays fully visible underneath
-      if (imgBack) {
-        if (imgFront.src && !imgFront.src.endsWith(targetSrc)) {
-          imgBack.src = imgFront.src;
-        } else if (currentWingImgLoadedSrc) {
-          imgBack.src = currentWingImgLoadedSrc;
-        }
-        imgBack.style.transition = "none";
-        imgBack.style.opacity = "1";
-        imgBack.style.transform = `scale(${sauceScale}) translateZ(0)`;
-        imgBack.style.zIndex = "11";
-      }
-
-      // Prepare incoming front layer: transparent, slightly scaled down (0.95), transition: none
-      imgFront.style.zIndex = "12";
-      imgFront.style.transition = "none";
-      imgFront.style.opacity = "0";
-      imgFront.style.transform = `scale(${Number((sauceScale * 0.95).toFixed(4))}) translateZ(0)`;
-      imgFront.src = targetSrc;
-
-      const triggerFadeIn = () => {
-        if (thisTransitionId !== wingTransitionId) return;
-        void imgFront.offsetWidth; // Force reflow
-        requestAnimationFrame(() => {
-          if (thisTransitionId !== wingTransitionId) return;
-          imgFront.style.transition = "opacity 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 280ms cubic-bezier(0.22, 1, 0.36, 1)";
-          imgFront.style.opacity = "1";
-          imgFront.style.transform = `scale(${sauceScale}) translateZ(0)`;
-        });
-
-        // Once incoming image has faded in, update base layer so DOM stays clean
-        setTimeout(() => {
-          if (thisTransitionId !== wingTransitionId) return;
-          if (imgBack) {
-            imgBack.src = targetSrc;
-            imgBack.style.transform = `scale(${sauceScale}) translateZ(0)`;
-            imgBack.style.opacity = "1";
-          }
-          currentWingImgLoadedSrc = targetSrc;
-        }, 290);
-      };
-
-      if (typeof imgFront.decode === "function") {
-        imgFront.decode().then(triggerFadeIn).catch(triggerFadeIn);
-      } else {
-        if (imgFront.complete) {
-          triggerFadeIn();
-        } else {
-          imgFront.onload = triggerFadeIn;
-        }
+        // Restart CSS keyframe animation smoothly (opacity: 0.35 -> 1, scale: 0.92 -> 1, translateY: 6px -> 0)
+        img.classList.remove("wing-pop-in");
+        void img.offsetWidth; // Force DOM reflow
+        img.classList.add("wing-pop-in");
       }
     }
 
