@@ -349,7 +349,7 @@
       align-items: center;
       justify-content: center;
       pointer-events: none;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
       transform-origin: center center;
     }
 
@@ -362,23 +362,33 @@
       pointer-events: none;
     }
 
-    /* Transparent PNG Wings Box: Strict Bounding Box (Silky Smooth Scale & Glide Transition) */
+    /* Transparent PNG Wings Box: Dual-Layer Ultra-Smooth 60fps Native Crossfade */
     .real-wing-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       max-width: 215px;
       max-height: 180px;
       aspect-ratio: 195 / 165;
       object-fit: contain;
-      z-index: 12;
       pointer-events: none;
       filter: drop-shadow(0 3px 3px rgba(35, 18, 6, 0.55)) drop-shadow(0 8px 12px rgba(35, 18, 6, 0.30));
       opacity: 1;
       transform: translateZ(0);
       transform-origin: center center;
-      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
-      will-change: transform, opacity;
+      will-change: opacity, transform;
       backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .wing-layer-back {
+      z-index: 11;
+      opacity: 1;
+    }
+    .wing-layer-front {
+      z-index: 12;
+      opacity: 1;
     }
     .real-wing-overlay.switching {
       opacity: 0.12;
@@ -646,11 +656,14 @@
       z-index: 24;
       box-shadow: 0 4px 14px rgba(35, 18, 6, 0.4);
       white-space: nowrap;
+      transition: all 200ms cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform, opacity;
     }
     .sauce-badge-dot {
       width: 7px;
       height: 7px;
       border-radius: 50%;
+      transition: background-color 200ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* ==========================================================
@@ -852,7 +865,7 @@
       width: 82px;
       text-align: center;
       scroll-snap-align: start;
-      transition: transform 100ms ease-out;
+      transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
       will-change: transform;
       -webkit-tap-highlight-color: transparent !important;
       -webkit-touch-callout: none;
@@ -876,14 +889,15 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 4px 10px rgba(61, 20, 8, 0.35);
-      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+      transition: border-color 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
       overflow: visible;
-      will-change: transform;
+      will-change: transform, border-color, box-shadow;
       -webkit-tap-highlight-color: transparent !important;
     }
     .item-card.selected .item-circle {
       border-color: #FFF8F0;
       box-shadow: 0 0 0 2px #5C200E, 0 4px 14px rgba(61, 20, 8, 0.4);
+      transform: scale(1.04);
     }
 
     .item-badge-check {
@@ -899,14 +913,20 @@
       border: 1.5px solid #5C200E;
       font-size: 11px;
       font-weight: 900;
-      display: none;
+      display: flex;
+      opacity: 0;
+      transform: scale(0.6);
+      pointer-events: none;
       align-items: center;
       justify-content: center;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
       z-index: 5;
+      transition: opacity 200ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
     }
     .item-card.selected .item-badge-check {
       display: flex;
+      opacity: 1;
+      transform: scale(1);
     }
 
     .item-btn-minus {
@@ -986,8 +1006,9 @@
       padding: 6px 0;
       border-radius: 9999px;
       cursor: pointer;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: background-color 200ms cubic-bezier(0.16, 1, 0.3, 1), color 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms cubic-bezier(0.16, 1, 0.3, 1), transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
       text-align: center;
+      will-change: transform, background-color;
     }
     .qty-btn:active {
       transform: scale(0.95);
@@ -2310,8 +2331,13 @@
                 <div class="wings-contact-shadow" id="wingsContactShadow"></div>
 
                 <div class="main-plate-wrap" id="mainPlateWrap">
-                  <!-- Single Clean Real PNG Image (Snappy Instant Switching, Zero Layering/Lag) -->
-                  <img id="realWingImg" class="real-wing-overlay" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
+                  <!-- Dual-Layer Real PNG Images for 60fps Native Crossfade (Zero Pop / Zero Blank Flash) -->
+                  <img id="realWingImgBack" class="real-wing-overlay wing-layer-back" src="/images/wings-crispy-6.png" alt="Wings Under" 
+                       width="215" height="180"
+                       fetchpriority="high"
+                       decoding="async"
+                       onerror="handleWingImgError(this)" />
+                  <img id="realWingImg" class="real-wing-overlay wing-layer-front" src="/images/wings-crispy-6.png" alt="Chicken Wings" 
                        width="215" height="180"
                        fetchpriority="high"
                        decoding="async"
@@ -2915,6 +2941,7 @@
     };
 
     let currentWingImgLoadedSrc = "";
+    let wingTransitionId = 0;
 
     /**
      * INITIALIZATION, CART RESTORATION & COMPLETE PNG ASSET PRELOADING
@@ -3455,10 +3482,20 @@
     }
 
     /**
-     * PRELOAD ALL PNG ASSETS ON APP MOUNT
-     * Preloads all 20 wing combinations, fallback images, dips, and sides into memory
+     * PRELOAD ALL PNG ASSETS ON APP MOUNT WITH ASYNC DECODING
+     * Preloads and decodes all 20 wing combinations, tray, fallback images, dips, and sides into memory
      */
     const PRELOADED_IMAGES = {};
+    function preloadImage(url) {
+      if (!url || PRELOADED_IMAGES[url]) return;
+      const img = new Image();
+      img.src = url;
+      PRELOADED_IMAGES[url] = img;
+      if (typeof img.decode === "function") {
+        img.decode().catch(() => {});
+      }
+    }
+
     function preloadAllAssets() {
       const allCounts = [3, 6, 9, 12, 20];
       const allSauces = ["crispy", "algeria", "bbq", "buffalo"];
@@ -3467,32 +3504,21 @@
       allSauces.forEach(sauceId => {
         allCounts.forEach(cnt => {
           const url = getWingImagePath(sauceId, cnt);
-          if (url && !PRELOADED_IMAGES[url]) {
-            const img = new Image();
-            img.src = url;
-            PRELOADED_IMAGES[url] = img;
-          }
+          if (url) preloadImage(url);
         });
       });
 
-      // 2. Preload default fallback wing image
-      const defaultWingSrc = resolveImagePath("/images/wings-crispy-6.png");
-      if (defaultWingSrc && !PRELOADED_IMAGES[defaultWingSrc]) {
-        const img = new Image();
-        img.src = defaultWingSrc;
-        PRELOADED_IMAGES[defaultWingSrc] = img;
-      }
+      // 2. Preload tray base and default fallback wing image
+      preloadImage(resolveImagePath("/tray.webp"));
+      preloadImage(resolveImagePath("/public/tray.webp"));
+      preloadImage(resolveImagePath("/logo.webp"));
+      preloadImage(resolveImagePath("/images/wings-crispy-6.png"));
 
       // 3. Preload custom sauce image URLs from database if any
       if (Array.isArray(MENU_CONFIG.coatingSauces)) {
         MENU_CONFIG.coatingSauces.forEach(sauce => {
           if (sauce.image_url) {
-            const url = resolveImagePath(sauce.image_url);
-            if (url && !PRELOADED_IMAGES[url]) {
-              const img = new Image();
-              img.src = url;
-              PRELOADED_IMAGES[url] = img;
-            }
+            preloadImage(resolveImagePath(sauce.image_url));
           }
         });
       }
@@ -3500,27 +3526,18 @@
       // 4. Preload all dips
       if (Array.isArray(MENU_CONFIG.dips)) {
         MENU_CONFIG.dips.forEach(dip => {
-          const url = resolveImagePath(dip.image || `/images/dip-${dip.id}.png`);
-          if (url && !PRELOADED_IMAGES[url]) {
-            const img = new Image();
-            img.src = url;
-            PRELOADED_IMAGES[url] = img;
-          }
+          preloadImage(resolveImagePath(dip.image || `/images/dip-${dip.id}.png`));
         });
       }
 
       // 5. Preload all sides
       if (Array.isArray(MENU_CONFIG.sides)) {
         MENU_CONFIG.sides.forEach(side => {
-          const url = resolveImagePath(side.image || `/images/side-${side.id}.png`);
-          if (url && !PRELOADED_IMAGES[url]) {
-            const img = new Image();
-            img.src = url;
-            PRELOADED_IMAGES[url] = img;
-          }
+          preloadImage(resolveImagePath(side.image || `/images/side-${side.id}.png`));
         });
       }
     }
+    try { preloadAllAssets(); } catch (e) {}
 
     /**
      * MAIN RENDER DISPATCHER
@@ -3684,12 +3701,16 @@
     }
 
     /**
-     * DYNAMIC REAL WINGS PNG RENDERER WITH < 250ms TRANSITION
+     * DUAL-LAYER REAL WINGS PNG RENDERER WITH 60FPS CROSSFADE & SCALE TRANSITION
+     * Uses dual layers (#realWingImgFront and #realWingImgBack) inside #mainPlateWrap.
+     * Keeps previous image visible underneath while incoming image fades in (opacity: 0 -> 1)
+     * and smoothly springs (scale: 0.95 -> 1) using cubic-bezier(0.22, 1, 0.36, 1) over 280ms.
      */
     function renderWingsImage() {
-      const img = document.getElementById("realWingImg");
+      const imgFront = document.getElementById("realWingImg");
+      const imgBack = document.getElementById("realWingImgBack");
       const plateWrap = document.getElementById("mainPlateWrap");
-      if (!img) return;
+      if (!imgFront) return;
 
       const currentCount = Number(state.wingsCount) || 6;
       // Proportionally enlarged wing boxes (3-piece increased by ~25%, 6-20 increased by 8-10%)
@@ -3715,25 +3736,11 @@
         targetSrc = getWingImagePath("crispy", currentCount);
       }
 
-      // Apply size scale on wrapper and sauce-specific scale on inner image
+      // Apply size scale on wrapper and sync contact shadow
       if (plateWrap) {
         plateWrap.style.transform = `scale(${currentScale})`;
       }
 
-      if (currentWingImgLoadedSrc !== targetSrc) {
-        currentWingImgLoadedSrc = targetSrc;
-        img.src = targetSrc;
-
-        // Silky smooth transition (subtle scale 0.94 -> 1, slight y glide, and opacity fade over 0.25s)
-        img.style.transform = `scale(${sauceScale})`;
-        img.classList.remove("product-tray-enter");
-        void img.offsetWidth; // force reflow
-        img.classList.add("product-tray-enter");
-      } else {
-        img.style.transform = `scale(${sauceScale})`;
-      }
-
-      // Grounded contact shadow scale sync
       const shadow = document.getElementById("wingsContactShadow");
       if (shadow) {
         shadow.style.transform = `translateX(-50%) scale(${finalScale})`;
@@ -3750,6 +3757,87 @@
       if (glow) {
         const glowColor = (sauceObj && sauceObj.color) ? `${sauceObj.color}35` : (glowColors[currentSauceId] || glowColors.crispy);
         glow.style.background = `radial-gradient(circle, ${glowColor} 0%, transparent 70%)`;
+      }
+
+      // Dual-Layer Crossfade & Scale Handling
+      if (!currentWingImgLoadedSrc) {
+        // First initial render: show immediately without delay
+        currentWingImgLoadedSrc = targetSrc;
+        imgFront.src = targetSrc;
+        imgFront.style.transition = "none";
+        imgFront.style.opacity = "1";
+        imgFront.style.transform = `scale(${sauceScale}) translateZ(0)`;
+        if (imgBack) {
+          imgBack.src = targetSrc;
+          imgBack.style.transition = "none";
+          imgBack.style.opacity = "1";
+          imgBack.style.transform = `scale(${sauceScale}) translateZ(0)`;
+        }
+        return;
+      }
+
+      if (currentWingImgLoadedSrc === targetSrc) {
+        // Image source unchanged, update transforms cleanly
+        imgFront.style.transform = `scale(${sauceScale}) translateZ(0)`;
+        if (imgBack) {
+          imgBack.style.transform = `scale(${sauceScale}) translateZ(0)`;
+        }
+        return;
+      }
+
+      // Image source changed: Perform dual-layer smooth crossfade + subtle scale
+      const thisTransitionId = ++wingTransitionId;
+
+      // Ensure the back layer holds the previous image and stays fully visible underneath
+      if (imgBack) {
+        if (imgFront.src && !imgFront.src.endsWith(targetSrc)) {
+          imgBack.src = imgFront.src;
+        } else if (currentWingImgLoadedSrc) {
+          imgBack.src = currentWingImgLoadedSrc;
+        }
+        imgBack.style.transition = "none";
+        imgBack.style.opacity = "1";
+        imgBack.style.transform = `scale(${sauceScale}) translateZ(0)`;
+        imgBack.style.zIndex = "11";
+      }
+
+      // Prepare incoming front layer: transparent, slightly scaled down (0.95), transition: none
+      imgFront.style.zIndex = "12";
+      imgFront.style.transition = "none";
+      imgFront.style.opacity = "0";
+      imgFront.style.transform = `scale(${Number((sauceScale * 0.95).toFixed(4))}) translateZ(0)`;
+      imgFront.src = targetSrc;
+
+      const triggerFadeIn = () => {
+        if (thisTransitionId !== wingTransitionId) return;
+        void imgFront.offsetWidth; // Force reflow
+        requestAnimationFrame(() => {
+          if (thisTransitionId !== wingTransitionId) return;
+          imgFront.style.transition = "opacity 280ms cubic-bezier(0.22, 1, 0.36, 1), transform 280ms cubic-bezier(0.22, 1, 0.36, 1)";
+          imgFront.style.opacity = "1";
+          imgFront.style.transform = `scale(${sauceScale}) translateZ(0)`;
+        });
+
+        // Once incoming image has faded in, update base layer so DOM stays clean
+        setTimeout(() => {
+          if (thisTransitionId !== wingTransitionId) return;
+          if (imgBack) {
+            imgBack.src = targetSrc;
+            imgBack.style.transform = `scale(${sauceScale}) translateZ(0)`;
+            imgBack.style.opacity = "1";
+          }
+          currentWingImgLoadedSrc = targetSrc;
+        }, 290);
+      };
+
+      if (typeof imgFront.decode === "function") {
+        imgFront.decode().then(triggerFadeIn).catch(triggerFadeIn);
+      } else {
+        if (imgFront.complete) {
+          triggerFadeIn();
+        } else {
+          imgFront.onload = triggerFadeIn;
+        }
       }
     }
 
