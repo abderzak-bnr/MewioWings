@@ -2718,7 +2718,7 @@
     }
     .has-floating-cart .controls-container,
     .has-floating-cart .ready-boxes-view {
-      padding-bottom: 96px !important;
+      padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
     }
   </style>
 </head>
@@ -5294,7 +5294,6 @@
       updateCartBadge();
       window.dispatchEvent(new CustomEvent("wingo-item-added", { detail: { item: cartItem } }));
       triggerCartBounce();
-      showToast(`تمت إضافة ${boxObj.nameAr} إلى السلة`, "عرض السلة", () => openOrderDrawer());
     }
 
     /**
@@ -5354,7 +5353,6 @@
       updateCartBadge();
       window.dispatchEvent(new CustomEvent("wingo-item-added", { detail: { item: cartItem } }));
       triggerCartBounce();
-      showToast("تمت إضافة الوجبة إلى السلة بنجاح", "عرض السلة", () => openOrderDrawer());
 
       // Reset optional dips and sides for next build
       state.selectedDips = {};

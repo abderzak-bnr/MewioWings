@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import NumberFlow from '@number-flow/react';
-import { ShoppingBag, Check, ArrowLeft } from 'lucide-react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
+import { ShoppingBag } from 'lucide-react';
 
 export default function FloatingCartIsland() {
   const [itemCount, setItemCount] = useState(() => {
@@ -12,17 +11,10 @@ export default function FloatingCartIsland() {
     return 0;
   });
 
-  const [totalPrice, setTotalPrice] = useState(() => {
-    if (typeof window !== 'undefined' && typeof window.getWingoCartState === 'function') {
-      const state = window.getWingoCartState();
-      return state?.subtotal || 0;
-    }
-    return 0;
-  });
-
-  const [justAdded, setJustAdded] = useState(false);
+  const [bounceTrigger, setBounceTrigger] = useState(0);
+  const [popKey, setPopKey] = useState(0);
   const prevCountRef = useRef(itemCount);
-  const timerRef = useRef(null);
+  const shouldReduceMotion = useReducedMotion();
 
   // Sync container class with cart existence
   useEffect(() => {
@@ -39,9 +31,7 @@ export default function FloatingCartIsland() {
   useEffect(() => {
     const handleCartUpdate = (e) => {
       const count = Number(e?.detail?.count) || 0;
-      const subtotal = Number(e?.detail?.subtotal) || 0;
       setItemCount(count);
-      setTotalPrice(subtotal);
     };
 
     const handleItemAdded = () => {
@@ -51,14 +41,12 @@ export default function FloatingCartIsland() {
           navigator.vibrate(15);
         }
       } catch (err) {
-        // Ignore vibration errors
+        // Ignore vibration errors on unsupported devices
       }
 
-      setJustAdded(true);
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        setJustAdded(false);
-      }, 1400);
+      // Trigger button bounce and +1 floating badge
+      setBounceTrigger((prev) => prev + 1);
+      setPopKey((prev) => prev + 1);
     };
 
     window.addEventListener('wingo-cart-updated', handleCartUpdate);
@@ -67,7 +55,6 @@ export default function FloatingCartIsland() {
     return () => {
       window.removeEventListener('wingo-cart-updated', handleCartUpdate);
       window.removeEventListener('wingo-item-added', handleItemAdded);
-      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, []);
 
@@ -79,82 +66,73 @@ export default function FloatingCartIsland() {
     }
   };
 
+  const springTransition = shouldReduceMotion
+    ? { duration: 0.1 }
+    : { type: 'spring', stiffness: 400, damping: 26 };
+
   return (
     <div
-      className="fixed inset-x-0 bottom-5 z-50 flex justify-center px-4 pointer-events-none"
-      style={{ direction: 'rtl' }}
+      className="fixed left-4 z-50 pointer-events-none select-none"
+      style={{
+        bottom: 'calc(1.25rem + env(safe-area-inset-bottom, 0px))',
+      }}
     >
       <AnimatePresence>
         {itemCount > 0 && (
           <motion.div
             layout
-            initial={{ y: 80, opacity: 0, scale: 0.95 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 80, opacity: 0, scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 380, damping: 28 }}
-            onClick={handleClick}
-            className="pointer-events-auto cursor-pointer select-none bg-[#1C1411]/95 backdrop-blur-md border border-[#FFF8F0]/15 text-[#FFF8F0] rounded-full shadow-[0_14px_34px_rgba(0,0,0,0.45)] px-3.5 py-2.5 flex items-center justify-between gap-3 w-full max-w-[360px] active:scale-[0.98] transition-transform duration-100"
-            role="button"
-            aria-label="عرض سلة الطلبات وإتمام الشراء"
+            initial={shouldReduceMotion ? { opacity: 0 } : { scale: 0, opacity: 0, y: 20 }}
+            animate={shouldReduceMotion ? { opacity: 1 } : { scale: 1, opacity: 1, y: 0 }}
+            exit={shouldReduceMotion ? { opacity: 0 } : { scale: 0, opacity: 0, y: 20 }}
+            transition={springTransition}
+            className="relative pointer-events-auto"
           >
-            {/* Right section in RTL (Icon + Text) */}
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className="relative flex-shrink-0">
-                <motion.div
-                  key={justAdded ? 'check' : 'cart'}
-                  initial={{ scale: 0.7, rotate: -20 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{ type: 'spring', stiffness: 450, damping: 25 }}
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-white shadow-sm ${
-                    justAdded ? 'bg-emerald-500' : 'bg-[#F97316]'
-                  }`}
+            {/* Floating +1 Pop Badge */}
+            <AnimatePresence>
+              {popKey > 0 && !shouldReduceMotion && (
+                <motion.span
+                  key={popKey}
+                  initial={{ opacity: 0, y: 0, scale: 0.8 }}
+                  animate={{
+                    opacity: [0, 1, 1, 0],
+                    y: -22,
+                    scale: [0.8, 1.15, 1, 0.9],
+                  }}
+                  transition={{
+                    duration: 0.8,
+                    ease: 'easeOut',
+                    times: [0, 0.2, 0.7, 1],
+                  }}
+                  className="absolute -top-3 left-1/2 -translate-x-1/2 bg-emerald-500 text-white text-[11px] font-black px-1.5 py-0.5 rounded-full shadow-lg pointer-events-none z-20 leading-none"
                 >
-                  {justAdded ? (
-                    <Check className="w-5 h-5 stroke-[2.5]" />
-                  ) : (
-                    <ShoppingBag className="w-4.5 h-4.5 stroke-[2.2]" />
-                  )}
-                </motion.div>
-                {!justAdded && itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-white text-[#1C1411] text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md border border-[#1C1411]/20">
-                    {itemCount}
-                  </span>
-                )}
-              </div>
+                  +1
+                </motion.span>
+              )}
+            </AnimatePresence>
 
-              <div className="flex flex-col text-right truncate">
-                {justAdded ? (
-                  <span className="text-[13px] font-black text-emerald-400">
-                    تمت الإضافة للسلة!
-                  </span>
-                ) : (
-                  <>
-                    <span className="text-[11px] text-[#FFF8F0]/70 font-medium">عرض السلة</span>
-                    <span
-                      className="text-[14px] font-black text-[#FFF8F0] tracking-tight"
-                      style={{ direction: 'ltr', display: 'inline-flex', alignItems: 'center' }}
-                    >
-                      <NumberFlow
-                        value={totalPrice}
-                        suffix=" دج"
-                        className="font-mono"
-                        style={{
-                          fontVariantNumeric: 'tabular-nums',
-                          direction: 'ltr',
-                          fontFamily: 'monospace, var(--font-cairo)'
-                        }}
-                      />
-                    </span>
-                  </>
-                )}
-              </div>
-            </div>
+            {/* Circular Floating Cart Button (FAB: 56px x 56px) */}
+            <motion.button
+              type="button"
+              key={bounceTrigger > 0 && !shouldReduceMotion ? `bounce-${bounceTrigger}` : 'idle'}
+              animate={
+                bounceTrigger > 0 && !shouldReduceMotion
+                  ? { scale: [1, 1.18, 1] }
+                  : { scale: 1 }
+              }
+              transition={{ duration: 0.35, ease: 'easeOut' }}
+              whileTap={{ scale: 0.92 }}
+              onClick={handleClick}
+              className="w-14 h-14 rounded-full bg-[#1C1411] border-2 border-[#F97316] text-[#FFF8F0] shadow-[0_10px_25px_rgba(0,0,0,0.4)] flex items-center justify-center relative cursor-pointer outline-none focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 active:border-[#EA580C] transition-colors"
+              aria-label={`عرض سلة الطلبات (${itemCount} وجبات)`}
+            >
+              {/* Shopping Bag Icon */}
+              <ShoppingBag className="w-6 h-6 text-[#F97316] stroke-[2.3]" />
 
-            {/* Left section in RTL (CTA Button) */}
-            <div className="flex items-center gap-1 bg-[#F97316] hover:bg-[#EA580C] text-white text-[12px] font-black px-3.5 py-2 rounded-full shadow-sm transition-colors flex-shrink-0">
-              <span>إتمام الطلب</span>
-              <ArrowLeft className="w-3.5 h-3.5 stroke-[2.5]" />
-            </div>
+              {/* Crisp Circular Item Count Badge */}
+              <span className="absolute -top-1.5 -right-1.5 bg-[#F97316] text-white text-[11px] font-black min-w-[22px] h-[22px] px-1 rounded-full flex items-center justify-center shadow-md border-2 border-[#1C1411] leading-none">
+                {itemCount > 99 ? '99+' : itemCount}
+              </span>
+            </motion.button>
           </motion.div>
         )}
       </AnimatePresence>
