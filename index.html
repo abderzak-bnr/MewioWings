@@ -2203,6 +2203,460 @@
       }
     }
 
+    /* ==========================================================
+       ANIMATED RECEIPT PRINTER ORDER CONFIRMATION MODAL
+       ========================================================== */
+    .receipt-printer-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px 16px 48px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      animation: receiptOverlayFadeIn 0.25s ease-out;
+    }
+
+    @keyframes receiptOverlayFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .receipt-printer-modal-wrap {
+      width: 100%;
+      max-width: 340px;
+      margin: auto 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      animation: receiptModalPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes receiptModalPop {
+      0% { opacity: 0; transform: scale(0.92) translateY(16px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Printer Housing */
+    .receipt-printer-housing {
+      width: 100%;
+      border-radius: 24px;
+      padding: 18px;
+      background: linear-gradient(180deg, #241A16 0%, #17110E 100%);
+      border: 1.5px solid #3D1408;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+      position: relative;
+      z-index: 20;
+    }
+
+    .printer-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .printer-dots {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .printer-dots span {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .printer-brand-label {
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      color: rgba(249, 115, 22, 0.9);
+      font-family: var(--font-cairo);
+      text-transform: uppercase;
+    }
+
+    .printer-status-led {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      transition: all 0.3s ease;
+    }
+    .printer-status-led.led-processing {
+      background: #F97316;
+      box-shadow: 0 0 8px #F97316;
+      animation: ledPulse 0.8s infinite alternate;
+    }
+    .printer-status-led.led-printing {
+      background: #FBBF24;
+      box-shadow: 0 0 10px #FBBF24;
+      animation: ledPulse 0.25s infinite alternate;
+    }
+    .printer-status-led.led-complete {
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+    }
+
+    @keyframes ledPulse {
+      0% { opacity: 0.4; }
+      100% { opacity: 1; }
+    }
+
+    /* Recessed Status Screen */
+    .printer-recessed-screen {
+      background: #0A0706;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.85), 0 1px 0 rgba(255, 255, 255, 0.05);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .printer-screen-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .printer-icon-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+    }
+
+    .printer-status-msg {
+      font-size: 13px;
+      font-weight: 800;
+      color: #FFF8F0;
+      font-family: var(--font-cairo);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .printer-mode-pill {
+      font-size: 9.5px;
+      font-weight: 900;
+      font-family: monospace;
+      color: #71717A;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    /* Paper Exit Slot */
+    .printer-paper-slot {
+      margin-top: 14px;
+      height: 8px;
+      border-radius: 4px;
+      background: #050403;
+      box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.95), 0 1px 0 rgba(255, 255, 255, 0.06);
+    }
+
+    /* Viewport that clips receipt as it rolls out */
+    .receipt-paper-viewport {
+      width: 94%;
+      overflow: hidden;
+      position: relative;
+      margin-top: -3px;
+      z-index: 10;
+    }
+
+    /* The Paper Receipt */
+    .receipt-paper-card {
+      width: 100%;
+      background: #FFFDF9;
+      color: #1C1411;
+      padding: 20px 18px 30px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+      transform: translateY(-100%);
+      will-change: transform;
+      clip-path: polygon(0% 0%, 100% 0%, 100.00% calc(100% - 4px), 98.75% 100%, 97.50% calc(100% - 4px), 96.25% 100%, 95.00% calc(100% - 4px), 93.75% 100%, 92.50% calc(100% - 4px), 91.25% 100%, 90.00% calc(100% - 4px), 88.75% 100%, 87.50% calc(100% - 4px), 86.25% 100%, 85.00% calc(100% - 4px), 83.75% 100%, 82.50% calc(100% - 4px), 81.25% 100%, 80.00% calc(100% - 4px), 78.75% 100%, 77.50% calc(100% - 4px), 76.25% 100%, 75.00% calc(100% - 4px), 73.75% 100%, 72.50% calc(100% - 4px), 71.25% 100%, 70.00% calc(100% - 4px), 68.75% 100%, 67.50% calc(100% - 4px), 66.25% 100%, 65.00% calc(100% - 4px), 63.75% 100%, 62.50% calc(100% - 4px), 61.25% 100%, 60.00% calc(100% - 4px), 58.75% 100%, 57.50% calc(100% - 4px), 56.25% 100%, 55.00% calc(100% - 4px), 53.75% 100%, 52.50% calc(100% - 4px), 51.25% 100%, 50.00% calc(100% - 4px), 48.75% 100%, 47.50% calc(100% - 4px), 46.25% 100%, 45.00% calc(100% - 4px), 43.75% 100%, 42.50% calc(100% - 4px), 41.25% 100%, 40.00% calc(100% - 4px), 38.75% 100%, 37.50% calc(100% - 4px), 36.25% 100%, 35.00% calc(100% - 4px), 33.75% 100%, 32.50% calc(100% - 4px), 31.25% 100%, 30.00% calc(100% - 4px), 28.75% 100%, 27.50% calc(100% - 4px), 26.25% 100%, 25.00% calc(100% - 4px), 23.75% 100%, 22.50% calc(100% - 4px), 21.25% 100%, 20.00% calc(100% - 4px), 18.75% 100%, 17.50% calc(100% - 4px), 16.25% 100%, 15.00% calc(100% - 4px), 13.75% 100%, 12.50% calc(100% - 4px), 11.25% 100%, 10.00% calc(100% - 4px), 8.75% 100%, 7.50% calc(100% - 4px), 6.25% 100%, 5.00% calc(100% - 4px), 3.75% 100%, 2.50% calc(100% - 4px), 1.25% 100%, 0% calc(100% - 4px));
+      -webkit-clip-path: polygon(0% 0%, 100% 0%, 100.00% calc(100% - 4px), 98.75% 100%, 97.50% calc(100% - 4px), 96.25% 100%, 95.00% calc(100% - 4px), 93.75% 100%, 92.50% calc(100% - 4px), 91.25% 100%, 90.00% calc(100% - 4px), 88.75% 100%, 87.50% calc(100% - 4px), 86.25% 100%, 85.00% calc(100% - 4px), 83.75% 100%, 82.50% calc(100% - 4px), 81.25% 100%, 80.00% calc(100% - 4px), 78.75% 100%, 77.50% calc(100% - 4px), 76.25% 100%, 75.00% calc(100% - 4px), 73.75% 100%, 72.50% calc(100% - 4px), 71.25% 100%, 70.00% calc(100% - 4px), 68.75% 100%, 67.50% calc(100% - 4px), 66.25% 100%, 65.00% calc(100% - 4px), 63.75% 100%, 62.50% calc(100% - 4px), 61.25% 100%, 60.00% calc(100% - 4px), 58.75% 100%, 57.50% calc(100% - 4px), 56.25% 100%, 55.00% calc(100% - 4px), 53.75% 100%, 52.50% calc(100% - 4px), 51.25% 100%, 50.00% calc(100% - 4px), 48.75% 100%, 47.50% calc(100% - 4px), 46.25% 100%, 45.00% calc(100% - 4px), 43.75% 100%, 42.50% calc(100% - 4px), 41.25% 100%, 40.00% calc(100% - 4px), 38.75% 100%, 37.50% calc(100% - 4px), 36.25% 100%, 35.00% calc(100% - 4px), 33.75% 100%, 32.50% calc(100% - 4px), 31.25% 100%, 30.00% calc(100% - 4px), 28.75% 100%, 27.50% calc(100% - 4px), 26.25% 100%, 25.00% calc(100% - 4px), 23.75% 100%, 22.50% calc(100% - 4px), 21.25% 100%, 20.00% calc(100% - 4px), 18.75% 100%, 17.50% calc(100% - 4px), 16.25% 100%, 15.00% calc(100% - 4px), 13.75% 100%, 12.50% calc(100% - 4px), 11.25% 100%, 10.00% calc(100% - 4px), 8.75% 100%, 7.50% calc(100% - 4px), 6.25% 100%, 5.00% calc(100% - 4px), 3.75% 100%, 2.50% calc(100% - 4px), 1.25% 100%, 0% calc(100% - 4px));
+    }
+
+    .receipt-paper-card.is-printing {
+      animation: receiptFeedStepped 1.75s forwards;
+    }
+
+    .receipt-paper-card.is-complete {
+      transform: translateY(0%);
+    }
+
+    @keyframes receiptFeedStepped {
+      0% { transform: translateY(-100%); }
+      4.5% { transform: translateY(-100%); }
+      5% { transform: translateY(-95%); }
+      9.5% { transform: translateY(-95%); }
+      10% { transform: translateY(-90%); }
+      15.5% { transform: translateY(-90%); }
+      16% { transform: translateY(-84%); }
+      21.5% { transform: translateY(-84%); }
+      22% { transform: translateY(-78%); }
+      27.5% { transform: translateY(-78%); }
+      28% { transform: translateY(-71%); }
+      34.5% { transform: translateY(-71%); }
+      35% { transform: translateY(-65%); }
+      40.5% { transform: translateY(-65%); }
+      41% { transform: translateY(-58%); }
+      47.5% { transform: translateY(-58%); }
+      48% { transform: translateY(-52%); }
+      53.5% { transform: translateY(-52%); }
+      54% { transform: translateY(-45%); }
+      60.5% { transform: translateY(-45%); }
+      61% { transform: translateY(-39%); }
+      66.5% { transform: translateY(-39%); }
+      67% { transform: translateY(-33%); }
+      73.5% { transform: translateY(-33%); }
+      74% { transform: translateY(-27%); }
+      79.5% { transform: translateY(-27%); }
+      80% { transform: translateY(-21%); }
+      85.5% { transform: translateY(-21%); }
+      86% { transform: translateY(-16%); }
+      90.5% { transform: translateY(-16%); }
+      91% { transform: translateY(-11%); }
+      94.5% { transform: translateY(-11%); }
+      95% { transform: translateY(-7%); }
+      96.5% { transform: translateY(-7%); }
+      97% { transform: translateY(-4%); }
+      98.5% { transform: translateY(-4%); }
+      99% { transform: translateY(-1%); }
+      99.5% { transform: translateY(-1%); }
+      100% { transform: translateY(0%); }
+    }
+
+    /* Actions */
+    .receipt-actions-container {
+      width: 100%;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 20;
+      animation: receiptActionsFadeIn 0.3s ease-out;
+    }
+
+    @keyframes receiptActionsFadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .receipt-close-btn {
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 9999px;
+      font-weight: 900;
+      font-size: 14px;
+      color: #FFFFFF;
+      font-family: var(--font-cairo);
+      background: linear-gradient(135deg, #FF7A00 0%, #EA580C 100%);
+      box-shadow: 0 8px 20px rgba(249, 115, 22, 0.4);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s ease, filter 0.15s ease;
+    }
+    .receipt-close-btn:active {
+      transform: scale(0.97);
+      filter: brightness(0.95);
+    }
+
+    .receipt-whatsapp-btn {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 800;
+      font-family: var(--font-cairo);
+      color: #34D399;
+      background: rgba(6, 78, 59, 0.4);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+    .receipt-whatsapp-btn:hover {
+      background: rgba(6, 78, 59, 0.6);
+    }
+
+    /* Inner Paper Content Styling */
+    .receipt-paper-content {
+      font-family: var(--font-cairo), system-ui, sans-serif;
+      text-align: right;
+    }
+    .receipt-header-center {
+      text-align: center;
+      padding-bottom: 12px;
+    }
+    .receipt-brand-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: #3D1408;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .receipt-brand-subtitle {
+      font-size: 11px;
+      font-weight: 800;
+      color: #71717A;
+      margin-top: 3px;
+    }
+    .receipt-brand-loc {
+      font-size: 10px;
+      font-weight: 600;
+      color: #A1A1AA;
+      margin-top: 2px;
+    }
+    .receipt-dashed-divider {
+      border-bottom: 1px dashed #D4D4D8;
+      margin: 10px 0;
+    }
+    .receipt-meta-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 11px;
+    }
+    .receipt-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #52525B;
+    }
+    .receipt-meta-row.align-top {
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .receipt-meta-label {
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .receipt-meta-val {
+      font-weight: 600;
+      color: #18181B;
+      text-align: left;
+    }
+    .receipt-section-heading {
+      font-size: 10px;
+      font-weight: 900;
+      color: #A1A1AA;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .receipt-items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 8px 0;
+    }
+    .receipt-item-block {
+      font-size: 11.5px;
+      line-height: 1.3;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #F4F4F5;
+    }
+    .receipt-item-block:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    .receipt-item-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      font-weight: 700;
+      color: #18181B;
+    }
+    .receipt-item-sub {
+      font-size: 10px;
+      color: #71717A;
+      margin-top: 2px;
+    }
+    .receipt-totals-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 11.5px;
+    }
+    .receipt-total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #52525B;
+    }
+    .receipt-grand-total {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 8px;
+      margin-top: 4px;
+      border-top: 1px solid #E4E4E7;
+      font-size: 13.5px;
+      font-weight: 900;
+      color: #3D1408;
+    }
+    .receipt-grand-amount {
+      font-size: 16px;
+      font-weight: 900;
+      color: #EA580C;
+    }
+    .receipt-cod-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: #F4F4F5;
+      border-radius: 6px;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #3F3F46;
+      margin-bottom: 8px;
+    }
+    .receipt-barcode-wrap {
+      width: 100%;
+      margin: 8px 0 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      opacity: 0.85;
+    }
+    .receipt-barcode-wrap svg {
+      width: 100%;
+      height: 32px;
+    }
+    .receipt-barcode-code {
+      font-family: monospace;
+      font-size: 9.5px;
+      letter-spacing: 0.15em;
+      color: #A1A1AA;
+      margin-top: 4px;
+    }
+    .receipt-thankyou {
+      font-size: 11px;
+      font-weight: 800;
+      color: #52525B;
+      text-align: center;
+      margin-top: 8px;
+    }
+
   </style>
   <script>
     if (window.location.pathname.startsWith('/admin')) {
@@ -2647,6 +3101,66 @@
       <!-- State 2: Order Confirmation Screen -->
       <div id="drawerSuccessState" style="display: none;">
         <!-- Populated on successful confirmation -->
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ========================================================
+       RECEIPT PRINTER ORDER CONFIRMATION MODAL OVERLAY
+       ======================================================== -->
+  <div id="receiptPrinterOverlay" class="receipt-printer-overlay" style="display: none;" dir="rtl">
+    <div class="receipt-printer-modal-wrap" id="receiptPrinterModalWrap">
+      
+      <!-- Printer Machine Body -->
+      <div class="receipt-printer-housing">
+        <!-- Top Vent / Brand Indicator -->
+        <div class="printer-top-bar">
+          <div class="printer-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="printer-brand-label">WINGO! POS-400</div>
+          <div class="printer-status-led" id="printerStatusLed"></div>
+        </div>
+
+        <!-- Recessed Status Screen -->
+        <div class="printer-recessed-screen">
+          <div class="printer-screen-left">
+            <span id="printerStatusIcon" class="printer-icon-wrap">
+              <!-- Injected dynamically: spinner, pulse, or check -->
+            </span>
+            <span id="printerStatusText" class="printer-status-msg">جاري إرسال طلبك...</span>
+          </div>
+          <span id="printerModeBadge" class="printer-mode-pill">BUSY</span>
+        </div>
+
+        <!-- Paper Feed Exit Slot -->
+        <div class="printer-paper-slot"></div>
+      </div>
+
+      <!-- Paper Feeder Viewport (Clips paper as it rolls out) -->
+      <div class="receipt-paper-viewport">
+        <div id="receiptPaper" class="receipt-paper-card">
+          <!-- Printed Receipt Paper Content (Populated on order) -->
+          <div id="receiptPaperContent"></div>
+        </div>
+      </div>
+
+      <!-- Post-Complete Action Buttons -->
+      <div id="receiptActionButtons" class="receipt-actions-container" style="display: none;">
+        <button type="button" class="receipt-close-btn" onclick="closeReceiptPrinter()">
+          <span>العودة للقائمة</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="transform: rotate(180deg);">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+        <a id="receiptWhatsappLink" href="#" target="_blank" rel="noopener noreferrer" class="receipt-whatsapp-btn" style="display: none;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+          </svg>
+          <span>متابعة الطلب عبر واتساب</span>
+        </a>
       </div>
 
     </div>
@@ -5103,6 +5617,9 @@
 
       const orderedItems = [...state.cartItems];
 
+      // Open ReceiptPrinter modal immediately in processing state
+      openReceiptPrinter("processing");
+
       // 1. Send Order to Secure Serverless Endpoint (/api/create-order)
       let result;
       try {
@@ -5123,12 +5640,14 @@
 
         if (!response.ok || !result.success) {
           const errMsg = result && result.error ? result.error : "تعذر تأكيد طلبك حالياً، يرجى إعادة المحاولة";
+          closeReceiptPrinter();
           showToast(errMsg, "error");
           restoreSubmitBtn();
           return;
         }
       } catch (netErr) {
         console.error("Order submission network error:", netErr);
+        closeReceiptPrinter();
         showToast("فشل الاتصال بالخادم لتسجيل طلبك. يرجى التحقق من اتصالك بالإنترنت والمحاولة مجدداً.", "error");
         restoreSubmitBtn();
         return;
@@ -5137,6 +5656,7 @@
       // Order Succeeded: Record cooldown timestamp
       localStorage.setItem("mewio_last_order_timestamp", Date.now().toString());
       state.isSubmittingOrder = false;
+      restoreSubmitBtn();
 
       const orderId = result.orderId || Math.floor(100000 + Math.random() * 900000);
       const verifiedTotal = typeof result.total === "number" ? result.total : grandTotal;
@@ -5195,12 +5715,327 @@
 
       const whatsappUrl = `https://api.whatsapp.com/send?phone=${MENU_CONFIG.restaurant.whatsapp}&text=${encodeURIComponent(msg)}`;
 
-      // 4. Clear Cart Upon Successful Order
+      // 4. Clear Cart & Close Drawer Upon Successful Order
       state.cartItems = [];
       saveCartToStorage();
       updateCartBadge();
+      closeOrderDrawer();
 
+      // 5. Trigger Receipt Printing Animation and Transition to Complete
+      const receiptData = {
+        orderId: orderId,
+        date: new Date().toLocaleDateString("ar-DZ", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        }),
+        phone: cleanPhone,
+        address: rawAddress,
+        notes: notes || "",
+        items: orderedItems,
+        subtotal: subtotal,
+        deliveryFee: MENU_CONFIG.rules.deliveryFee,
+        total: verifiedTotal,
+        whatsappUrl: whatsappUrl
+      };
+
+      setReceiptPrinterStage("printing", receiptData);
       renderOrderSuccessScreen(orderId, cleanPhone, rawAddress, notes, verifiedTotal, whatsappUrl, orderedItems);
+    }
+
+    /* ==========================================================
+       ANIMATED RECEIPT PRINTER LOGIC & MODAL CONTROLS
+       ========================================================== */
+    let receiptPrinterTimer = null;
+
+    function openReceiptPrinter(stage, initialData) {
+      const overlay = document.getElementById("receiptPrinterOverlay");
+      if (!overlay) return;
+      overlay.style.display = "flex";
+      overlay.scrollTop = 0;
+      setReceiptPrinterStage(stage || "processing", initialData);
+    }
+
+    function closeReceiptPrinter() {
+      if (receiptPrinterTimer) {
+        clearTimeout(receiptPrinterTimer);
+        receiptPrinterTimer = null;
+      }
+      const overlay = document.getElementById("receiptPrinterOverlay");
+      if (overlay) overlay.style.display = "none";
+      const paper = document.getElementById("receiptPaper");
+      if (paper) {
+        paper.classList.remove("is-printing", "is-complete");
+      }
+      handleNewOrder();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function setReceiptPrinterStage(stage, data) {
+      const led = document.getElementById("printerStatusLed");
+      const iconWrap = document.getElementById("printerStatusIcon");
+      const statusText = document.getElementById("printerStatusText");
+      const modeBadge = document.getElementById("printerModeBadge");
+      const paper = document.getElementById("receiptPaper");
+      const actions = document.getElementById("receiptActionButtons");
+      const whatsappBtn = document.getElementById("receiptWhatsappLink");
+
+      if (data) {
+        renderReceiptContent(data);
+      }
+
+      if (stage === "processing") {
+        if (led) led.className = "printer-status-led led-processing";
+        if (modeBadge) modeBadge.textContent = "BUSY";
+        if (statusText) statusText.textContent = "جاري إرسال طلبك...";
+        if (iconWrap) {
+          iconWrap.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="animation: spin 0.8s linear infinite;">
+              <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+            </svg>
+          `;
+        }
+        if (paper) {
+          paper.classList.remove("is-printing", "is-complete");
+        }
+        if (actions) actions.style.display = "none";
+      } else if (stage === "printing") {
+        if (led) led.className = "printer-status-led led-printing";
+        if (modeBadge) modeBadge.textContent = "BUSY";
+        if (statusText) statusText.textContent = "جاري طباعة الوصل...";
+        if (iconWrap) {
+          iconWrap.innerHTML = `
+            <span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(251,191,36,0.3);border-top-color:#FBBF24;border-radius:50%;animation:spin 0.5s linear infinite;"></span>
+          `;
+        }
+        if (paper) {
+          paper.classList.remove("is-complete");
+          void paper.offsetWidth;
+          paper.classList.add("is-printing");
+        }
+        if (actions) actions.style.display = "none";
+
+        if (receiptPrinterTimer) clearTimeout(receiptPrinterTimer);
+        receiptPrinterTimer = setTimeout(() => {
+          setReceiptPrinterStage("complete", data);
+        }, 1750);
+      } else if (stage === "complete") {
+        if (led) led.className = "printer-status-led led-complete";
+        if (modeBadge) modeBadge.textContent = "READY";
+        if (statusText) statusText.textContent = "تم تأكيد طلبك بنجاح";
+        if (iconWrap) {
+          iconWrap.innerHTML = `
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+          `;
+        }
+        if (paper) {
+          paper.classList.remove("is-printing");
+          paper.classList.add("is-complete");
+        }
+        if (actions) actions.style.display = "flex";
+        if (whatsappBtn) {
+          if (data && data.whatsappUrl) {
+            whatsappBtn.href = data.whatsappUrl;
+            whatsappBtn.style.display = "flex";
+          } else {
+            whatsappBtn.style.display = "none";
+          }
+        }
+      }
+    }
+
+    function renderReceiptContent(data) {
+      const container = document.getElementById("receiptPaperContent");
+      if (!container || !data) return;
+
+      const orderId = escapeHtml(data.orderId || "10001");
+      const dateStr = escapeHtml(data.date || new Date().toLocaleDateString("ar-DZ", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }));
+      const phone = escapeHtml(data.phone || "");
+      const address = escapeHtml(data.address || "");
+      const notes = escapeHtml(data.notes || "");
+      const subtotal = typeof data.subtotal === "number" ? data.subtotal : calculateCartSubtotal();
+      const deliveryFee = typeof data.deliveryFee === "number" ? data.deliveryFee : MENU_CONFIG.rules.deliveryFee;
+      const total = typeof data.total === "number" ? data.total : (subtotal + deliveryFee);
+      const items = Array.isArray(data.items) ? data.items : [];
+
+      let itemsHtml = "";
+      if (items.length > 0) {
+        items.forEach(it => {
+          const qty = it.qty || 1;
+          const lineTotal = (it.unitPrice || 0) * qty;
+          let subDetails = [];
+          if (it.spiceTitle) subDetails.push(`الحرارة: ${escapeHtml(it.spiceTitle)}`);
+          if (it.sauceName) subDetails.push(`الصوص: ${escapeHtml(it.sauceName)}`);
+          if (it.includesSummary) subDetails.push(escapeHtml(it.includesSummary));
+
+          if (it.selectedDips && Object.keys(it.selectedDips).length > 0) {
+            const freeAllowance = it.freeDipsAllowance || getFreeDipsAllowance(it.wingsCount);
+            const dipsInfo = calculateDipsBreakdown(it.selectedDips, freeAllowance);
+            const dipsStr = dipsInfo.items.map(d => `${d.name} ×${d.qty}`).join(", ");
+            if (dipsStr) subDetails.push(`الصوصات: ${escapeHtml(dipsStr)}`);
+          }
+
+          if (it.selectedSides) {
+            const distinctSides = Object.keys(it.selectedSides).filter(id => it.selectedSides[id] > 0);
+            if (distinctSides.length > 0) {
+              const sidesStr = distinctSides.map(id => {
+                const s = MENU_CONFIG.sides.find(x => x.id === id);
+                return `${s ? s.name : id} ×${it.selectedSides[id]}`;
+              }).join(", ");
+              subDetails.push(`الإضافات: ${escapeHtml(sidesStr)}`);
+            }
+          }
+
+          itemsHtml += `
+            <div class="receipt-item-block">
+              <div class="receipt-item-main">
+                <span>${escapeHtml(it.title || "وجبة أجنحة")} <span style="font-weight: normal; color: #71717A;">×${qty}</span></span>
+                <span style="font-family: monospace; font-weight: 900; color: #18181B;">${lineTotal.toLocaleString("fr-DZ")} دج</span>
+              </div>
+              ${subDetails.length > 0 ? `<div class="receipt-item-sub">${subDetails.join(" • ")}</div>` : ""}
+            </div>
+          `;
+        });
+      } else {
+        itemsHtml = `<div class="receipt-item-block"><div class="receipt-item-main">وجبة أجنحة مقرمشة</div></div>`;
+      }
+
+      container.innerHTML = `
+        <div class="receipt-paper-content">
+          <!-- Header -->
+          <div class="receipt-header-center">
+            <div class="receipt-brand-title">WINGO!</div>
+            <div class="receipt-brand-subtitle">وصل طلب زبون إلكتروني</div>
+            <div class="receipt-brand-loc">المدية، الجزائر • خدمة التوصيل السريع</div>
+          </div>
+
+          <div class="receipt-dashed-divider"></div>
+
+          <!-- Order Meta -->
+          <div class="receipt-meta-list">
+            <div class="receipt-meta-row">
+              <span class="receipt-meta-label">رقم الطلب:</span>
+              <span class="receipt-meta-val" style="font-family: monospace; font-weight: 900;">#${orderId}</span>
+            </div>
+            <div class="receipt-meta-row">
+              <span class="receipt-meta-label">التاريخ:</span>
+              <span class="receipt-meta-val">${dateStr}</span>
+            </div>
+            ${phone ? `
+              <div class="receipt-meta-row">
+                <span class="receipt-meta-label">الهاتف:</span>
+                <span class="receipt-meta-val" dir="ltr" style="font-family: monospace;">${phone}</span>
+              </div>
+            ` : ""}
+            ${address ? `
+              <div class="receipt-meta-row align-top">
+                <span class="receipt-meta-label">العنوان:</span>
+                <span class="receipt-meta-val">${address}</span>
+              </div>
+            ` : ""}
+            ${notes ? `
+              <div class="receipt-meta-row align-top">
+                <span class="receipt-meta-label">ملاحظات:</span>
+                <span class="receipt-meta-val" style="color: #4B5563;">${notes}</span>
+              </div>
+            ` : ""}
+          </div>
+
+          <div class="receipt-dashed-divider"></div>
+
+          <!-- Items -->
+          <div class="receipt-section-heading">الوجبات المطلوبة</div>
+          <div class="receipt-items-list">
+            ${itemsHtml}
+          </div>
+
+          <div class="receipt-dashed-divider"></div>
+
+          <!-- Totals -->
+          <div class="receipt-totals-list">
+            <div class="receipt-total-row">
+              <span>المجموع الفرعي:</span>
+              <span style="font-family: monospace; font-weight: 700;">${subtotal.toLocaleString("fr-DZ")} دج</span>
+            </div>
+            <div class="receipt-total-row">
+              <span>التوصيل (المدية):</span>
+              <span style="font-family: monospace; font-weight: 700;">${deliveryFee} دج</span>
+            </div>
+            <div class="receipt-grand-total">
+              <span>الإجمالي للدفع:</span>
+              <span class="receipt-grand-amount">${total.toLocaleString("fr-DZ")} دج</span>
+            </div>
+          </div>
+
+          <div class="receipt-dashed-divider" style="margin-top: 12px;"></div>
+
+          <!-- Footer & Barcode -->
+          <div style="text-align: center; padding-top: 4px;">
+            <div class="receipt-cod-badge">طريقة الدفع: الدفع نقداً عند الاستلام (COD)</div>
+
+            <div class="receipt-barcode-wrap">
+              <svg viewBox="0 0 200 32" preserveAspectRatio="none">
+                <rect x="0" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="4" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="7" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="12" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="15" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="19" y="0" width="4" height="32" fill="#1C1411"/>
+                <rect x="25" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="28" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="33" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="37" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="40" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="45" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="49" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="52" y="0" width="4" height="32" fill="#1C1411"/>
+                <rect x="58" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="62" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="65" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="70" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="73" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="77" y="0" width="4" height="32" fill="#1C1411"/>
+                <rect x="83" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="86" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="91" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="95" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="98" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="103" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="106" y="0" width="4" height="32" fill="#1C1411"/>
+                <rect x="112" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="116" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="119" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="124" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="128" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="131" y="0" width="4" height="32" fill="#1C1411"/>
+                <rect x="137" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="141" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="144" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="149" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="152" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="157" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="161" y="0" width="4" height="32" fill="#1C1411"/>
+                <rect x="167" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="170" y="0" width="3" height="32" fill="#1C1411"/>
+                <rect x="175" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="179" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="182" y="0" width="4" height="32" fill="#1C1411"/>
+                <rect x="188" y="0" width="2" height="32" fill="#1C1411"/>
+                <rect x="192" y="0" width="1" height="32" fill="#1C1411"/>
+                <rect x="195" y="0" width="3" height="32" fill="#1C1411"/>
+              </svg>
+              <div class="receipt-barcode-code">* WINGO-ORD-${orderId} *</div>
+            </div>
+
+            <div class="receipt-thankyou">شكراً لطلبكم من مطعم WINGO! 🍗</div>
+          </div>
+        </div>
+      `;
     }
 
     function renderOrderSuccessScreen(orderId, phone, address, notes, total, whatsappUrl, orderedItems) {
