@@ -2,8 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="#FF7A00">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#FF7A00" />
   <title>WINGO! — Build Your Wings | صمّم وجبتك (المدية)</title>
   
   <!-- Google Font: Cairo -->
@@ -16,6 +16,10 @@
        RESET & BASE THEME VARIABLES
        ========================================================== */
     html {
+      background-color: #FF7A00;
+      overscroll-behavior-y: none;
+      height: 100%;
+      overflow: hidden;
       scroll-behavior: smooth;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
@@ -83,33 +87,73 @@
     }
 
     body {
-      background-color: #EA580C;
+      background-color: #FF7A00;
       background: linear-gradient(180deg, #FF7A00 0%, #EA580C 100%);
       color: #3D1408;
       font-family: var(--font-cairo);
       direction: rtl;
       text-align: right;
-      min-height: 100vh;
+      height: 100%;
+      height: 100vh;
+      height: 100dvh;
+      overflow: hidden;
+      overscroll-behavior-y: none;
       display: flex;
       justify-content: center;
       align-items: stretch;
-      overflow-x: hidden;
       user-select: none;
       -webkit-user-select: none;
     }
 
-    /* Sleek Mobile Viewport Container */
+    /* Customer Storefront Wrapper (Full-height App Shell Host) */
+    #customer-storefront {
+      width: 100%;
+      height: 100%;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Sleek Mobile Viewport Container (Locked 100dvh App Shell) */
     .app-viewport {
       width: 100%;
       max-width: 430px;
-      min-height: 100vh;
+      height: 100%;
+      height: 100vh;
+      height: 100dvh;
+      max-height: 100dvh;
       background-color: #F97316;
       background: linear-gradient(180deg, #FF7A00 0%, #EA580C 100%);
       position: relative;
       display: flex;
       flex-direction: column;
       box-shadow: 0 0 50px rgba(61, 20, 8, 0.45), 0 0 0 1px #5C200E;
+      overflow: hidden;
+    }
+
+    /* App Shell Top Header (Sticky/Fixed to Top, Safe Area Aware) */
+    .app-header {
+      flex-shrink: 0;
+      padding-top: env(safe-area-inset-top, 0px);
+      position: relative;
+      z-index: 30;
+      width: 100%;
+    }
+
+    /* App Shell Middle Content Area (The ONLY Scrollable Region) */
+    .app-content-scroll {
+      flex: 1 1 0%;
+      min-height: 0;
+      width: 100%;
+      overflow-y: auto;
       overflow-x: hidden;
+      overscroll-behavior-y: contain;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      position: relative;
     }
 
     /* Hide scrollbars */
@@ -668,7 +712,7 @@
     .controls-container {
       display: flex;
       flex-direction: column;
-      padding: 0 14px calc(84px + env(safe-area-inset-bottom, 0px));
+      padding: 0 14px 24px;
       gap: 12px;
     }
 
@@ -1064,15 +1108,12 @@
        State B: Cart Has Items -> Split into Add to Cart (right) + Cart Button (left)
        ========================================================== */
     .bottom-action-bar {
-      position: fixed;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
+      flex-shrink: 0;
       width: 100%;
-      max-width: 430px;
+      position: relative;
       z-index: 40;
-      padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
-      background: linear-gradient(180deg, rgba(234, 88, 12, 0) 0%, rgba(35, 14, 6, 0.88) 32%, rgba(20, 9, 6, 0.98) 100%);
+      padding: 10px 14px calc(12px + env(safe-area-inset-bottom, 0px));
+      background: linear-gradient(180deg, rgba(234, 88, 12, 0.25) 0%, rgba(35, 14, 6, 0.92) 28%, rgba(20, 9, 6, 0.98) 100%);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       display: flex;
@@ -1263,12 +1304,10 @@
     .ready-boxes-view {
       display: none;
       flex: 1;
-      padding: 10px 16px calc(84px + env(safe-area-inset-bottom, 0px));
-      overflow-y: auto;
+      padding: 10px 16px calc(24px + env(safe-area-inset-bottom, 0px));
+      overflow-y: visible;
       gap: 12px;
       flex-direction: column;
-      -webkit-overflow-scrolling: touch;
-      scroll-behavior: smooth;
     }
     .ready-boxes-view.active {
       display: flex;
@@ -1440,6 +1479,7 @@
       border-bottom: none;
       padding: 16px 20px calc(24px + env(safe-area-inset-bottom, 0px));
       max-height: 90vh;
+      max-height: 90dvh;
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       overscroll-behavior-y: contain;
@@ -1476,6 +1516,7 @@
         border: 1px solid #5C200E;
         max-width: 460px;
         max-height: 85vh;
+        max-height: 85dvh;
         transform: translate3d(0, 16px, 0) scale(0.96);
         box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
         padding: 24px;
@@ -2411,10 +2452,17 @@
       html:not(.is-admin-route) body {
         padding: 24px 0;
         background: radial-gradient(circle at center, #0B1324 0%, #03060C 100%);
+        align-items: center;
+      }
+      html:not(.is-admin-route) #customer-storefront {
+        height: 100%;
+        align-items: center;
       }
       html:not(.is-admin-route) .app-viewport {
         border-radius: 28px;
-        min-height: calc(100vh - 48px);
+        height: min(880px, calc(100vh - 48px));
+        height: min(880px, calc(100dvh - 48px));
+        max-height: calc(100dvh - 48px);
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.08);
       }
     }
@@ -2880,6 +2928,16 @@
     }
   </script>
   <style>
+    html.is-admin-route,
+    html.is-admin-route body {
+      height: auto !important;
+      min-height: 100vh !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      background-color: #14100E !important;
+      background: #14100E !important;
+      overscroll-behavior-y: auto !important;
+    }
     html.is-admin-route #customer-storefront {
       display: none !important;
     }
@@ -2891,60 +2949,66 @@
 <body>
 
   <!-- Customer Storefront Wrapper -->
-  <div id="customer-storefront" style="width: 100%; display: flex; justify-content: center;">
-  <!-- Sleek Mobile Viewport Container -->
+  <div id="customer-storefront">
+  <!-- Sleek Mobile Viewport Container (Locked 100dvh App Shell) -->
   <main class="app-viewport">
 
-    <!-- 1. Top Bar -->
-    <header class="top-bar">
-      <div class="brand-title-wrap">
-        <img src="/logo.webp" alt="WINGO!" class="header-brand-logo" onerror="this.onerror=null; this.src='/public/logo.webp';" />
-        <div class="brand-subtitle">المدية، الجزائر</div>
+    <!-- 1. Top Header Area (Fixed at Top of App Shell, Safe-Area aware) -->
+    <header class="app-header header">
+      <!-- 1. Top Bar -->
+      <div class="top-bar">
+        <div class="brand-title-wrap">
+          <img src="/logo.webp" alt="WINGO!" class="header-brand-logo" onerror="this.onerror=null; this.src='/public/logo.webp';" />
+          <div class="brand-subtitle">المدية، الجزائر</div>
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-btn" onclick="handleResetMenu()" title="إعادة تعيين" aria-label="إعادة تعيين">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="1 4 1 10 7 10"></polyline>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
+            </svg>
+          </button>
+
+          <button class="icon-btn" onclick="openOrderDrawer()" title="السلة" aria-label="السلة">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <path d="M16 10a4 4 0 0 1-8 0"></path>
+            </svg>
+            <div class="cart-badge" id="cartBadgeCount">1</div>
+          </button>
+        </div>
       </div>
 
-      <div class="header-actions">
-        <button class="icon-btn" onclick="handleResetMenu()" title="إعادة تعيين" aria-label="إعادة تعيين">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="1 4 1 10 7 10"></polyline>
-            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path>
-          </svg>
-        </button>
-
-        <button class="icon-btn" onclick="openOrderDrawer()" title="السلة" aria-label="السلة">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <path d="M16 10a4 4 0 0 1-8 0"></path>
-          </svg>
-          <div class="cart-badge" id="cartBadgeCount">1</div>
-        </button>
+      <!-- Store Closed Alert Banner (driven by Supabase store_settings.is_open) -->
+      <div id="storeClosedBanner" style="display: none; align-items: center; justify-content: center; gap: 8px; background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.35); color: #FCA5A5; padding: 10px 14px; border-radius: 12px; margin: 4px 18px 8px; font-size: 13px; font-weight: 700;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span>المطعم مغلق حالياً — يمكنك استعراض القائمة وسنعاود استقبال الطلبات قريباً</span>
       </div>
+
+      <!-- 2. Header Row: MODE SWITCHER (صمّم وجبتك | وجبات جاهزة) -->
+      <section class="header-row">
+        <div>
+          <h1 class="header-headline" id="mainHeaderTitle">صمّم وجبتك</h1>
+          <p class="header-tagline" id="mainHeaderTagline">أجنحة دجاج مقرمشة طازجة</p>
+        </div>
+
+        <!-- Segmented Mode Switcher -->
+        <div class="mode-toggle-container">
+          <div class="mode-slider" id="modeToggleSlider"></div>
+          <button class="mode-toggle-btn active" id="btnModeBuild" onclick="setMode('build')">صمّم وجبتك</button>
+          <button class="mode-toggle-btn" id="btnModeReady" onclick="setMode('ready_boxes')">وجبات جاهزة</button>
+        </div>
+      </section>
     </header>
 
-    <!-- Store Closed Alert Banner (driven by Supabase store_settings.is_open) -->
-    <div id="storeClosedBanner" style="display: none; align-items: center; justify-content: center; gap: 8px; background: rgba(239, 68, 68, 0.16); border: 1px solid rgba(239, 68, 68, 0.35); color: #FCA5A5; padding: 10px 14px; border-radius: 12px; margin: 4px 18px 8px; font-size: 13px; font-weight: 700;">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"></circle>
-        <line x1="12" y1="8" x2="12" y2="12"></line>
-        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-      </svg>
-      <span>المطعم مغلق حالياً — يمكنك استعراض القائمة وسنعاود استقبال الطلبات قريباً</span>
-    </div>
-
-    <!-- 2. Header Row: MODE SWITCHER (صمّم وجبتك | وجبات جاهزة) -->
-    <section class="header-row">
-      <div>
-        <h1 class="header-headline" id="mainHeaderTitle">صمّم وجبتك</h1>
-        <p class="header-tagline" id="mainHeaderTagline">أجنحة دجاج مقرمشة طازجة</p>
-      </div>
-
-      <!-- Segmented Mode Switcher -->
-      <div class="mode-toggle-container">
-        <div class="mode-slider" id="modeToggleSlider"></div>
-        <button class="mode-toggle-btn active" id="btnModeBuild" onclick="setMode('build')">صمّم وجبتك</button>
-        <button class="mode-toggle-btn" id="btnModeReady" onclick="setMode('ready_boxes')">وجبات جاهزة</button>
-      </div>
-    </section>
+    <!-- 2. Middle Content Area (The ONLY Scrollable Region) -->
+    <div class="app-content-scroll" id="appContentScroll">
 
     <!-- ========================================================
          VIEW 1: BUILD YOUR OWN (صمّم وجبتك — Default Active View)
@@ -3132,24 +3196,9 @@
       <!-- Populated dynamically by renderReadyBoxes() -->
     </div>
 
-  
-  <!-- Toast Notification (Floating Top) -->
-  <div class="cart-toast" id="cartToast" role="alert" aria-live="assertive">
-    <div class="cart-toast-icon-wrap" id="cartToastIcon">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="20 6 9 17 4 12"></polyline>
-      </svg>
-    </div>
-    <span id="cartToastMsg">تمت الإضافة إلى السلة</span>
-    <button class="cart-toast-btn" id="cartToastBtn" onclick="openOrderDrawer()">
-      <span>عرض السلة</span>
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-        <line x1="19" y1="12" x2="5" y2="12"></line>
-        <polyline points="12 19 5 12 12 5"></polyline>
-      </svg>
-    </button>
-  </div>
-    <!-- Smart Split Action Bar (Fixed Bottom) -->
+    </div><!-- /app-content-scroll -->
+
+    <!-- 3. Bottom Split Action Bar (Anchored at the bottom of the locked flex shell) -->
     <div class="bottom-action-bar" id="bottomActionBar">
       <button class="cta-button" id="btnAddToCart" onclick="handleAddToCart(event)" type="button">
         <span class="cta-text">أضف إلى السلة</span>
@@ -3168,6 +3217,23 @@
       </button>
     </div>
   </main>
+
+  <!-- Toast Notification (Floating Top) -->
+  <div class="cart-toast" id="cartToast" role="alert" aria-live="assertive">
+    <div class="cart-toast-icon-wrap" id="cartToastIcon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+    </div>
+    <span id="cartToastMsg">تمت الإضافة إلى السلة</span>
+    <button class="cart-toast-btn" id="cartToastBtn" onclick="openOrderDrawer()">
+      <span>عرض السلة</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+    </button>
+  </div>
 
   <!-- ==========================================================
        READY BOX CUSTOMIZATION MODAL
@@ -4127,7 +4193,7 @@
 
     function triggerCartBounce() {
       const badge = document.getElementById("cartBadgeCount");
-      const cartBtn = document.querySelector(".header .icon-btn");
+      const cartBtn = document.querySelector(".app-header .icon-btn, .header .icon-btn, .top-bar .icon-btn");
       if (badge) {
         badge.classList.remove("badge-bounce");
         badge.offsetHeight; // trigger reflow
@@ -4431,6 +4497,8 @@
     function setMode(mode) {
       if (state.viewMode === mode) return;
       state.viewMode = mode;
+      const scrollArea = document.getElementById("appContentScroll");
+      if (scrollArea) scrollArea.scrollTop = 0;
       renderAll();
     }
 
@@ -6241,6 +6309,8 @@
         paper.classList.remove("is-printing", "is-complete");
       }
       handleNewOrder();
+      const scrollArea = document.getElementById("appContentScroll");
+      if (scrollArea) scrollArea.scrollTo({ top: 0, behavior: "smooth" });
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 

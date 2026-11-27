@@ -15,16 +15,19 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     direction: rtl;
+    background-color: #FF7A00;
+    overscroll-behavior-y: none;
   }
 
   body {
-    background-color: #F97316;
+    background-color: #FF7A00;
     background: linear-gradient(180deg, #FF7A00 0%, #EA580C 100%);
     color: #FFF8F0;
     font-family: 'Cairo', 'Tajawal', system-ui, -apple-system, sans-serif;
     user-select: none;
     -webkit-user-select: none;
     overflow-x: hidden;
+    overscroll-behavior-y: none;
     -webkit-tap-highlight-color: transparent !important;
   }
 
