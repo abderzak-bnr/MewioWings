@@ -79,6 +79,46 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 // Compress & resize image in browser via HTML5 Canvas (max 800px, WebP @ 0.8 quality)
+function resolveAdminItemName(rawId: any, menuList: any[] = []): string {
+  if (!rawId) return '';
+  const strId = String(rawId).trim();
+  const normalized = strId.replace(/^(dip_|side_|sauce_|box_)/, '').replace(/-/g, '_');
+
+  const STATIC_MAP: Record<string, string> = {
+    crispy: 'أجنحة مقرمشة كلاسيك',
+    algeria: 'الصوص الجزائرية',
+    algerian: 'الصوص الجزائرية',
+    bbq: 'باربيكيو مدخن',
+    buffalo: 'بافالو حار',
+    garlic_mayo: 'مايونيز بالثوم',
+    'garlic-mayo': 'مايونيز بالثوم',
+    cheddar: 'شيدر دافئة',
+    ranch: 'رانش كلاسيك',
+    honey_mustard: 'هوني ماسترد',
+    'honey-mustard': 'هوني ماسترد',
+    spicy_mayo: 'مايونيز حار',
+    'spicy-mayo': 'مايونيز حار',
+    fries: 'بطاطا مقلية',
+    coleslaw: 'سلطة الكرنب',
+  };
+
+  if (STATIC_MAP[strId]) return STATIC_MAP[strId];
+  if (STATIC_MAP[normalized]) return STATIC_MAP[normalized];
+
+  if (Array.isArray(menuList)) {
+    const found = menuList.find((m) => {
+      const mId = String(m.id || '').trim();
+      const mNorm = mId.replace(/^(dip_|side_|sauce_|box_)/, '').replace(/-/g, '_');
+      return mId === strId || mNorm === normalized || mId === `dip_${strId}` || mId === `side_${strId}`;
+    });
+    if (found && (found.name_ar || (found as any).name)) {
+      return found.name_ar || (found as any).name;
+    }
+  }
+
+  return strId;
+}
+
 function compressImageToWebP(file: File): Promise<Blob> {
   return new Promise((resolve, reject) => {
     const objectUrl = URL.createObjectURL(file);
@@ -1007,20 +1047,22 @@ export default function AdminDashboard() {
                         {itemsList.map((it: any, idx: number) => {
                           let dipsInfo = '';
                           if (it.dipsBreakdown && Array.isArray(it.dipsBreakdown.items) && it.dipsBreakdown.items.length > 0) {
-                            dipsInfo = 'صوصات جانبية: ' + it.dipsBreakdown.items.map((d: any) => `${d.name} (×${d.qty})`).join(' + ');
+                            dipsInfo = 'صوصات جانبية: ' + it.dipsBreakdown.items.map((d: any) => `${resolveAdminItemName(d.name || d.id, menuItems)} (×${d.qty})`).join(' + ');
                           } else if (it.selectedDips) {
                             const arr = Object.keys(it.selectedDips).filter((k) => it.selectedDips[k] > 0);
                             if (arr.length > 0) {
-                              dipsInfo = 'صوصات: ' + arr.map((k) => `${k} (×${it.selectedDips[k]})`).join(', ');
+                              dipsInfo = 'صوصات: ' + arr.map((k) => `${resolveAdminItemName(k, menuItems)} (×${it.selectedDips[k]})`).join(', ');
                             }
                           }
                           let sidesInfo = '';
                           if (it.selectedSides) {
                             const arr = Object.keys(it.selectedSides).filter((k) => it.selectedSides[k] > 0);
                             if (arr.length > 0) {
-                              sidesInfo = 'إضافات: ' + arr.map((k) => `${k === 'fries' ? 'بطاطا مقلية' : k === 'coleslaw' ? 'سلطة الكرنب' : k} (×${it.selectedSides[k]})`).join(', ');
+                              sidesInfo = 'إضافات: ' + arr.map((k) => `${resolveAdminItemName(k, menuItems)} (×${it.selectedSides[k]})`).join(', ');
                             }
                           }
+
+                          const displaySauce = resolveAdminItemName(it.sauceName || it.sauceId, menuItems);
 
                           return (
                             <div key={idx} style={{ fontSize: '12px', marginBottom: '4px', paddingBottom: '4px', borderBottom: idx < itemsList.length - 1 ? '1px dashed rgba(255,255,255,0.06)' : 'none' }}>
@@ -1028,7 +1070,7 @@ export default function AdminDashboard() {
                                 <span>{it.title || it.boxCode || 'وجبة'} ×{it.qty || 1}</span>
                                 <span style={{ color: '#FF7A00' }}>{((it.unitPrice || it.price || 0) * (it.qty || 1)).toLocaleString('fr-DZ')} دج</span>
                               </div>
-                              {it.sauceName && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>صوص: {it.sauceName} {it.spiceTitle ? `• ${it.spiceTitle}` : ''}</div>}
+                              {displaySauce && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>صوص: {displaySauce} {it.spiceTitle ? `• ${it.spiceTitle}` : ''}</div>}
                               {it.includesSummary && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>يتضمن: {it.includesSummary}</div>}
                               {dipsInfo && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>{dipsInfo}</div>}
                               {sidesInfo && <div style={{ fontSize: '11px', color: '#8E9BAE' }}>{sidesInfo}</div>}

@@ -1,6 +1,8 @@
 import React, { lazy, Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { supabase } from './lib/supabase';
+import FloatingCartIsland from './components/FloatingCartIsland';
+import LivePriceFlow from './components/LivePriceFlow';
 import './index.css';
 
 // Lazy-load AdminDashboard so customer storefront never downloads admin code
@@ -55,6 +57,26 @@ if (path.startsWith('/admin')) {
     );
   }
 } else {
+  // Mount Floating Cart Island
+  const cartIslandRoot = document.getElementById('floating-cart-island-root');
+  if (cartIslandRoot) {
+    ReactDOM.createRoot(cartIslandRoot).render(
+      <React.StrictMode>
+        <FloatingCartIsland />
+      </React.StrictMode>
+    );
+  }
+
+  // Mount Live Price Flow into CTA button
+  const ctaPriceEl = document.getElementById('ctaPriceText');
+  if (ctaPriceEl) {
+    ReactDOM.createRoot(ctaPriceEl).render(
+      <React.StrictMode>
+        <LivePriceFlow />
+      </React.StrictMode>
+    );
+  }
+
   // Inform storefront script that Supabase is ready
   window.dispatchEvent(new CustomEvent('supabase-ready', { detail: supabase }));
   if (typeof window.initSupabaseStorefront === 'function') {

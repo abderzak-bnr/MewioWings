@@ -265,6 +265,16 @@ export default function ReceiptPrinter({
                             الصوص: {it.sauceName}
                           </div>
                         )}
+                        {it.dipsBreakdown?.items?.length > 0 && (
+                          <div className="text-[10px] text-neutral-500">
+                            الصوصات: {it.dipsBreakdown.items.map(d => `${d.name} ×${d.qty}`).join('، ')}
+                          </div>
+                        )}
+                        {it.selectedSides && Object.keys(it.selectedSides).filter(k => it.selectedSides[k] > 0).length > 0 && (
+                          <div className="text-[10px] text-neutral-500">
+                            الإضافات: {Object.keys(it.selectedSides).filter(k => it.selectedSides[k] > 0).map(k => `${k === 'fries' ? 'بطاطا مقلية' : k === 'coleslaw' ? 'سلطة الكرنب' : k} ×${it.selectedSides[k]}`).join('، ')}
+                          </div>
+                        )}
                         {it.includesSummary && (
                           <div className="text-[10px] text-neutral-500">
                             {it.includesSummary}

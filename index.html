@@ -2716,6 +2716,10 @@
     html.is-admin-route #admin-root {
       display: block !important;
     }
+    .has-floating-cart .controls-container,
+    .has-floating-cart .ready-boxes-view {
+      padding-bottom: 96px !important;
+    }
   </style>
 </head>
 <body>
@@ -2987,6 +2991,8 @@
       </svg>
     </button>
   </div>
+    <!-- Smart Floating Cart Island Root (Dynamic Island Style) -->
+    <div id="floating-cart-island-root"></div>
   </main>
 
   <!-- ==========================================================
@@ -3270,11 +3276,19 @@
 
       Object.entries(selectedDips || {}).forEach(([id, qty]) => {
         if (qty > 0) {
-          const dipObj = MENU_CONFIG.dips.find(d => d.id === id);
-          const name = dipObj ? dipObj.name : id;
+          const cleanId = String(id).trim();
+          const dipObj = MENU_CONFIG.dips.find(d =>
+            d.id === cleanId ||
+            d.dbId === cleanId ||
+            String(d.id) === cleanId ||
+            String(d.dbId) === cleanId ||
+            String(d.id).replace(/-/g, "_") === cleanId.replace(/-/g, "_") ||
+            String(d.id).replace(/^(dip_|side_)/, "") === cleanId.replace(/^(dip_|side_)/, "")
+          );
+          const name = dipObj ? dipObj.name : cleanId;
           const price = dipObj && typeof dipObj.price === "number" ? dipObj.price : MENU_CONFIG.rules.extraDipPrice;
           totalDipsCount += qty;
-          dipItems.push({ id, name, qty, price });
+          dipItems.push({ id: cleanId, name, qty, price });
         }
       });
 
@@ -3897,12 +3911,34 @@
       return state.cartItems.reduce((acc, it) => acc + (it.qty || 1), 0);
     }
 
+    window.getWingoCartState = function() {
+      return {
+        count: getCartCount(),
+        subtotal: calculateCartSubtotal(),
+        items: state.cartItems
+      };
+    };
+
     function updateCartBadge() {
       const count = getCartCount();
       const badge = document.getElementById("cartBadgeCount");
       if (badge) {
         badge.innerText = count;
         badge.style.display = count > 0 ? "flex" : "none";
+      }
+
+      const subtotal = calculateCartSubtotal();
+      window.dispatchEvent(new CustomEvent("wingo-cart-updated", {
+        detail: { count, subtotal, items: state.cartItems }
+      }));
+
+      const storefront = document.getElementById("customer-storefront");
+      if (storefront) {
+        if (count > 0) {
+          storefront.classList.add("has-floating-cart");
+        } else {
+          storefront.classList.remove("has-floating-cart");
+        }
       }
     }
 
@@ -5256,6 +5292,7 @@
       saveCartToStorage();
       closeReadyBoxModal();
       updateCartBadge();
+      window.dispatchEvent(new CustomEvent("wingo-item-added", { detail: { item: cartItem } }));
       triggerCartBounce();
       showToast(`تمت إضافة ${boxObj.nameAr} إلى السلة`, "عرض السلة", () => openOrderDrawer());
     }
@@ -5315,6 +5352,7 @@
       state.cartItems.push(cartItem);
       saveCartToStorage();
       updateCartBadge();
+      window.dispatchEvent(new CustomEvent("wingo-item-added", { detail: { item: cartItem } }));
       triggerCartBounce();
       showToast("تمت إضافة الوجبة إلى السلة بنجاح", "عرض السلة", () => openOrderDrawer());
 
@@ -5341,7 +5379,11 @@
 
       Object.entries(state.selectedSides).forEach(([id, qty]) => {
         if (qty > 0) {
-          const sideObj = MENU_CONFIG.sides.find(s => s.id === id && s.is_available !== false);
+          const cleanId = String(id).trim();
+          const sideObj = MENU_CONFIG.sides.find(s =>
+            (s.id === cleanId || s.dbId === cleanId || String(s.id) === cleanId || String(s.dbId) === cleanId) &&
+            s.is_available !== false
+          );
           if (sideObj) total += sideObj.price * qty;
         }
       });
@@ -5402,6 +5444,21 @@
       priceAnimRaf = requestAnimationFrame(tick);
     }
 
+    window.getCurrentMealPrice = function() {
+      const wingsObj = state.wingsCount ? MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount && w.is_available !== false) : null;
+      const sauceObj = state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId && s.is_available !== false) : null;
+      let status = "available";
+      if (state.isStoreOpen === false) {
+        status = "closed";
+      } else if (!wingsObj || !sauceObj) {
+        status = "unavailable";
+      }
+      return {
+        price: calculateBuildMealTotal(),
+        status: status
+      };
+    };
+
     function updateLivePrice() {
       const wingsObj = state.wingsCount ? MENU_CONFIG.wingCounts.find(w => w.count === state.wingsCount && w.is_available !== false) : null;
       const sauceObj = state.selectedSauceId ? MENU_CONFIG.coatingSauces.find(s => s.id === state.selectedSauceId && s.is_available !== false) : null;
@@ -5423,11 +5480,23 @@
       }
 
       const currentMealPrice = calculateBuildMealTotal();
-      if (ctaPriceEl) {
-        if (state.isStoreOpen === false) {
+      let liveStatus = "available";
+      if (state.isStoreOpen === false) {
+        liveStatus = "closed";
+      } else if (!wingsObj || !sauceObj) {
+        liveStatus = "unavailable";
+      }
+
+      window.dispatchEvent(new CustomEvent("wingo-live-price-update", {
+        detail: { price: currentMealPrice, status: liveStatus }
+      }));
+
+      // Fallback text if React is not yet mounted into ctaPriceText
+      if (ctaPriceEl && !ctaPriceEl.querySelector('number-flow')) {
+        if (liveStatus === "closed") {
           ctaPriceEl.innerText = "المطعم مغلق";
           currentDisplayedPrice = null;
-        } else if (!wingsObj || !sauceObj) {
+        } else if (liveStatus === "unavailable") {
           ctaPriceEl.innerText = "غير متوفر";
           currentDisplayedPrice = null;
         } else {
@@ -6062,8 +6131,17 @@
             const distinctSides = Object.keys(it.selectedSides).filter(id => it.selectedSides[id] > 0);
             if (distinctSides.length > 0) {
               const sidesStr = distinctSides.map(id => {
-                const s = MENU_CONFIG.sides.find(x => x.id === id);
-                return `${s ? s.name : id} ×${it.selectedSides[id]}`;
+                const cleanId = String(id).trim();
+                const s = MENU_CONFIG.sides.find(x =>
+                  x.id === cleanId ||
+                  x.dbId === cleanId ||
+                  String(x.id) === cleanId ||
+                  String(x.dbId) === cleanId ||
+                  String(x.id).replace(/-/g, "_") === cleanId.replace(/-/g, "_") ||
+                  String(x.id).replace(/^(side_|dip_)/, "") === cleanId.replace(/^(side_|dip_)/, "")
+                );
+                const sName = s ? s.name : (cleanId === 'fries' ? 'بطاطا مقلية' : (cleanId === 'coleslaw' ? 'سلطة الكرنب' : cleanId));
+                return `${sName} ×${it.selectedSides[id]}`;
               }).join(", ");
               subDetails.push(`الإضافات: ${escapeHtml(sidesStr)}`);
             }

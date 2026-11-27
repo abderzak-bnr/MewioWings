@@ -49,15 +49,54 @@ const READY_BOX_PRICES = {
   party: 2750,
 };
 
-const DIP_NAMES = {
-  buffalo: 'بافالو',
-  'honey-mustard': 'هوني ماسترد',
-  honey_mustard: 'هوني ماسترد',
-  ranch: 'رانش',
+const FALLBACK_NAMES = {
+  crispy: 'أجنحة مقرمشة كلاسيك',
+  algeria: 'الصوص الجزائرية',
+  algerian: 'الصوص الجزائرية',
+  bbq: 'باربيكيو مدخن',
+  buffalo: 'بافالو حار',
+  garlic_mayo: 'مايونيز بالثوم',
+  'garlic-mayo': 'مايونيز بالثوم',
+  cheddar: 'شيدر دافئة',
   cheese: 'صوص الجبن',
-  bbq: 'باربكيو',
+  ranch: 'رانش كلاسيك',
+  honey_mustard: 'هوني ماسترد',
+  'honey-mustard': 'هوني ماسترد',
+  spicy_mayo: 'مايونيز حار',
+  'spicy-mayo': 'مايونيز حار',
   ketchup: 'كاتشب',
+  fries: 'بطاطا مقلية',
+  coleslaw: 'سلطة الكرنب',
 };
+
+function resolveItemName(rawId, dbItemsList = []) {
+  if (!rawId) return '';
+  const strId = String(rawId).trim();
+  const normalized = strId.replace(/^(dip_|side_|sauce_|box_)/, '').replace(/-/g, '_');
+
+  if (FALLBACK_NAMES[strId]) return FALLBACK_NAMES[strId];
+  if (FALLBACK_NAMES[normalized]) return FALLBACK_NAMES[normalized];
+
+  if (Array.isArray(dbItemsList)) {
+    const found = dbItemsList.find((it) => {
+      const itId = String(it.id || '').trim();
+      const itNorm = itId.replace(/^(dip_|side_|sauce_|box_)/, '').replace(/-/g, '_');
+      return (
+        itId === strId ||
+        itNorm === normalized ||
+        itId === `dip_${strId}` ||
+        itId === `side_${strId}` ||
+        itId === `sauce_${strId}` ||
+        itId === `box_${strId}`
+      );
+    });
+    if (found && (found.name_ar || found.name)) {
+      return found.name_ar || found.name;
+    }
+  }
+
+  return strId;
+}
 
 function escapeHtml(text) {
   if (!text) return '';
@@ -163,10 +202,12 @@ export default async function handler(req, res) {
       : 200;
 
   // 5. Fetch dynamic menu_items from DB if available for live price synchronization
+  let dbItemsList = [];
   const menuMap = new Map();
   try {
     const { data: dbItems } = await supabase.from('menu_items').select('*');
     if (dbItems && Array.isArray(dbItems)) {
+      dbItemsList = dbItems;
       dbItems.forEach((it) => {
         menuMap.set(it.id, it);
       });
@@ -194,12 +235,24 @@ export default async function handler(req, res) {
       const dbWing = menuMap.get(`wing_${wingsCount}`);
       const baseWingPrice = dbWing && typeof dbWing.price === 'number' ? dbWing.price : (WING_PRICES[wingsCount] || 650);
 
+      // Resolve sauce name
+      const resolvedSauce = resolveItemName(item.sauceName || item.sauceId, dbItemsList);
+
       // Free dips calculation
       const freeAllowance = FREE_DIPS_ALLOWANCE[wingsCount] || getFreeDipsAllowance(wingsCount);
       let totalDipsCount = 0;
+      const resolvedDipsList = [];
       if (item.selectedDips && typeof item.selectedDips === 'object') {
-        Object.values(item.selectedDips).forEach((dq) => {
-          totalDipsCount += Math.max(0, Math.min(20, Math.floor(Number(dq) || 0)));
+        Object.entries(item.selectedDips).forEach(([dId, dq]) => {
+          const count = Math.max(0, Math.min(20, Math.floor(Number(dq) || 0)));
+          if (count > 0) {
+            totalDipsCount += count;
+            resolvedDipsList.push({
+              id: dId,
+              name: resolveItemName(dId, dbItemsList),
+              qty: count,
+            });
+          }
         });
       }
       const extraDipsCount = Math.max(0, totalDipsCount - freeAllowance);
@@ -207,6 +260,7 @@ export default async function handler(req, res) {
 
       // Sides calculation
       let sidesCost = 0;
+      const resolvedSidesList = [];
       if (item.selectedSides && typeof item.selectedSides === 'object') {
         Object.entries(item.selectedSides).forEach(([sId, sq]) => {
           const sQuantity = Math.max(0, Math.min(20, Math.floor(Number(sq) || 0)));
@@ -214,6 +268,11 @@ export default async function handler(req, res) {
             const dbSide = menuMap.get(sId) || menuMap.get(`side_${sId}`);
             const sidePrice = dbSide && typeof dbSide.price === 'number' ? dbSide.price : (SIDE_PRICES[sId] || 200);
             sidesCost += sidePrice * sQuantity;
+            resolvedSidesList.push({
+              id: sId,
+              name: resolveItemName(sId, dbItemsList),
+              qty: sQuantity,
+            });
           }
         });
       }
@@ -222,6 +281,13 @@ export default async function handler(req, res) {
 
       verifiedItems.push({
         ...item,
+        sauceName: resolvedSauce || item.sauceName,
+        dipsBreakdown: {
+          items: resolvedDipsList,
+          freeAllowance,
+          totalDipsCount,
+        },
+        resolvedSides: resolvedSidesList,
         wingsCount,
         qty,
         unitPrice,
@@ -239,8 +305,11 @@ export default async function handler(req, res) {
         unitPrice = Math.max(0, Number(item.unitPrice) || 850);
       }
 
+      const resolvedSauce = resolveItemName(item.sauceName || item.sauceId, dbItemsList);
+
       verifiedItems.push({
         ...item,
+        sauceName: resolvedSauce || item.sauceName,
         qty,
         unitPrice,
         verifiedLineTotal: unitPrice * qty,
@@ -320,7 +389,7 @@ export default async function handler(req, res) {
               const dipsList = [];
               for (const [dId, q] of Object.entries(it.selectedDips)) {
                 if (q > 0) {
-                  const dName = DIP_NAMES[dId] || dId;
+                  const dName = resolveItemName(dId, dbItemsList);
                   dipsList.push(`${escapeHtml(dName)} ×${q}`);
                 }
               }
@@ -332,7 +401,7 @@ export default async function handler(req, res) {
               const sidesList = [];
               for (const [sId, q] of Object.entries(it.selectedSides)) {
                 if (q > 0) {
-                  const sName = sId === 'fries' ? 'بطاطا مقلية' : (sId === 'coleslaw' ? 'سلطة الكرنب' : sId);
+                  const sName = resolveItemName(sId, dbItemsList);
                   sidesList.push(`${escapeHtml(sName)} ×${q}`);
                 }
               }
@@ -341,7 +410,8 @@ export default async function handler(req, res) {
               }
             }
           } else {
-            teleText += `   - صوص: ${escapeHtml(it.sauceName || '-')} • حرارة: ${escapeHtml(it.spiceTitle || 'عادي')}\n`;
+            const sauceDisplay = resolveItemName(it.sauceName || it.sauceId, dbItemsList);
+            teleText += `   - صوص: ${escapeHtml(sauceDisplay || '-')} • حرارة: ${escapeHtml(it.spiceTitle || 'عادي')}\n`;
             if (it.includesSummary) {
               teleText += `   - يتضمن: ${escapeHtml(it.includesSummary)}\n`;
             }
